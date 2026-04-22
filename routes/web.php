@@ -3,10 +3,16 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceCategoryController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Custom Manual Verification Route
+Route::get('/customer/verify/{id}/{hash}', [VerifyEmailController::class, 'verifyCustom'])
+    ->middleware(['signed', 'throttle:6,1'])
+    ->name('verification.verify.custom');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

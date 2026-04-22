@@ -15,6 +15,12 @@ use Illuminate\View\View;
 
 use App\Models\Role;
 use App\Models\StaffDetail;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CustomerVerificationMail;
+use Illuminate\Support\Facades\URL;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class RegisteredUserController extends Controller
 {
@@ -57,19 +63,50 @@ class RegisteredUserController extends Controller
             }
         }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'whatsapp_number' => $request->whatsapp_number,
-            'password' => Hash::make($request->password),
-            'role_id' => $customerRole ? $customerRole->id : null,
-            'referred_by_staff_id' => $referredById,
-            'status' => 'pending',
-            'profile_completed' => 0,
-        ]);
+        // Check if mail service is configured
+        if (config('mail.default') === 'smtp') {
+            $smtpConfig = config('mail.mailers.smtp');
+            if (empty($smtpConfig['host']) || empty($smtpConfig['port']) || empty($smtpConfig['username']) || empty($smtpConfig['password']) || empty(config('mail.from.address'))) {
+                return back()->withErrors(['email' => 'Mail service is not configured. Please contact administrator.'])->withInput();
+            }
+        }
 
-        event(new Registered($user));
+        DB::beginTransaction();
 
-        return redirect(route('register'))->with('status', 'Registration successful. A verification email has been sent to your registered email address. Please click the registration link in your email to complete your profile.');
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'whatsapp_number' => $request->whatsapp_number,
+                'password' => Hash::make($request->password),
+                'role_id' => $customerRole ? $customerRole->id : null,
+                'referred_by_staff_id' => $referredById,
+                'status' => 'pending',
+                'profile_completed' => 0,
+            ]);
+
+            // Generate secure signed verification link manually
+            $verificationUrl = URL::temporarySignedRoute(
+                'verification.verify.custom',
+                Carbon::now()->addMinutes(1440), // 24 hours expiry
+                [
+                    'id' => $user->getKey(),
+                    'hash' => sha1($user->getEmailForVerification()),
+                ]
+            );
+
+            // Send custom mail manually
+            Mail::to($user->email)->send(new CustomerVerificationMail($user, $verificationUrl));
+
+            DB::commit();
+
+            return redirect(route('register'))->with('status', 'Registration successful. A verification email has been sent to your registered email. Please click the link in your email to complete registration.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Registration Mail Error: ' . $e->getMessage());
+            
+            return back()->withErrors(['email' => 'Unable to send verification email right now. Please try again later 2.'])->withInput();
+        }
     }
 }
