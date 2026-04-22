@@ -114,7 +114,7 @@
                                                 type="checkbox" />
                                             <label
                                                 class="mb-2 ml-1 font-normal cursor-pointer select-none text-sm text-slate-700"
-                                                for="remember_me">Remember me</label>
+                                                for="remember_me">Remember me for a while</label>
                                         </div>
                                         <div class="text-center">
                                             <button type="submit"
@@ -145,8 +145,8 @@
                             <div
                                 class="absolute top-0 hidden w-3/5 h-full -mr-32 overflow-hidden -skew-x-10 -right-40 rounded-bl-xl md:block">
                                 <div class="absolute inset-x-0 top-0 z-0 h-full -ml-16 bg-cover skew-x-10" style="
-                      background-image: url('{{ asset('assets/img/curved-images/curved6.jpg') }}');
-                    "></div>
+                          background-image: url('{{ asset('assets/img/curved-images/curved6.jpg') }}');
+                        "></div>
                             </div>
                         </div>
                     </div>
