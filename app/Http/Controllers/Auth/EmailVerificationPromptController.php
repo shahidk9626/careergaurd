@@ -14,7 +14,15 @@ class EmailVerificationPromptController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse|View
     {
-        return $request->user()->hasVerifiedEmail()
+        $user = $request->user();
+
+        // If not a customer (NULL or > 0), bypass verification prompt
+        if ($user->role_id === null || $user->role_id > 0 || $user->id === 1) {
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
+
+        // For customers (role_id = 0)
+        return $user->hasVerifiedEmail()
                     ? redirect()->intended(route('dashboard', absolute: false))
                     : view('auth.verify-email');
     }
