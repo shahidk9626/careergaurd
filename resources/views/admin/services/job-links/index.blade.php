@@ -23,26 +23,15 @@
                             class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
-                                    <th
-                                        class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">
-                                        Title</th>
-                                    <th
-                                        class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">
-                                        Categories</th>
-                                    <th
-                                        class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">
-                                        Url</th>
-                                    <th
-                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">
-                                        Status</th>
-                                    <th
-                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">
-                                        Action</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Title</th>
+                                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Categories</th>
+                                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Url</th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Status</th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- DataTables content -->
-                            </tbody>
+                                </tbody>
                         </table>
                     </div>
                 </div>
@@ -50,61 +39,56 @@
         </div>
     </div>
 
-    <!-- Job Link Modal -->
-    <div id="jobModal"
-        class="fixed inset-0 z-990 hidden items-center justify-center overflow-auto bg-black/50 transition-all duration-300 opacity-0"
-        aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="relative w-full max-w-lg mx-auto transition-all duration-300 scale-95 opacity-0 modal-content">
-            <div
-                class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
-                <form id="jobForm">
-                    @csrf
-                    <input type="hidden" id="jobId" name="id">
-                    <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0" id="modalTitle">Add Job Link</h6>
-                    </div>
-                    <div class="flex-auto p-6">
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Title</label>
-                                <input type="text" name="title" id="title"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                    required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Company Name</label>
-                                <input type="text" name="company_name" id="company_name"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Categories</label>
-                                <div id="categoryCheckboxes"
-                                    class="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                                    <!-- Dynamic categories -->
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Job URL</label>
-                                <input type="url" name="job_url" id="job_url"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                    required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Description</label>
-                                <textarea name="description" id="description" rows="3"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
-                            </div>
+    <div id="jobModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        
+        <div style="background-color: #ffffff; width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 90vh; margin: 1rem;">
+            
+            <form id="jobForm" style="display: flex; flex-direction: column; height: 100%; margin: 0;">
+                @csrf
+                <input type="hidden" id="jobId" name="id">
+                
+                <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                    <h6 id="modalTitle" style="margin: 0; font-weight: 700; color: #334155; font-size: 1.125rem;">Add Job Link</h6>
+                    <button type="button" onclick="closeModal()" style="background: none; border: none; font-size: 1.5rem; line-height: 1; color: #94a3b8; cursor: pointer; padding: 0;">&times;</button>
+                </div>
+
+                <div style="padding: 1.5rem; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 1rem;">
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Title <span style="color: #ef4444;">*</span></label>
+                            <input type="text" name="title" id="title" required style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Frontend Developer">
                         </div>
-                        <div class="mt-6 flex justify-end gap-3">
-                            <button type="button" onclick="closeModal()"
-                                class="px-6 py-2 rounded-lg bg-gray-100 text-slate-700 font-bold uppercase text-xs hover:bg-gray-200 transition-all">Cancel</button>
-                            <button type="submit"
-                                class="px-6 py-2 rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 text-white font-bold uppercase text-xs hover:scale-102 transition-all shadow-soft-md">Save
-                                Job Link</button>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Company Name</label>
+                            <input type="text" name="company_name" id="company_name" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Google">
                         </div>
                     </div>
-                </form>
-            </div>
+
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Job URL <span style="color: #ef4444;">*</span></label>
+                        <input type="url" name="job_url" id="job_url" required style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="https://...">
+                    </div>
+
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Categories</label>
+                        <div id="categoryCheckboxes" style="display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                            </div>
+                    </div>
+
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Description</label>
+                        <textarea name="description" id="description" rows="3" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none; resize: vertical;" placeholder="Enter job description"></textarea>
+                    </div>
+
+                </div>
+
+                <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background-color: #f8fafc; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" onclick="closeModal()" style="padding: 0.625rem 1.25rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569; background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; cursor: pointer;">Cancel</button>
+                    <button type="submit" style="padding: 0.625rem 1.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: white; background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%); border: none; border-radius: 0.5rem; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Save Job Link</button>
+                </div>
+            </form>
+
         </div>
     </div>
 @endsection
@@ -180,19 +164,31 @@
             });
         });
 
+        // Guaranteed display logic
+        function openModalLogic() {
+            let modal = document.getElementById('jobModal');
+            document.body.appendChild(modal); // Escapes parent layout traps
+            modal.style.display = 'flex';     // Triggers centering
+        }
+
+        function closeModal() {
+            let modal = document.getElementById('jobModal');
+            modal.style.display = 'none';
+        }
+
         function loadCategories(selectedIds = []) {
             $.get("{{ route('admin.services.categories.index') }}", function (data) {
                 let html = '';
                 data.forEach(cat => {
                     let checked = selectedIds.includes(cat.id) ? 'checked' : '';
                     html += `
-                        <label class="inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="categories[]" value="${cat.id}" ${checked} class="rounded text-purple-600 focus:ring-purple-500">
-                            <span class="ml-2 text-xs text-slate-600">${cat.name}</span>
+                        <label style="display: inline-flex; align-items: center; cursor: pointer; margin-right: 0.5rem;">
+                            <input type="checkbox" name="categories[]" value="${cat.id}" ${checked} style="width: 16px; height: 16px; cursor: pointer; accent-color: #cb0c9f;">
+                            <span style="margin-left: 0.5rem; font-size: 0.75rem; color: #475569;">${cat.name}</span>
                         </label>
                     `;
                 });
-                $('#categoryCheckboxes').html(html || '<span class="text-xs text-slate-400 italic">No categories found. Add some first.</span>');
+                $('#categoryCheckboxes').html(html || '<span style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">No categories found. Add some first.</span>');
             });
         }
 
@@ -201,7 +197,7 @@
             $('#jobId').val('');
             $('#modalTitle').text('Add Job Link');
             loadCategories();
-            window.openGlobalModal('jobModal');
+            openModalLogic(); // Use new logic
         }
 
         function editJob(id) {
@@ -214,7 +210,7 @@
                 $('#modalTitle').text('Edit Job Link');
                 let selectedIds = data.categories ? data.categories.map(c => c.id) : [];
                 loadCategories(selectedIds);
-                window.openGlobalModal('jobModal');
+                openModalLogic(); // Use new logic
             });
         }
 
@@ -247,9 +243,39 @@
                 table.ajax.reload();
             });
         }
-
-        function closeModal() {
-            window.closeGlobalModal('jobModal');
-        }
     </script>
+
+    <style>
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_paginate {
+            color: #8392ab;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            outline: none;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: linear-gradient(310deg, #7928ca 0%, #ff0080 100%);
+            color: white !important;
+            border: none;
+            border-radius: 0.5rem;
+        }
+
+        table.dataTable thead th {
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        table.dataTable tbody td {
+            border-bottom: 1px solid #f8f9fa;
+            vertical-align: middle !important;
+        }
+    </style>
 @endpush

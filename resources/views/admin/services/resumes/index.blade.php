@@ -23,18 +23,11 @@
                         <table id="templateTable" class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
-                                    <th
-                                        class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
-                                        Template</th>
-                                    <th
-                                        class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
-                                        Status</th>
-                                    <th
-                                        class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
-                                        Created At</th>
-                                    <th
-                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
-                                        Actions</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">Template</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">Categories</th>
+                                    <th class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">Status</th>
+                                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">Created At</th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">Actions</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -45,63 +38,56 @@
         </div>
     </div>
 
-    <!-- Template Modal -->
-    <div id="templateModal"
-        class="fixed inset-0 z-990 hidden items-center justify-center overflow-auto bg-black/50 transition-all duration-300 opacity-0"
-        aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="relative w-full max-w-lg mx-auto transition-all duration-300 scale-95 opacity-0 modal-content">
-            <div
-                class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
-                <form id="templateForm" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" id="templateId" name="id">
-                    <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0" id="modalTitle">Add Resume Template</h6>
+    <div id="templateModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        
+        <div style="background-color: #ffffff; width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 90vh; margin: 1rem;">
+            
+            <form id="templateForm" enctype="multipart/form-data" style="display: flex; flex-direction: column; height: 100%; margin: 0;">
+                @csrf
+                <input type="hidden" id="templateId" name="id">
+                
+                <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                    <h6 id="modalTitle" style="margin: 0; font-weight: 700; color: #334155; font-size: 1.125rem;">Add Resume Template</h6>
+                    <button type="button" onclick="closeModal()" style="background: none; border: none; font-size: 1.5rem; line-height: 1; color: #94a3b8; cursor: pointer; padding: 0;">&times;</button>
+                </div>
+
+                <div style="padding: 1.5rem; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 1rem;">
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Title <span style="color: #ef4444;">*</span></label>
+                        <input type="text" name="title" id="title" required style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="Enter template title">
                     </div>
-                    <div class="flex-auto p-6">
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Title</label>
-                                <input type="text" name="title" id="title"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                    required>
+
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Categories</label>
+                        <div id="categoryCheckboxes" style="display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Categories</label>
-                                <div id="categoryCheckboxes"
-                                    class="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                                    <!-- Dynamic categories -->
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Description</label>
-                                <textarea name="description" id="description" rows="3"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-600 mb-1">Thumbnail (Image)</label>
-                                    <input type="file" name="thumbnail" id="thumbnail" class="w-full text-xs"
-                                        accept="image/*">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-600 mb-1">Template File
-                                        (PDF/DOC)</label>
-                                    <input type="file" name="file_path" id="file_path" class="w-full text-xs"
-                                        accept=".pdf,.doc,.docx">
-                                </div>
-                            </div>
+                    </div>
+
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Description</label>
+                        <textarea name="description" id="description" rows="3" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none; resize: vertical;" placeholder="Enter template description"></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Thumbnail (Image)</label>
+                            <input type="file" name="thumbnail" id="thumbnail" accept="image/*" style="width: 100%; font-size: 0.75rem; color: #475569;">
                         </div>
-                        <div class="mt-6 flex justify-end gap-3">
-                            <button type="button" onclick="closeModal()"
-                                class="px-6 py-2 rounded-lg bg-gray-100 text-slate-700 font-bold uppercase text-xs hover:bg-gray-200 transition-all">Cancel</button>
-                            <button type="submit"
-                                class="px-6 py-2 rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 text-white font-bold uppercase text-xs hover:scale-102 transition-all shadow-soft-md">Save
-                                Template</button>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Template File (PDF/DOC)</label>
+                            <input type="file" name="file_path" id="file_path" accept=".pdf,.doc,.docx" style="width: 100%; font-size: 0.75rem; color: #475569;">
                         </div>
                     </div>
-                </form>
-            </div>
+
+                </div>
+
+                <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background-color: #f8fafc; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" onclick="closeModal()" style="padding: 0.625rem 1.25rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569; background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; cursor: pointer;">Cancel</button>
+                    <button type="submit" style="padding: 0.625rem 1.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: white; background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%); border: none; border-radius: 0.5rem; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Save Template</button>
+                </div>
+            </form>
+
         </div>
     </div>
 @endsection
@@ -119,16 +105,16 @@
                         render: function (data) {
                             let thumb = data.thumbnail ? `/storage/${data.thumbnail}` : 'https://via.placeholder.com/50x70?text=No+Img';
                             return `
-                                        <div class="flex px-2 py-1">
-                                            <div>
-                                                <img src="${thumb}" class="inline-flex items-center justify-center mr-4 text-white transition-all duration-200 ease-soft-in-out text-sm h-12 w-9 rounded-md" alt="thumb">
-                                            </div>
-                                            <div class="flex flex-col justify-center">
-                                                <h6 class="mb-0 text-sm leading-normal font-semibold">${data.title}</h6>
-                                                <p class="mb-0 text-xs leading-tight text-slate-400 font-bold uppercase truncate w-32">${data.description || 'No description'}</p>
-                                            </div>
-                                        </div>
-                                    `;
+                                <div class="flex px-2 py-1">
+                                    <div>
+                                        <img src="${thumb}" class="inline-flex items-center justify-center mr-4 text-white transition-all duration-200 ease-soft-in-out text-sm h-12 w-9 rounded-md" alt="thumb">
+                                    </div>
+                                    <div class="flex flex-col justify-center">
+                                        <h6 class="mb-0 text-sm leading-normal font-semibold">${data.title}</h6>
+                                        <p class="mb-0 text-xs leading-tight text-slate-400 font-bold uppercase truncate w-32">${data.description || 'No description'}</p>
+                                    </div>
+                                </div>
+                            `;
                         }
                     },
                     {
@@ -158,18 +144,18 @@
                         className: 'text-center align-middle bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data) {
                             return `
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button onclick="toggleStatus(${data.id})" class="text-xs font-bold text-slate-400 hover:text-slate-700" title="Toggle Status">
-                                                <i class="fas ${data.status === 'active' ? 'fa-toggle-on text-green-500' : 'fa-toggle-off'} fa-lg"></i>
-                                            </button>
-                                            <button onclick="editTemplate(${data.id})" class="text-xs font-bold text-slate-400 hover:text-slate-700">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </button>
-                                            <button onclick="deleteTemplate(${data.id})" class="text-xs font-bold text-rose-400 hover:text-rose-600">
-                                                <i class="fas fa-trash"></i> Delete
-                                            </button>
-                                        </div>
-                                    `;
+                                <div class="flex items-center justify-center gap-2">
+                                    <button onclick="toggleStatus(${data.id})" class="text-xs font-bold text-slate-400 hover:text-slate-700" title="Toggle Status">
+                                        <i class="fas ${data.status === 'active' ? 'fa-toggle-on text-green-500' : 'fa-toggle-off'} fa-lg"></i>
+                                    </button>
+                                    <button onclick="editTemplate(${data.id})" class="text-xs font-bold text-slate-400 hover:text-slate-700">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button onclick="deleteTemplate(${data.id})" class="text-xs font-bold text-rose-400 hover:text-rose-600">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            `;
                         }
                     }
                 ],
@@ -206,19 +192,31 @@
             });
         });
 
+        // Guaranteed display logic
+        function openModalLogic() {
+            let modal = document.getElementById('templateModal');
+            document.body.appendChild(modal); // Escapes parent layout traps
+            modal.style.display = 'flex';     // Triggers centering
+        }
+
+        function closeModal() {
+            let modal = document.getElementById('templateModal');
+            modal.style.display = 'none';
+        }
+
         function loadCategories(selectedIds = []) {
             $.get("{{ route('admin.services.categories.index') }}", function (data) {
                 let html = '';
                 data.forEach(cat => {
                     let checked = selectedIds.includes(cat.id) ? 'checked' : '';
                     html += `
-                            <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="categories[]" value="${cat.id}" ${checked} class="rounded text-purple-600 focus:ring-purple-500">
-                                <span class="ml-2 text-xs text-slate-600">${cat.name}</span>
-                            </label>
-                        `;
+                        <label style="display: inline-flex; align-items: center; cursor: pointer; margin-right: 0.5rem;">
+                            <input type="checkbox" name="categories[]" value="${cat.id}" ${checked} style="width: 16px; height: 16px; cursor: pointer; accent-color: #cb0c9f;">
+                            <span style="margin-left: 0.5rem; font-size: 0.75rem; color: #475569;">${cat.name}</span>
+                        </label>
+                    `;
                 });
-                $('#categoryCheckboxes').html(html || '<span class="text-xs text-slate-400 italic">No categories found. Add some first.</span>');
+                $('#categoryCheckboxes').html(html || '<span style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">No categories found. Add some first.</span>');
             });
         }
 
@@ -227,11 +225,7 @@
             $('#templateId').val('');
             $('#modalTitle').text('Add Resume Template');
             loadCategories();
-            $('#templateModal').removeClass('hidden');
-            setTimeout(() => {
-                $('#templateModal').removeClass('opacity-0');
-                $('#templateModal .modal-content').removeClass('scale-95 opacity-0');
-            }, 10);
+            openModalLogic(); // Using the new function
         }
 
         function editTemplate(id) {
@@ -242,20 +236,8 @@
                 $('#modalTitle').text('Edit Resume Template');
                 let selectedIds = data.categories ? data.categories.map(c => c.id) : [];
                 loadCategories(selectedIds);
-                $('#templateModal').removeClass('hidden');
-                setTimeout(() => {
-                    $('#templateModal').removeClass('opacity-0');
-                    $('#templateModal .modal-content').removeClass('scale-95 opacity-0');
-                }, 10);
+                openModalLogic(); // Using the new function
             });
-        }
-
-        function closeModal() {
-            $('#templateModal').addClass('opacity-0');
-            $('#templateModal .modal-content').addClass('scale-95 opacity-0');
-            setTimeout(() => {
-                $('#templateModal').addClass('hidden');
-            }, 300);
         }
 
         function toggleStatus(id) {
