@@ -65,6 +65,10 @@ class AuthenticatedSessionController extends Controller
         // Normal flow for Staff/Admin or verified Customers
         $request->session()->regenerate();
 
+        if ($user->role_id === 0 && $user->profile_completed === 0) {
+            return redirect()->route('customer.registration');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

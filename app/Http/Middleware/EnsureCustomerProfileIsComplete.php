@@ -17,9 +17,9 @@ class EnsureCustomerProfileIsComplete
     {
         $user = $request->user();
 
-        if ($user && $user->role && $user->role->name === 'customer') {
+        if ($user && $user->role_id === 0) {
             if (
-                !$user->profile_completed &&
+                $user->profile_completed === 0 &&
                 !$request->routeIs('customer.registration') &&
                 !$request->routeIs('logout') &&
                 !$request->routeIs('verification.*')
