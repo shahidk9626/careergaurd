@@ -23,7 +23,9 @@ class CustomerController extends Controller
     {
         if ($request->ajax()) {
             $users = User::with(['role', 'customerDetail', 'referredBy.staffDetail'])
-                ->where('role_id', 0)->get();
+                ->whereHas('role', function ($q) {
+                    $q->where('name', 'customer');
+                })->get();
 
             $data = $users->map(function ($user) {
                 return [
@@ -152,7 +154,7 @@ class CustomerController extends Controller
                 'phone' => $request->phone,
                 'whatsapp_number' => $request->whatsapp_number,
                 'password' => Hash::make(Str::random(10)),
-                'role_id' => 0,
+                'role_id' => $customerRole ? $customerRole->id : null,
                 'referred_by_staff_id' => $referredById,
                 'status' => 'pending',
                 'profile_completed' => 0,

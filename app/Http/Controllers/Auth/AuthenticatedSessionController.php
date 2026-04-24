@@ -26,43 +26,6 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $user = Auth::user();
-
-        // Run logic only if customer (role_id = 0)
-        if ($user->role_id === 0) {
-            if (!$user->hasVerifiedEmail()) {
-                // Not verified - log out and stay on login page
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                $sentAt = $user->verification_sent_at ?? $user->created_at;
-                $isExpired = $sentAt->diffInHours(now()) >= 24;
-
-                if (!$isExpired) {
-                    // Case 1: Under 24h
-                    return back()->with('status', 'Please verify your profile using the verification link we sent to your registered email address.');
-                } else {
-                    // Case 2: Over 24h - auto resend
-                    $verificationUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
-                        'verification.verify.custom',
-                        now()->addMinutes(1440),
-                        [
-                            'id' => $user->id,
-                            'hash' => sha1($user->getEmailForVerification()),
-                        ]
-                    );
-
-                    \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\CustomerVerificationMail($user, $verificationUrl));
-                    
-                    $user->update(['verification_sent_at' => now()]);
-
-                    return back()->with('status', 'A verification email has been sent to your registered email address. Please click the link in your email to complete your registration.');
-                }
-            }
-        }
-
-        // Normal flow for Staff/Admin or verified Customers
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));

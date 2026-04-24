@@ -79,11 +79,10 @@ class RegisteredUserController extends Controller
                 'email' => $request->email,
                 'whatsapp_number' => $request->whatsapp_number,
                 'password' => Hash::make($request->password),
-                'role_id' => 0,
+                'role_id' => $customerRole ? $customerRole->id : null,
                 'referred_by_staff_id' => $referredById,
                 'status' => 'pending',
                 'profile_completed' => 0,
-                'verification_sent_at' => now(),
             ]);
 
             // Generate secure signed verification link manually
