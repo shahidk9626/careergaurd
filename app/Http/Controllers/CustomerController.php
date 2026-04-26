@@ -113,6 +113,15 @@ class CustomerController extends Controller
     }
 
     /**
+     * Customer Side: Profile View
+     */
+    public function profile()
+    {
+        $user = auth()->user()->load(['customerDetail', 'role']);
+        return view('customer.profile', compact('user'));
+    }
+
+    /**
      * Admin Side: Create View
      */
     public function create()

@@ -65,7 +65,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
     // Customer Dashboard & Other Protected Pages
     Route::middleware(['customer.profile', 'verified'])->group(function () {
         Route::get('/customer/dashboard', [App\Http\Controllers\CustomerController::class, 'dashboard'])->name('customer.dashboard');
-        Route::get('/customer/profile', [App\Http\Controllers\CustomerController::class, 'dashboard'])->name('customer.profile'); // Placeholder
+        Route::get('/customer/profile', [App\Http\Controllers\CustomerController::class, 'profile'])->name('customer.profile'); // Placeholder
         Route::get('/customer/services', [App\Http\Controllers\CustomerController::class, 'dashboard'])->name('customer.services'); // Placeholder
     });
 
