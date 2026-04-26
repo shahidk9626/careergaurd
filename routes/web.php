@@ -126,6 +126,18 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         Route::post('/plans/status/{id}', [App\Http\Controllers\PlanController::class, 'toggleStatus'])->name('admin.plans.status');
         Route::get('/plan-preview', [App\Http\Controllers\PlanController::class, 'preview'])->name('admin.plans.preview');
     });
+    // Customer-specific routes
+    Route::middleware(['auth', 'is_customer'])->prefix('customer')->group(function () {
+        Route::get('/plan-preview', [App\Http\Controllers\PlanController::class, 'preview'])->name('customer.plan-preview');
+        
+        // Profile check logic
+        Route::get('/profile-redirect', function () {
+            if (auth()->user()->profile_completed) {
+                return redirect()->route('customer.profile');
+            }
+            return redirect()->route('customer.registration');
+        })->name('customer.profile.check');
+    });
 });
 
 require __DIR__ . '/auth.php';

@@ -21,6 +21,7 @@ class EnsureCustomerProfileIsComplete
             if (
                 $user->profile_completed === 0 &&
                 !$request->routeIs('customer.registration') &&
+                !$request->routeIs('customer.plan-preview') &&
                 !$request->routeIs('logout') &&
                 !$request->routeIs('verification.*')
             ) {
