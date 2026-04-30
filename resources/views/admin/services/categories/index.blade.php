@@ -23,14 +23,15 @@
                             class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Name</th>
-                                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Slug</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Status</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Action</th>
+                                    <!-- Playbook Step 1: Explicit Widths -->
+                                    <th class="w-4/12 px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Name</th>
+                                    <th class="w-4/12 px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Slug</th>
+                                    <th class="w-2/12 px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Status</th>
+                                    <th class="w-2/12 px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -38,8 +39,8 @@
         </div>
     </div>
 
+    <!-- Category Modal -->
     <div id="categoryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-        
         <div style="background-color: #ffffff; width: 100%; max-width: 450px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 90vh; margin: 1rem;">
             
             <form id="categoryForm" style="display: flex; flex-direction: column; height: 100%; margin: 0;">
@@ -82,6 +83,7 @@
             table = $('#categoriesTable').DataTable({
                 processing: true,
                 serverSide: false, 
+                autoWidth: false, // Playbook Step 2
                 ajax: {
                     url: "{{ route('admin.services.categories.index') }}",
                     dataSrc: ''
@@ -89,39 +91,50 @@
                 columns: [
                     {
                         data: 'name',
+                        className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
                         render: function (data) {
-                            return '<div class="flex px-2 py-1"><div class="flex flex-col justify-center"><h6 class="mb-0 text-sm leading-normal">' + data + '</h6></div></div>';
+                            // Playbook Step 3: whitespace-normal break-words
+                            return '<h6 class="mb-0 text-sm leading-normal whitespace-normal break-words">' + data + '</h6>';
                         }
                     },
                     {
                         data: 'slug',
+                        className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
                         render: function (data) {
-                            return '<span class="text-xs font-semibold leading-tight text-slate-400">' + data + '</span>';
+                            // Playbook Step 3: whitespace-normal break-words
+                            return '<span class="text-xs font-semibold leading-tight text-slate-400 whitespace-normal break-words">' + data + '</span>';
                         }
                     },
                     {
                         data: 'status',
-                        className: 'align-middle text-center text-sm',
+                        className: 'px-6 py-3 align-middle text-center text-sm bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data, type, row) {
                             const badgeColor = data === 'active' ? 'bg-gradient-to-tl from-green-600 to-lime-400' : 'bg-gradient-to-tl from-slate-600 to-slate-300';
-                            return '<span onclick="toggleStatus(' + row.id + ')" class="cursor-pointer badge badge-sm ' + badgeColor + '">' + data + '</span>';
+                            return '<span onclick="toggleStatus(' + row.id + ')" class="cursor-pointer text-xxs px-2.5 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white rounded-1.8 ' + badgeColor + '">' + data + '</span>';
                         }
                     },
                     {
                         data: 'id',
-                        className: 'align-middle text-center',
+                        className: 'px-6 py-3 align-middle text-center bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data) {
-                            return '<div class="flex justify-center gap-2">' +
-                                '<button onclick="editCategory(' + data + ')" class="text-xs font-semibold leading-tight text-slate-400 hover:text-slate-700"><i class="fas fa-edit"></i></button>' +
-                                '<button onclick="deleteCategory(' + data + ')" class="text-xs font-semibold leading-tight text-red-400 hover:text-red-700"><i class="fas fa-trash"></i></button>' +
-                                '</div>';
+                            // Playbook Step 4: Fixed Action Buttons Layout
+                            return `
+                                <div class="text-center whitespace-nowrap">
+                                    <button onclick="editCategory(${data})" class="inline-block mr-4 text-xs font-bold text-slate-400 hover:text-slate-700 transition-colors">
+                                        <i class="fas fa-edit mr-1"></i> Edit
+                                    </button>
+                                    <button onclick="deleteCategory(${data})" class="inline-block text-xs font-bold text-rose-400 hover:text-rose-600 transition-colors">
+                                        <i class="fas fa-trash mr-1"></i> Delete
+                                    </button>
+                                </div>
+                            `;
                         }
                     }
                 ],
                 language: {
                     paginate: {
-                        previous: "<",
-                        next: ">"
+                        previous: "<i class='fas fa-angle-left'></i>",
+                        next: "<i class='fas fa-angle-right'></i>"
                     }
                 }
             });
@@ -142,8 +155,8 @@
         // Guaranteed display logic
         function openModalLogic() {
             let modal = document.getElementById('categoryModal');
-            document.body.appendChild(modal); // Escapes parent layout traps
-            modal.style.display = 'flex';     // Triggers centering
+            document.body.appendChild(modal); 
+            modal.style.display = 'flex';     
         }
 
         function closeModal() {
@@ -155,7 +168,7 @@
             $('#categoryForm')[0].reset();
             $('#categoryId').val('');
             $('#modalTitle').text('Add Service Category');
-            openModalLogic(); // Use new logic instead of global function
+            openModalLogic(); 
         }
 
         function editCategory(id) {
@@ -164,7 +177,7 @@
                 $('#name').val(data.name);
                 $('#status').val(data.status);
                 $('#modalTitle').text('Edit Service Category');
-                openModalLogic(); // Use new logic instead of global function
+                openModalLogic(); 
             });
         }
 
@@ -198,4 +211,56 @@
             });
         }
     </script>
+
+    <style>
+        /* Playbook Step 4: The Ultimate CSS Block for Alignment */
+        
+        /* Left Side Controls Padding */
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_info {
+            padding-left: 1.5rem !important; /* 24px to match px-6 */
+            color: #8392ab;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Right Side Controls Padding */
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_paginate {
+            padding-right: 1.5rem !important; /* 24px to match px-6 */
+            color: #8392ab;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            outline: none;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: linear-gradient(310deg, #7928ca 0%, #ff0080 100%);
+            color: white !important;
+            border: none;
+            border-radius: 0.5rem;
+        }
+
+        /* Force table headers and data cells to have identical left padding */
+        table.dataTable thead th,
+        table.dataTable tbody td {
+            padding-left: 1.5rem !important; /* Overrides the default DataTables squishing */
+            border-bottom: 1px solid #f8f9fa;
+            vertical-align: middle !important;
+        }
+
+        /* Exclude the Status and Action columns so they stay perfectly centered */
+        table.dataTable thead th.text-center,
+        table.dataTable tbody td.text-center {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+            text-align: center !important;
+        }
+    </style>
 @endpush

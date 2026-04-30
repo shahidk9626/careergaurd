@@ -17,21 +17,23 @@
                         </div>
                     </div>
                 </div>
+                <!-- px-0 removes padding so table borders span full width -->
                 <div class="flex-auto p-6 px-0 pb-2">
                     <div class="overflow-x-auto">
                         <table id="questionsTable"
                             class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Title</th>
-                                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Categories</th>
-                                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Question Preview</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Status</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Action</th>
+                                    <th class="w-2/12 px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Title</th>
+                                    <th class="w-2/12 px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Categories</th>
+                                    <th class="w-4/12 px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Question Preview</th>
+                                    <th class="w-2/12 px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Status</th>
+                                    <th class="w-2/12 px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                </tbody>
+                                <!-- DataTables content -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -39,8 +41,8 @@
         </div>
     </div>
 
+    <!-- Question Modal -->
     <div id="questionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-        
         <div style="background-color: #ffffff; width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 90vh; margin: 1rem;">
             
             <form id="questionForm" style="display: flex; flex-direction: column; height: 100%; margin: 0;">
@@ -53,28 +55,23 @@
                 </div>
 
                 <div style="padding: 1.5rem; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 1rem;">
-                    
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Title <span style="color: #ef4444;">*</span></label>
                         <input type="text" name="title" id="title" required style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. React Hook Basics">
                     </div>
-
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Categories</label>
                         <div id="categoryCheckboxes" style="display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
-                            </div>
+                        </div>
                     </div>
-
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Question Text <span style="color: #ef4444;">*</span></label>
                         <textarea name="question_text" id="question_text" rows="2" required style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none; resize: vertical;" placeholder="Enter the exact interview question"></textarea>
                     </div>
-
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Suggested Answer</label>
                         <textarea name="answer_text" id="answer_text" rows="4" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none; resize: vertical;" placeholder="Enter the suggested or correct answer"></textarea>
                     </div>
-
                 </div>
 
                 <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background-color: #f8fafc; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; justify-content: flex-end; gap: 0.75rem;">
@@ -82,7 +79,6 @@
                     <button type="submit" style="padding: 0.625rem 1.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: white; background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%); border: none; border-radius: 0.5rem; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Save Question</button>
                 </div>
             </form>
-
         </div>
     </div>
 @endsection
@@ -94,6 +90,7 @@
             table = $('#questionsTable').DataTable({
                 processing: true,
                 serverSide: false,
+                autoWidth: false,
                 ajax: {
                     url: "{{ route('admin.services.questions.index') }}",
                     dataSrc: ''
@@ -101,46 +98,55 @@
                 columns: [
                     {
                         data: 'title',
+                        className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
                         render: function (data) {
-                            return '<div class="flex px-2 py-1"><div class="flex flex-col justify-center"><h6 class="mb-0 text-sm leading-normal">' + data + '</h6></div></div>';
+                            return '<h6 class="mb-0 text-sm leading-normal whitespace-normal break-words">' + data + '</h6>';
                         }
                     },
                     {
                         data: 'categories',
+                        className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
                         render: function (data) {
                             if (!data || data.length === 0) return '<span class="text-xs text-slate-400 italic">No Categories</span>';
-                            return data.map(c => '<span class="px-2 py-1 mr-1 text-xxs font-bold bg-gray-100 text-slate-600 rounded-lg shadow-none border">' + c.name + '</span>').join('');
+                            return '<div class="flex flex-wrap gap-1">' + data.map(c => '<span class="px-2 py-1 text-xxs font-bold bg-gray-100 text-slate-600 rounded-lg shadow-none border">' + c.name + '</span>').join('') + '</div>';
                         }
                     },
                     {
                         data: 'question_text',
+                        className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
                         render: function (data) {
-                            return '<span class="text-xs font-semibold leading-tight text-slate-400">' + (data.length > 50 ? data.substring(0, 50) + '...' : data) + '</span>';
+                            return '<span class="text-xs font-semibold leading-tight text-slate-400 whitespace-normal break-words">' + (data.length > 50 ? data.substring(0, 50) + '...' : data) + '</span>';
                         }
                     },
                     {
                         data: 'status',
-                        className: 'align-middle text-center text-sm',
+                        className: 'px-6 py-3 align-middle text-center text-sm bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data, type, row) {
                             const badgeColor = data === 'active' ? 'bg-gradient-to-tl from-green-600 to-lime-400' : 'bg-gradient-to-tl from-slate-600 to-slate-300';
-                            return '<span onclick="toggleStatus(' + row.id + ')" class="cursor-pointer badge badge-sm ' + badgeColor + '">' + data + '</span>';
+                            return '<span onclick="toggleStatus(' + row.id + ')" class="cursor-pointer text-xxs px-2.5 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white rounded-1.8 ' + badgeColor + '">' + data + '</span>';
                         }
                     },
                     {
                         data: 'id',
-                        className: 'align-middle text-center',
+                        className: 'px-6 py-3 align-middle text-center bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data) {
-                            return '<div class="flex justify-center gap-2">' +
-                                '<button onclick="editQuestion(' + data + ')" class="text-xs font-semibold leading-tight text-slate-400 hover:text-slate-700"><i class="fas fa-edit"></i></button>' +
-                                '<button onclick="deleteQuestion(' + data + ')" class="text-xs font-semibold leading-tight text-red-400 hover:text-red-700"><i class="fas fa-trash"></i></button>' +
-                                '</div>';
+                            return `
+                                <div class="text-center whitespace-nowrap">
+                                    <button onclick="editQuestion(${data})" class="inline-block mr-4 text-xs font-bold text-slate-400 hover:text-slate-700 transition-colors">
+                                        <i class="fas fa-edit mr-1"></i> Edit
+                                    </button>
+                                    <button onclick="deleteQuestion(${data})" class="inline-block text-xs font-bold text-rose-400 hover:text-rose-600 transition-colors">
+                                        <i class="fas fa-trash mr-1"></i> Delete
+                                    </button>
+                                </div>
+                            `;
                         }
                     }
                 ],
                 language: {
                     paginate: {
-                        previous: "<",
-                        next: ">"
+                        previous: "<i class='fas fa-angle-left'></i>",
+                        next: "<i class='fas fa-angle-right'></i>"
                     }
                 }
             });
@@ -158,11 +164,10 @@
             });
         });
 
-        // Guaranteed display logic
         function openModalLogic() {
             let modal = document.getElementById('questionModal');
-            document.body.appendChild(modal); // Escapes parent layout traps
-            modal.style.display = 'flex';     // Triggers centering
+            document.body.appendChild(modal); 
+            modal.style.display = 'flex';     
         }
 
         function closeModal() {
@@ -191,7 +196,7 @@
             $('#questionId').val('');
             $('#modalTitle').text('Add Interview Question');
             loadCategories();
-            openModalLogic(); // Use new logic
+            openModalLogic();
         }
 
         function editQuestion(id) {
@@ -203,7 +208,7 @@
                 $('#modalTitle').text('Edit Interview Question');
                 let selectedIds = data.categories ? data.categories.map(c => c.id) : [];
                 loadCategories(selectedIds);
-                openModalLogic(); // Use new logic
+                openModalLogic();
             });
         }
 
@@ -239,10 +244,19 @@
     </script>
 
     <style>
+        /* Left Side Controls Padding */
         .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_info {
+            padding-left: 1.5rem !important; /* 24px to match px-6 */
+            color: #8392ab;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Right Side Controls Padding */
         .dataTables_wrapper .dataTables_filter,
-        .dataTables_wrapper .dataTables_info,
         .dataTables_wrapper .dataTables_paginate {
+            padding-right: 1.5rem !important; /* 24px to match px-6 */
             color: #8392ab;
             font-size: 0.75rem;
             margin-bottom: 1rem;
@@ -262,13 +276,20 @@
             border-radius: 0.5rem;
         }
 
-        table.dataTable thead th {
-            border-bottom: 1px solid #f8f9fa;
-        }
-
+        /* NEW: Force table headers and data cells to have identical left padding */
+        table.dataTable thead th,
         table.dataTable tbody td {
+            padding-left: 1.5rem !important; /* Overrides the default DataTables squishing */
             border-bottom: 1px solid #f8f9fa;
             vertical-align: middle !important;
+        }
+
+        /* NEW: Exclude the Status and Action columns so they stay perfectly centered */
+        table.dataTable thead th.text-center,
+        table.dataTable tbody td.text-center {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+            text-align: center !important;
         }
     </style>
 @endpush

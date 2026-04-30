@@ -17,21 +17,24 @@
                         </div>
                     </div>
                 </div>
+                <!-- px-0 removes padding so table borders span full width -->
                 <div class="flex-auto p-6 px-0 pb-2">
                     <div class="overflow-x-auto">
                         <table id="jobLinksTable"
                             class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Title</th>
-                                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Categories</th>
-                                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Url</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Status</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Action</th>
+                                    <!-- Playbook Step 1: Explicit Widths -->
+                                    <th class="w-3/12 px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Title</th>
+                                    <th class="w-3/12 px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Categories</th>
+                                    <th class="w-2/12 px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Url</th>
+                                    <th class="w-2/12 px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Status</th>
+                                    <th class="w-2/12 px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                </tbody>
+                                <!-- DataTables content -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -39,6 +42,7 @@
         </div>
     </div>
 
+    <!-- Job Link Modal -->
     <div id="jobModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
         
         <div style="background-color: #ffffff; width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 90vh; margin: 1rem;">
@@ -73,7 +77,7 @@
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Categories</label>
                         <div id="categoryCheckboxes" style="display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
-                            </div>
+                        </div>
                     </div>
 
                     <div>
@@ -100,6 +104,7 @@
             table = $('#jobLinksTable').DataTable({
                 processing: true,
                 serverSide: false,
+                autoWidth: false, // Playbook Step 2: Respect manual widths
                 ajax: {
                     url: "{{ route('admin.services.job-links.index') }}",
                     dataSrc: ''
@@ -107,46 +112,59 @@
                 columns: [
                     {
                         data: 'title',
+                        className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
                         render: function (data, type, row) {
-                            return '<div class="flex px-2 py-1"><div class="flex flex-col justify-center"><h6 class="mb-0 text-sm leading-normal">' + data + '</h6><p class="mb-0 text-xs leading-tight text-slate-400">' + (row.company_name || '') + '</p></div></div>';
+                            // Playbook Step 3: whitespace-normal break-words
+                            return '<h6 class="mb-0 text-sm leading-normal whitespace-normal break-words">' + data + '</h6><p class="mb-0 text-xs leading-tight text-slate-400 whitespace-normal break-words">' + (row.company_name || '') + '</p>';
                         }
                     },
                     {
                         data: 'categories',
+                        className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
                         render: function (data) {
                             if (!data || data.length === 0) return '<span class="text-xs text-slate-400 italic">No Categories</span>';
-                            return data.map(c => '<span class="px-2 py-1 mr-1 text-xxs font-bold bg-gray-100 text-slate-600 rounded-lg shadow-none border">' + c.name + '</span>').join('');
+                            // Flex wrap to prevent overflow
+                            return '<div class="flex flex-wrap gap-1">' + data.map(c => '<span class="px-2 py-1 text-xxs font-bold bg-gray-100 text-slate-600 rounded-lg shadow-none border">' + c.name + '</span>').join('') + '</div>';
                         }
                     },
                     {
                         data: 'job_url',
+                        className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
                         render: function (data) {
-                            return '<a href="' + data + '" target="_blank" class="text-xs font-semibold leading-tight text-slate-400 hover:text-slate-700"><i class="fas fa-external-link-alt"></i> View Link</a>';
+                            // Added break-all for super long URLs
+                            return '<a href="' + data + '" target="_blank" class="text-xs font-semibold leading-tight text-slate-400 hover:text-slate-700 whitespace-normal break-all"><i class="fas fa-external-link-alt"></i> View Link</a>';
                         }
                     },
                     {
                         data: 'status',
-                        className: 'align-middle text-center text-sm',
+                        className: 'px-6 py-3 align-middle text-center text-sm bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data, type, row) {
                             const badgeColor = data === 'active' ? 'bg-gradient-to-tl from-green-600 to-lime-400' : 'bg-gradient-to-tl from-slate-600 to-slate-300';
-                            return '<span onclick="toggleStatus(' + row.id + ')" class="cursor-pointer badge badge-sm ' + badgeColor + '">' + data + '</span>';
+                            return '<span onclick="toggleStatus(' + row.id + ')" class="cursor-pointer text-xxs px-2.5 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white rounded-1.8 ' + badgeColor + '">' + data + '</span>';
                         }
                     },
                     {
                         data: 'id',
-                        className: 'align-middle text-center',
+                        className: 'px-6 py-3 align-middle text-center bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data) {
-                            return '<div class="flex justify-center gap-2">' +
-                                '<button onclick="editJob(' + data + ')" class="text-xs font-semibold leading-tight text-slate-400 hover:text-slate-700"><i class="fas fa-edit"></i></button>' +
-                                '<button onclick="deleteJob(' + data + ')" class="text-xs font-semibold leading-tight text-red-400 hover:text-red-700"><i class="fas fa-trash"></i></button>' +
-                                '</div>';
+                            // Playbook Step 4: Fixed Action Buttons Layout
+                            return `
+                                <div class="text-center whitespace-nowrap">
+                                    <button onclick="editJob(${data})" class="inline-block mr-4 text-xs font-bold text-slate-400 hover:text-slate-700 transition-colors">
+                                        <i class="fas fa-edit mr-1"></i> Edit
+                                    </button>
+                                    <button onclick="deleteJob(${data})" class="inline-block text-xs font-bold text-rose-400 hover:text-rose-600 transition-colors">
+                                        <i class="fas fa-trash mr-1"></i> Delete
+                                    </button>
+                                </div>
+                            `;
                         }
                     }
                 ],
                 language: {
                     paginate: {
-                        previous: "<",
-                        next: ">"
+                        previous: "<i class='fas fa-angle-left'></i>",
+                        next: "<i class='fas fa-angle-right'></i>"
                     }
                 }
             });
@@ -164,11 +182,10 @@
             });
         });
 
-        // Guaranteed display logic
         function openModalLogic() {
             let modal = document.getElementById('jobModal');
-            document.body.appendChild(modal); // Escapes parent layout traps
-            modal.style.display = 'flex';     // Triggers centering
+            document.body.appendChild(modal); 
+            modal.style.display = 'flex';     
         }
 
         function closeModal() {
@@ -197,7 +214,7 @@
             $('#jobId').val('');
             $('#modalTitle').text('Add Job Link');
             loadCategories();
-            openModalLogic(); // Use new logic
+            openModalLogic();
         }
 
         function editJob(id) {
@@ -210,7 +227,7 @@
                 $('#modalTitle').text('Edit Job Link');
                 let selectedIds = data.categories ? data.categories.map(c => c.id) : [];
                 loadCategories(selectedIds);
-                openModalLogic(); // Use new logic
+                openModalLogic(); 
             });
         }
 
@@ -246,10 +263,21 @@
     </script>
 
     <style>
+        /* Playbook Step 4: The Ultimate CSS Block for Alignment */
+
+        /* Left Side Controls Padding */
         .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_info {
+            padding-left: 1.5rem !important; /* 24px to match px-6 */
+            color: #8392ab;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Right Side Controls Padding */
         .dataTables_wrapper .dataTables_filter,
-        .dataTables_wrapper .dataTables_info,
         .dataTables_wrapper .dataTables_paginate {
+            padding-right: 1.5rem !important; /* 24px to match px-6 */
             color: #8392ab;
             font-size: 0.75rem;
             margin-bottom: 1rem;
@@ -269,13 +297,20 @@
             border-radius: 0.5rem;
         }
 
-        table.dataTable thead th {
-            border-bottom: 1px solid #f8f9fa;
-        }
-
+        /* Force table headers and data cells to have identical left padding */
+        table.dataTable thead th,
         table.dataTable tbody td {
+            padding-left: 1.5rem !important; /* Overrides the default DataTables squishing */
             border-bottom: 1px solid #f8f9fa;
             vertical-align: middle !important;
+        }
+
+        /* Exclude the Status and Action columns so they stay perfectly centered */
+        table.dataTable thead th.text-center,
+        table.dataTable tbody td.text-center {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+            text-align: center !important;
         }
     </style>
 @endpush
