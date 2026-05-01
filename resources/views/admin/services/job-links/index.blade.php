@@ -147,14 +147,14 @@
                         data: 'id',
                         className: 'px-6 py-3 align-middle text-center bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data) {
-                            // Playbook Step 4: Fixed Action Buttons Layout
+                            // UPDATED BUTTONS HERE
                             return `
-                                <div class="text-center whitespace-nowrap">
-                                    <button onclick="editJob(${data})" class="inline-block mr-4 text-xs font-bold text-slate-400 hover:text-slate-700 transition-colors">
-                                        <i class="fas fa-edit mr-1"></i> Edit
+                                <div class="flex items-center justify-center gap-1.5 whitespace-nowrap">
+                                    <button onclick="editJob(${data})" class="btn-action-edit" title="Edit">
+                                        <i class="fas fa-edit"></i>
                                     </button>
-                                    <button onclick="deleteJob(${data})" class="inline-block text-xs font-bold text-rose-400 hover:text-rose-600 transition-colors">
-                                        <i class="fas fa-trash mr-1"></i> Delete
+                                    <button onclick="deleteJob(${data})" class="btn-action-delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             `;
@@ -311,6 +311,31 @@
             padding-left: 0.5rem !important;
             padding-right: 0.5rem !important;
             text-align: center !important;
+        }
+
+        /* --- BULLETPROOF ACTION BUTTONS (Bypasses Tailwind JIT bugs) --- */
+        .btn-action-edit {
+            width: 38px; height: 38px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 0.75rem; color: white; border: none; cursor: pointer;
+            background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-action-delete {
+            width: 38px; height: 38px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 0.75rem; color: white; border: none; cursor: pointer;
+            background: linear-gradient(135deg, #fb7185 0%, #ef4444 100%);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .btn-action-edit:hover, .btn-action-delete:hover {
+            opacity: 0.85;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
         }
     </style>
 @endpush

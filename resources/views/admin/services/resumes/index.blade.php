@@ -121,7 +121,7 @@
                         data: 'categories',
                         render: function (data) {
                             if (!data || data.length === 0) return '<span class="text-xs text-slate-400 italic">No Categories</span>';
-                            return data.map(c => '<span class="px-2 py-1 mr-1 text-xxs font-bold bg-gray-100 text-slate-600 rounded-lg shadow-none border">' + c.name + '</span>').join('');
+                            return '<div class="flex flex-wrap gap-1">' + data.map(c => '<span class="px-2 py-1 text-xxs font-bold bg-gray-100 text-slate-600 rounded-lg shadow-none border">' + c.name + '</span>').join('') + '</div>';
                         }
                     },
                     {
@@ -144,15 +144,15 @@
                         className: 'text-center align-middle bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data) {
                             return `
-                                <div class="flex items-center justify-center gap-2">
-                                    <button onclick="toggleStatus(${data.id})" class="text-xs font-bold text-slate-400 hover:text-slate-700" title="Toggle Status">
+                                <div class="flex items-center justify-center gap-1.5 whitespace-nowrap">
+                                    <button onclick="toggleStatus(${data.id})" class="mr-2 text-slate-400 hover:text-slate-700 transition-colors" title="Toggle Status">
                                         <i class="fas ${data.status === 'active' ? 'fa-toggle-on text-green-500' : 'fa-toggle-off'} fa-lg"></i>
                                     </button>
-                                    <button onclick="editTemplate(${data.id})" class="text-xs font-bold text-slate-400 hover:text-slate-700">
-                                        <i class="fas fa-edit"></i> Edit
+                                    <button onclick="editTemplate(${data.id})" class="btn-action-edit" title="Edit">
+                                        <i class="fas fa-edit"></i>
                                     </button>
-                                    <button onclick="deleteTemplate(${data.id})" class="text-xs font-bold text-rose-400 hover:text-rose-600">
-                                        <i class="fas fa-trash"></i> Delete
+                                    <button onclick="deleteTemplate(${data.id})" class="btn-action-delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             `;
@@ -271,10 +271,19 @@
     </script>
 
     <style>
+        /* Left Side Controls Padding */
         .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_info {
+            padding-left: 1.5rem !important;
+            color: #8392ab;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Right Side Controls Padding */
         .dataTables_wrapper .dataTables_filter,
-        .dataTables_wrapper .dataTables_info,
         .dataTables_wrapper .dataTables_paginate {
+            padding-right: 1.5rem !important;
             color: #8392ab;
             font-size: 0.75rem;
             margin-bottom: 1rem;
@@ -294,13 +303,45 @@
             border-radius: 0.5rem;
         }
 
-        table.dataTable thead th {
-            border-bottom: 1px solid #f8f9fa;
-        }
-
+        /* Force table headers and data cells to have identical padding */
+        table.dataTable thead th,
         table.dataTable tbody td {
+            padding-left: 1.5rem !important; 
             border-bottom: 1px solid #f8f9fa;
             vertical-align: middle !important;
+        }
+
+        /* Exclude the Status and Action columns so they stay perfectly centered */
+        table.dataTable thead th.text-center,
+        table.dataTable tbody td.text-center {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+            text-align: center !important;
+        }
+
+        /* --- BULLETPROOF ACTION BUTTONS --- */
+        .btn-action-edit {
+            width: 38px; height: 38px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 0.75rem; color: white; border: none; cursor: pointer;
+            background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-action-delete {
+            width: 38px; height: 38px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 0.75rem; color: white; border: none; cursor: pointer;
+            background: linear-gradient(135deg, #fb7185 0%, #ef4444 100%);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .btn-action-edit:hover, .btn-action-delete:hover {
+            opacity: 0.85;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
         }
     </style>
 @endpush
