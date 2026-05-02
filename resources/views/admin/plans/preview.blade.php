@@ -20,7 +20,7 @@
                         </span>
                         <h5 class="mb-0 font-bold text-slate-700">{{ $plan->name }}</h5>
                         <p class="mb-0 text-sm leading-normal text-slate-400">
-                            {{ $plan->description ?? 'Premium career services' }}</p>
+                            {{ $plan->short_description ?? 'Premium career services' }}</p>
 
                         <div class="my-6">
                             <h2 class="font-bold text-slate-700">
@@ -78,13 +78,89 @@
                     </div>
 
                     <div class="p-6 pt-0 mt-auto bg-transparent border-t-0 rounded-b-2xl">
-                        <button
-                            class="w-full px-8 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85">
-                            Get Started
-                        </button>
+                        @if(auth()->user()->role_id == 0)
+                            <div class="flex gap-2">
+                                <a href="{{ route('customer.plan.show', $plan->slug) }}"
+                                    class="w-1/2 px-4 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-slate-600 to-slate-300 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85">
+                                    View Detail
+                                </a>
+                                <button type="button" onclick="confirmPurchase('{{ $plan->id }}', '{{ $plan->name }}')"
+                                    class="w-1/2 px-4 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85">
+                                    Purchase Now
+                                </button>
+                            </div>
+                        @else
+                            <button
+                                class="w-full px-8 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85">
+                                Get Started
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
         @endforeach
     </div>
+
+    @if(auth()->user()->role_id == 0)
+    <script>
+        function confirmPurchase(planId, planName) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Are you sure you want to purchase this plan?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#cb0c9f',
+                cancelButtonColor: '#8392ab',
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    purchasePlan(planId);
+                }
+            })
+        }
+
+        function purchasePlan(planId) {
+            fetch("{{ route('customer.plan.purchase') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ plan_id: planId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: data.success,
+                        icon: 'success',
+                        confirmButtonColor: '#cb0c9f',
+                    }).then(() => {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.error || 'Something went wrong',
+                        icon: 'error',
+                        confirmButtonColor: '#cb0c9f',
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to process purchase.',
+                    icon: 'error',
+                    confirmButtonColor: '#cb0c9f',
+                });
+            });
+        }
+    </script>
+    @endif
 @endsection

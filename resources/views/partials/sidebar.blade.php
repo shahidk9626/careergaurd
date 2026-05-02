@@ -41,6 +41,42 @@
                     </a>
                 </li>
             @endif
+            
+            <li class="w-full mt-4">
+                <h6 class="pl-6 ml-2 text-xs font-bold leading-tight uppercase opacity-60 text-slate-500">My Plans & Claims</h6>
+            </li>
+
+            <!-- Purchased Plans -->
+            <li class="w-full mt-0.5">
+                @php 
+                    $isPurchasedPlansActive = request()->routeIs('customer.purchased-plans') || request()->routeIs('admin.purchased-plans');
+                    $purchasedPlansRoute = auth()->user()->role_id === 0 ? route('customer.purchased-plans') : route('admin.purchased-plans');
+                @endphp
+                <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isPurchasedPlansActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
+                    href="{{ $purchasedPlansRoute }}">
+                    <div
+                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ $isPurchasedPlansActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
+                        <i class="fas fa-receipt {{ $isPurchasedPlansActive ? 'text-white' : 'text-slate-700' }}"></i>
+                    </div>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Purchased Plans</span>
+                </a>
+            </li>
+
+            <!-- Claim Management -->
+            <li class="w-full mt-0.5">
+                @php 
+                    $isClaimManagementActive = request()->routeIs('customer.claim-management') || request()->routeIs('admin.claim-management');
+                    $claimManagementRoute = auth()->user()->role_id === 0 ? route('customer.claim-management') : route('admin.claim-management');
+                @endphp
+                <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isClaimManagementActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
+                    href="{{ $claimManagementRoute }}">
+                    <div
+                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ $isClaimManagementActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
+                        <i class="fas fa-hand-holding-usd {{ $isClaimManagementActive ? 'text-white' : 'text-slate-700' }}"></i>
+                    </div>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Claim Management</span>
+                </a>
+            </li>
 
             @if(auth()->user()->role_id !== 0)
                 @if(hasPermission('roles.view') || hasPermission('staff.view'))

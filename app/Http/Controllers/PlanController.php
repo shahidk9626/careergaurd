@@ -10,6 +10,9 @@ use App\Models\InterviewQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Models\PurchasedPlan;
+use App\Models\Transaction;
+use Carbon\Carbon;
 
 class PlanController extends Controller
 {
@@ -42,7 +45,8 @@ class PlanController extends Controller
         try {
             DB::beginTransaction();
 
-            $data = $request->except(['plan_services']);
+            $data = $request->except(['plan_services', 'description']);
+            $data['short_description'] = $request->description;
             $data['slug'] = Str::slug($request->name) . '-' . Str::random(5);
 
             $plan = Plan::create($data);
@@ -91,7 +95,8 @@ class PlanController extends Controller
         try {
             DB::beginTransaction();
 
-            $data = $request->except(['plan_services']);
+            $data = $request->except(['plan_services', 'description']);
+            $data['short_description'] = $request->description;
             if ($request->name !== $plan->name) {
                 $data['slug'] = Str::slug($request->name) . '-' . Str::random(5);
             }
@@ -142,5 +147,80 @@ class PlanController extends Controller
     {
         $plans = Plan::with('planServices.category')->where('status', 'active')->get();
         return view('admin.plans.preview', compact('plans'));
+    }
+
+    public function show($slug)
+    {
+        $plan = Plan::with('planServices.category')->where('slug', $slug)->firstOrFail();
+        return view('customer.plans.show', compact('plan'));
+    }
+
+    public function purchase(Request $request)
+    {
+        $request->validate([
+            'plan_id' => 'required|exists:plans,id',
+        ]);
+
+        $plan = Plan::findOrFail($request->plan_id);
+        $user = auth()->user();
+
+        // Access control: role_id = 0 (customer)
+        if ($user->role_id != 0) {
+            return response()->json(['error' => 'Unauthorized. Only customers can purchase plans.'], 403);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $timestamp = time();
+            $planUniqueId = $plan->slug . '_' . $user->id . '_' . $timestamp;
+
+            $startDate = Carbon::now();
+            $endDate = null;
+
+            $tenureType = rtrim(strtolower($plan->tenure_type), 's'); // Convert 'months' to 'month', 'days' to 'day'
+            
+            if ($tenureType === 'month') {
+                $endDate = $startDate->copy()->addMonths($plan->tenure_value);
+            } elseif ($tenureType === 'year') {
+                $endDate = $startDate->copy()->addYears($plan->tenure_value);
+            } elseif ($tenureType === 'day') {
+                $endDate = $startDate->copy()->addDays($plan->tenure_value);
+            }
+
+            // Create Transaction
+            Transaction::create([
+                'user_id' => $user->id,
+                'plan_id' => $plan->id,
+                'plan_unique_id' => $planUniqueId,
+                'amount' => $plan->premium_amount,
+                'payment_status' => 'success',
+                'payment_method' => 'manual',
+            ]);
+
+            // Create Purchased Plan
+            PurchasedPlan::create([
+                'user_id' => $user->id,
+                'plan_id' => $plan->id,
+                'plan_unique_id' => $planUniqueId,
+                'plan_name' => $plan->name,
+                'amount' => $plan->premium_amount,
+                'tenure_type' => $plan->tenure_type,
+                'tenure_value' => $plan->tenure_value,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'status' => 'active',
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => 'Plan purchased successfully!',
+                'redirect' => route('customer.plan-preview')
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Purchase failed: ' . $e->getMessage()], 500);
+        }
     }
 }

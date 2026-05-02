@@ -73,7 +73,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-slate-600 mb-1">Short Description</label>
-                                <input type="text" name="description" value="{{ $plan->description }}"
+                                <input type="text" name="description" value="{{ $plan->short_description }}"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                                     placeholder="Quick highlight of the plan">
                             </div>

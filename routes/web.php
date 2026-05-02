@@ -125,10 +125,18 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         Route::delete('/plans/delete/{id}', [App\Http\Controllers\PlanController::class, 'destroy'])->name('admin.plans.destroy');
         Route::post('/plans/status/{id}', [App\Http\Controllers\PlanController::class, 'toggleStatus'])->name('admin.plans.status');
         Route::get('/plan-preview', [App\Http\Controllers\PlanController::class, 'preview'])->name('admin.plans.preview');
+
+        // Purchased Plans & Claim Management
+        Route::get('/purchased-plans', [App\Http\Controllers\ClaimController::class, 'purchasedPlans'])->name('admin.purchased-plans');
+        Route::get('/purchased-plan/{plan_unique_id}', [App\Http\Controllers\ClaimController::class, 'viewPlan'])->name('admin.purchased-plan.view');
+        Route::get('/claim-management', [App\Http\Controllers\ClaimController::class, 'claimManagement'])->name('admin.claim-management');
+        Route::post('/claim-management/claim', [App\Http\Controllers\ClaimController::class, 'processClaim'])->name('admin.claim.process');
     });
     // Customer-specific routes
     Route::middleware(['auth', 'is_customer'])->prefix('customer')->group(function () {
         Route::get('/plan-preview', [App\Http\Controllers\PlanController::class, 'preview'])->name('customer.plan-preview');
+        Route::get('/plan/{slug}', [App\Http\Controllers\PlanController::class, 'show'])->name('customer.plan.show');
+        Route::post('/plan/purchase', [App\Http\Controllers\PlanController::class, 'purchase'])->name('customer.plan.purchase');
         
         // Profile check logic
         Route::get('/profile-redirect', function () {
@@ -137,6 +145,12 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
             }
             return redirect()->route('customer.registration');
         })->name('customer.profile.check');
+
+        // Customer Purchased Plans & Claim Management
+        Route::get('/purchased-plans', [App\Http\Controllers\ClaimController::class, 'purchasedPlans'])->name('customer.purchased-plans');
+        Route::get('/purchased-plan/{plan_unique_id}', [App\Http\Controllers\ClaimController::class, 'viewPlan'])->name('customer.purchased-plan.view');
+        Route::get('/claim-management', [App\Http\Controllers\ClaimController::class, 'claimManagement'])->name('customer.claim-management');
+        Route::post('/claim-management/claim', [App\Http\Controllers\ClaimController::class, 'processClaim'])->name('customer.claim.process');
     });
 });
 

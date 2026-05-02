@@ -52,6 +52,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Permission::class, 'user_permissions')->withPivot('allowed');
     }
 
+    public function purchasedPlans()
+    {
+        return $this->hasMany(PurchasedPlan::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
