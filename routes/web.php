@@ -130,7 +130,10 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         Route::get('/purchased-plans', [App\Http\Controllers\ClaimController::class, 'purchasedPlans'])->name('admin.purchased-plans');
         Route::get('/purchased-plan/{plan_unique_id}', [App\Http\Controllers\ClaimController::class, 'viewPlan'])->name('admin.purchased-plan.view');
         Route::get('/claim-management', [App\Http\Controllers\ClaimController::class, 'claimManagement'])->name('admin.claim-management');
-        Route::post('/claim-management/claim', [App\Http\Controllers\ClaimController::class, 'processClaim'])->name('admin.claim.process');
+        
+        // Claim Requests
+        Route::get('/claim-requests', [App\Http\Controllers\ClaimController::class, 'adminClaimRequests'])->name('admin.claim.requests');
+        Route::post('/claim-requests/update-status', [App\Http\Controllers\ClaimController::class, 'updateClaimStatus'])->name('admin.claim.update-status');
     });
     // Customer-specific routes
     Route::middleware(['auth', 'is_customer'])->prefix('customer')->group(function () {
@@ -150,7 +153,8 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         Route::get('/purchased-plans', [App\Http\Controllers\ClaimController::class, 'purchasedPlans'])->name('customer.purchased-plans');
         Route::get('/purchased-plan/{plan_unique_id}', [App\Http\Controllers\ClaimController::class, 'viewPlan'])->name('customer.purchased-plan.view');
         Route::get('/claim-management', [App\Http\Controllers\ClaimController::class, 'claimManagement'])->name('customer.claim-management');
-        Route::post('/claim-management/claim', [App\Http\Controllers\ClaimController::class, 'processClaim'])->name('customer.claim.process');
+        Route::get('/claim/{plan_unique_id}', [App\Http\Controllers\ClaimController::class, 'showClaimForm'])->name('customer.claim.form');
+        Route::post('/claim/submit', [App\Http\Controllers\ClaimController::class, 'submitClaim'])->name('customer.claim.submit');
     });
 });
 

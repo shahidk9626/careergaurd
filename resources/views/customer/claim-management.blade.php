@@ -64,10 +64,10 @@
                                     </td>
                                     <td class="px-6 py-4 text-center align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none">
                                         @if($plan->status !== 'claimed')
-                                            <button onclick="confirmClaim({{ $plan->id }}, '{{ $plan->plan_unique_id }}')"
+                                            <a href="{{ route('customer.claim.form', $plan->plan_unique_id) }}"
                                                 class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85">
-                                                Claim Now
-                                            </button>
+                                                Claim
+                                            </a>
                                         @else
                                             <button disabled
                                                 class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg opacity-50 cursor-not-allowed leading-pro text-xs ease-soft-in shadow-none bg-150 bg-x-25 bg-gradient-to-tl from-slate-600 to-slate-300">
@@ -101,44 +101,6 @@
             });
         });
 
-        function confirmClaim(id, uniqueId) {
-            Swal.fire({
-                title: 'Process Claim?',
-                text: "Are you sure you want to process the claim for plan " + uniqueId + "?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Process!',
-                cancelButtonText: 'Cancel',
-                customClass: {
-                    confirmButton: 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white px-4 py-2 rounded-lg font-bold',
-                    cancelButton: 'bg-gradient-to-tl from-gray-900 to-slate-800 text-white px-4 py-2 rounded-lg font-bold ml-2'
-                },
-                buttonsStyling: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ auth()->user()->role_id === 0 ? route('customer.claim.process') : route('admin.claim.process') }}",
-                        type: 'POST',
-                        data: {
-                            id: id,
-                            _token: "{{ csrf_token() }}"
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                Swal.fire('Success!', response.success, 'success').then(() => {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire('Error!', response.error || 'Something went wrong', 'error');
-                            }
-                        },
-                        error: function (xhr) {
-                            Swal.fire('Error!', xhr.responseJSON.error || 'Failed to process claim.', 'error');
-                        }
-                    });
-                }
-            });
-        }
     </script>
 
     <style>
