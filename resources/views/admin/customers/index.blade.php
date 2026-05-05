@@ -117,22 +117,28 @@
                     {
                         data: null,
                         className: 'text-center align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none',
-                        render: function (data) {
+                        render: function (data, type, row) {
                             let actions = `<div class="flex items-center justify-center gap-2">`;
 
                             if (canEdit) {
-                                let editUrl = "{{ route('admin.customers.edit', ':slug') }}".replace(':slug', data.slug || 0);
+                                // FOOLPROOF URL: Uses the customer's ID to safely build the edit URL
+                                let editUrl = "{{ url('admin/customers') }}/" + row.id + "/edit";
+                                
                                 actions += `
-                                        <a href="${data.slug ? editUrl : '#'}" class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-102 ${!data.slug ? 'opacity-50 pointer-events-none' : ''}">
-                                            <i class="fas fa-edit"></i>
-                                        </a>`;
+                                    <a href="${editUrl}" 
+                                       class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-110 mx-1" 
+                                       title="Edit">
+                                        <i class="fas fa-edit text-sm pointer-events-none"></i>
+                                    </a>`;
                             }
 
                             if (canDelete) {
                                 actions += `
-                                        <button onclick="confirmDelete(${data.id})" class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-102">
-                                            <i class="fas fa-trash"></i>
-                                        </button>`;
+                                    <button onclick="confirmDelete(${row.id})" 
+                                            class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-110 mx-1" 
+                                            title="Delete">
+                                        <i class="fas fa-trash text-sm pointer-events-none"></i>
+                                    </button>`;
                             }
 
                             actions += `</div>`;

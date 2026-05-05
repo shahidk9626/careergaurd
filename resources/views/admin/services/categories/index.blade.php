@@ -23,7 +23,6 @@
                             class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
-                                    <!-- Playbook Step 1: Explicit Widths -->
                                     <th class="w-4/12 px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Name</th>
                                     <th class="w-4/12 px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Slug</th>
                                     <th class="w-2/12 px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Status</th>
@@ -39,7 +38,6 @@
         </div>
     </div>
 
-    <!-- Category Modal -->
     <div id="categoryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
         <div style="background-color: #ffffff; width: 100%; max-width: 450px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 90vh; margin: 1rem;">
             
@@ -83,7 +81,7 @@
             table = $('#categoriesTable').DataTable({
                 processing: true,
                 serverSide: false, 
-                autoWidth: false, // Playbook Step 2
+                autoWidth: false, 
                 ajax: {
                     url: "{{ route('admin.services.categories.index') }}",
                     dataSrc: ''
@@ -93,7 +91,6 @@
                         data: 'name',
                         className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
                         render: function (data) {
-                            // Playbook Step 3: whitespace-normal break-words
                             return '<h6 class="mb-0 text-sm leading-normal whitespace-normal break-words">' + data + '</h6>';
                         }
                     },
@@ -101,7 +98,6 @@
                         data: 'slug',
                         className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
                         render: function (data) {
-                            // Playbook Step 3: whitespace-normal break-words
                             return '<span class="text-xs font-semibold leading-tight text-slate-400 whitespace-normal break-words">' + data + '</span>';
                         }
                     },
@@ -116,15 +112,19 @@
                     {
                         data: 'id',
                         className: 'px-6 py-3 align-middle text-center bg-transparent border-b whitespace-nowrap shadow-none',
-                        render: function (data) {
-                            // UPDATED BUTTONS HERE
+                        render: function (data, type, row) {
                             return `
-                                <div class="flex items-center justify-center gap-1.5 whitespace-nowrap">
-                                    <button onclick="editCategory(${data})" class="btn-action-edit" title="Edit">
-                                        <i class="fas fa-edit"></i>
+                                <div class="flex items-center justify-center gap-3">
+                                    <button type="button" 
+                                            class="edit-category-btn inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-110 mx-2" 
+                                            title="Edit">
+                                        <i class="fas fa-edit text-sm pointer-events-none"></i>
                                     </button>
-                                    <button onclick="deleteCategory(${data})" class="btn-action-delete" title="Delete">
-                                        <i class="fas fa-trash"></i>
+
+                                    <button type="button" onclick="deleteCategory(${data})" 
+                                            class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-110 mx-2"
+                                            title="Delete">
+                                        <i class="fas fa-trash text-sm pointer-events-none"></i>
                                     </button>
                                 </div>
                             `;
@@ -139,6 +139,27 @@
                 }
             });
 
+            // --- THE MAGIC FIX FOR EDIT BUTTON ---
+            // Listens for a click on any .edit-category-btn, grabs row data directly, opens modal
+            $('#categoriesTable tbody').on('click', '.edit-category-btn', function () {
+                let tr = $(this).closest('tr');
+                let rowData = table.row(tr).data();
+                
+                // Safety check in case of responsive child rows
+                if (rowData === undefined) {
+                    rowData = table.row(tr.prev('tr')).data();
+                }
+
+                // Populate modal directly from table memory
+                $('#categoryId').val(rowData.id);
+                $('#name').val(rowData.name);
+                $('#status').val(rowData.status);
+                $('#modalTitle').text('Edit Service Category');
+                
+                openModalLogic(); 
+            });
+
+            // Form Submit Logic (Save/Update)
             $('#categoryForm').on('submit', function (e) {
                 e.preventDefault();
                 const id = $('#categoryId').val();
@@ -147,7 +168,9 @@
                 $.post(url, $(this).serialize(), function (response) {
                     Swal.fire('Success', response.success, 'success');
                     closeModal();
-                    table.ajax.reload();
+                    table.ajax.reload(null, false); // Reload without resetting pagination
+                }).fail(function(err) {
+                    Swal.fire('Error', 'Something went wrong!', 'error');
                 });
             });
         });
@@ -171,16 +194,6 @@
             openModalLogic(); 
         }
 
-        function editCategory(id) {
-            $.get("{{ url('admin/services/categories/edit') }}/" + id, function (data) {
-                $('#categoryId').val(data.id);
-                $('#name').val(data.name);
-                $('#status').val(data.status);
-                $('#modalTitle').text('Edit Service Category');
-                openModalLogic(); 
-            });
-        }
-
         function deleteCategory(id) {
             Swal.fire({
                 title: 'Are you sure?',
@@ -198,7 +211,10 @@
                         data: { _token: "{{ csrf_token() }}" },
                         success: function (response) {
                             Swal.fire('Deleted!', response.success, 'success');
-                            table.ajax.reload();
+                            table.ajax.reload(null, false);
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Failed to delete category.', 'error');
                         }
                     });
                 }
@@ -207,18 +223,16 @@
 
         function toggleStatus(id) {
             $.post("{{ url('admin/services/categories/status') }}/" + id, { _token: "{{ csrf_token() }}" }, function (response) {
-                table.ajax.reload();
+                table.ajax.reload(null, false);
             });
         }
     </script>
 
     <style>
-        /* Playbook Step 4: The Ultimate CSS Block for Alignment */
-        
         /* Left Side Controls Padding */
         .dataTables_wrapper .dataTables_length,
         .dataTables_wrapper .dataTables_info {
-            padding-left: 1.5rem !important; /* 24px to match px-6 */
+            padding-left: 1.5rem !important; 
             color: #8392ab;
             font-size: 0.75rem;
             margin-bottom: 1rem;
@@ -227,7 +241,7 @@
         /* Right Side Controls Padding */
         .dataTables_wrapper .dataTables_filter,
         .dataTables_wrapper .dataTables_paginate {
-            padding-right: 1.5rem !important; /* 24px to match px-6 */
+            padding-right: 1.5rem !important; 
             color: #8392ab;
             font-size: 0.75rem;
             margin-bottom: 1rem;
@@ -250,7 +264,7 @@
         /* Force table headers and data cells to have identical left padding */
         table.dataTable thead th,
         table.dataTable tbody td {
-            padding-left: 1.5rem !important; /* Overrides the default DataTables squishing */
+            padding-left: 1.5rem !important;
             border-bottom: 1px solid #f8f9fa;
             vertical-align: middle !important;
         }
@@ -261,31 +275,6 @@
             padding-left: 0.5rem !important;
             padding-right: 0.5rem !important;
             text-align: center !important;
-        }
-
-        /* --- BULLETPROOF ACTION BUTTONS (Bypasses Tailwind JIT bugs) --- */
-        .btn-action-edit {
-            width: 38px; height: 38px;
-            display: inline-flex; align-items: center; justify-content: center;
-            border-radius: 0.75rem; color: white; border: none; cursor: pointer;
-            background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s ease;
-        }
-        
-        .btn-action-delete {
-            width: 38px; height: 38px;
-            display: inline-flex; align-items: center; justify-content: center;
-            border-radius: 0.75rem; color: white; border: none; cursor: pointer;
-            background: linear-gradient(135deg, #fb7185 0%, #ef4444 100%);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s ease;
-        }
-
-        .btn-action-edit:hover, .btn-action-delete:hover {
-            opacity: 0.85;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transform: translateY(-1px);
         }
     </style>
 @endpush

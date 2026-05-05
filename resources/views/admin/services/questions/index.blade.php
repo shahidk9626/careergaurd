@@ -133,10 +133,10 @@
                             // UPDATED BUTTONS HERE
                             return `
                                 <div class="flex items-center justify-center gap-1.5 whitespace-nowrap">
-                                    <button onclick="editQuestion(${data})" class="btn-action-edit" title="Edit">
+                                    <button onclick="editQuestion(${data})" class="edit-category-btn inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-110 mx-2">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button onclick="deleteQuestion(${data})" class="btn-action-delete" title="Delete">
+                                    <button onclick="deleteQuestion(${data})" class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-110 mx-2">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>

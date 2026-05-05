@@ -3,8 +3,7 @@
 @section('content')
     <div class="flex flex-wrap -mx-3">
         <div class="flex-none w-full max-w-full px-3">
-            <div
-                class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
                 <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
                     <div class="flex flex-wrap -mx-3">
                         <div class="flex items-center flex-none w-1/2 max-w-full px-3">
@@ -23,20 +22,15 @@
                         <table id="planTable" class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
-                                    <th
-                                        class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">
                                         Plan Name</th>
-                                    <th
-                                        class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
+                                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">
                                         Price</th>
-                                    <th
-                                        class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
+                                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">
                                         Tenure</th>
-                                    <th
-                                        class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
+                                    <th class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">
                                         Status</th>
-                                    <th
-                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">
                                         Actions</th>
                                 </tr>
                             </thead>
@@ -84,21 +78,25 @@
                         data: null,
                         className: 'text-center align-middle bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data) {
-                            let editUrl = "{{ url('admin/plans/edit') }}/" + data.id;
-                            return `
-                                <div class="flex items-center justify-center gap-2">
-                                    <button onclick="toggleStatus(${data.id})" class="text-xs font-bold text-slate-400 hover:text-slate-700">
-                                        <i class="fas ${data.status === 'active' ? 'fa-toggle-on text-green-500' : 'fa-toggle-off'} fa-lg"></i>
-                                    </button>
-                                    <a href="${editUrl}" class="text-xs font-bold text-slate-400 hover:text-slate-700">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <button onclick="deletePlan(${data.id})" class="text-xs font-bold text-rose-400 hover:text-rose-600">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </div>
-                            `;
-                        }
+    let editUrl = "{{ url('admin/plans/edit') }}/" + data.id;
+    let statusIcon = data.status === 'active' ? 'fa-toggle-on text-green-500' : 'fa-toggle-off text-slate-400';
+    
+    return `
+        <div class="flex items-center justify-center">
+            <button onclick="toggleStatus(${data.id})" class="inline-block px-3 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 hover:shadow-soft-xs active:opacity-85">
+                <i class="fas ${statusIcon} mr-1"></i> Status
+            </button>
+
+            <a href="${editUrl}" class="inline-block ml-2 px-3 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-102 hover:shadow-soft-xs active:opacity-85">
+                <i class="fas fa-edit mr-1"></i> Edit
+            </a>
+
+            <button onclick="deletePlan(${data.id})" class="inline-block ml-2 px-3 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-102 hover:shadow-soft-xs active:opacity-85">
+                <i class="fas fa-trash mr-1"></i> Delete
+            </button>
+        </div>
+    `;
+}
                     }
                 ],
                 language: {
@@ -137,6 +135,7 @@
         });
     </script>
     <style>
+        /* Matches Staff Page Styles */
         .dataTables_wrapper .dataTables_length,
         .dataTables_wrapper .dataTables_filter,
         .dataTables_wrapper .dataTables_info,
@@ -154,9 +153,9 @@
         }
 
         .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-            background: linear-gradient(310deg, #7928ca 0%, #ff0080 100%);
+            background: linear-gradient(310deg, #7928ca 0%, #ff0080 100%) !important;
             color: white !important;
-            border: none;
+            border: none !important;
             border-radius: 0.5rem;
         }
 
