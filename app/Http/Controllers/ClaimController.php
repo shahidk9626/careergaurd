@@ -66,13 +66,18 @@ class ClaimController extends Controller
         // Maturity Condition: current_date >= purchase_date + claim_duration
         // maturity_date = created_at + plan.claim_duration_days
         $plans = $query->get()->filter(function ($purchasedPlan) {
-    $purchaseDate = Carbon::parse($purchasedPlan->start_date);
-    $claimDuration = $purchasedPlan->plan->claim_duration_days ?? 0;
 
-    $maturityDate = $purchaseDate->copy()->addDays($claimDuration);
+            if (!$purchasedPlan->plan) {
+                return false;
+            }
 
-    return now()->greaterThanOrEqualTo($maturityDate);
-});
+            $purchaseDate = Carbon::parse($purchasedPlan->start_date);
+            $claimDuration = $purchasedPlan->plan->claim_duration_days;
+
+            $maturityDate = $purchaseDate->copy()->addDays($claimDuration);
+
+            return now()->greaterThanOrEqualTo($maturityDate);
+        });
 
         return view('customer.claim-management', compact('plans'));
     }
@@ -93,11 +98,11 @@ class ClaimController extends Controller
         }
 
         // Maturity check
-        $purchaseDate = $purchasedPlan->created_at->copy();
+        $purchaseDate = Carbon::parse($purchasedPlan->start_date);
         $claimDuration = $purchasedPlan->plan->claim_duration_days ?? 0;
-        $maturityDate = $purchaseDate->addDays($claimDuration);
+        $maturityDate = $purchaseDate->copy()->addDays($claimDuration);
 
-        if (Carbon::now()->lessThan($maturityDate)) {
+        if (now()->lessThan($maturityDate)) {
             return redirect()->back()->with('error', 'This plan has not matured yet.');
         }
 
@@ -133,7 +138,7 @@ class ClaimController extends Controller
 
         // File uploads
         $terminationLetterPath = $request->file('termination_letter')->store('claims/termination_letters', 'public');
-        
+
         $salarySlipsPaths = [];
         if ($request->hasFile('salary_slips')) {
             foreach ($request->file('salary_slips') as $file) {
@@ -159,7 +164,7 @@ class ClaimController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('customer.claim-management')->with('success', 'Your claim request has been submitted successfully and is under review.');
+        return redirect()->route('customer.claim-management')->with('success', 'Your claim request has been submitted successfully.');
     }
 
     /**
@@ -167,7 +172,13 @@ class ClaimController extends Controller
      */
     public function adminClaimRequests()
     {
-        $claims = Claim::with(['user', 'plan'])->latest()->get();
+        // Security check: Only Admin/Staff
+        if (auth()->user()->role_id === 0) {
+            abort(403);
+        }
+
+        // Show ONLY status = pending as per requirements
+        $claims = Claim::with(['user', 'plan'])->where('status', 'pending')->latest()->get();
         return view('admin.claim-requests', compact('claims'));
     }
 
@@ -176,6 +187,11 @@ class ClaimController extends Controller
      */
     public function updateClaimStatus(Request $request)
     {
+        // Security check: Only Admin/Staff
+        if (auth()->user()->role_id === 0) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $request->validate([
             'claim_id' => 'required|exists:claims,id',
             'status' => 'required|in:approved,rejected',
