@@ -40,8 +40,10 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
     Route::middleware('permission:staff.edit')->get('/user-permissions/{id}', [App\Http\Controllers\StaffController::class, 'manageUserPermissions'])->name('user-permissions.manage');
     Route::middleware('permission:staff.edit')->post('/user-permissions/{id}', [App\Http\Controllers\StaffController::class, 'saveUserPermissions'])->name('user-permissions.save');
 
-    // Staff Routes
-    Route::middleware('permission:staff.view')->get('/staff', [App\Http\Controllers\StaffController::class, 'index'])->name('staff.index');
+    Route::middleware('permission:staff.view')->group(function () {
+        Route::get('/staff', [App\Http\Controllers\StaffController::class, 'index'])->name('staff.index');
+        Route::get('/staff/{id}/view', [App\Http\Controllers\StaffController::class, 'show'])->name('staff.show');
+    });
     Route::middleware('permission:staff.create')->group(function () {
         Route::get('/staff/create', [App\Http\Controllers\StaffController::class, 'create'])->name('staff.create');
         Route::post('/staff/store', [App\Http\Controllers\StaffController::class, 'store'])->name('staff.store');
@@ -65,20 +67,22 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
     // Customer Dashboard & Other Protected Pages
     Route::middleware(['customer.profile', 'verified'])->group(function () {
         Route::get('/customer/dashboard', [App\Http\Controllers\CustomerController::class, 'dashboard'])->name('customer.dashboard');
-        Route::get('/customer/profile', [App\Http\Controllers\CustomerController::class, 'profile'])->name('customer.profile'); // Placeholder
         Route::get('/customer/services', [App\Http\Controllers\CustomerController::class, 'dashboard'])->name('customer.services'); // Placeholder
     });
 
     // Admin Customer Management
     Route::prefix('admin')->group(function () {
-        Route::middleware('permission:staff.view')->get('/customers', [App\Http\Controllers\CustomerController::class, 'index'])->name('admin.customers.index');
+        Route::middleware('permission:staff.view')->group(function () {
+            Route::get('/customers', [App\Http\Controllers\CustomerController::class, 'index'])->name('admin.customers.index');
+            Route::get('/customers/{id}/view', [App\Http\Controllers\CustomerController::class, 'show'])->name('admin.customers.show');
+        });
         Route::middleware('permission:staff.create')->group(function () {
             Route::get('/customers/create', [App\Http\Controllers\CustomerController::class, 'create'])->name('admin.customers.create');
             Route::post('/customers/store', [App\Http\Controllers\CustomerController::class, 'store'])->name('admin.customers.store');
         });
         Route::middleware('permission:staff.edit')->group(function () {
-            Route::get('/customers/edit/{slug}', [App\Http\Controllers\CustomerController::class, 'edit'])->name('admin.customers.edit');
-            Route::match(['POST', 'PUT'], '/customers/update/{slug}', [App\Http\Controllers\CustomerController::class, 'update'])->name('admin.customers.update');
+            Route::get('/customers/{id}/edit', [App\Http\Controllers\CustomerController::class, 'edit'])->name('admin.customers.edit');
+            Route::match(['POST', 'PUT'], '/customers/{id}/update', [App\Http\Controllers\CustomerController::class, 'update'])->name('admin.customers.update');
         });
         Route::middleware('permission:staff.delete')->delete('/customers/delete/{id}', [App\Http\Controllers\CustomerController::class, 'destroy'])->name('admin.customers.destroy');
 
@@ -150,6 +154,10 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         })->name('customer.profile.check');
 
         // Customer Purchased Plans & Claim Management
+        Route::get('/profile', [App\Http\Controllers\CustomerController::class, 'profile'])->name('customer.profile');
+        Route::get('/profile/edit', [App\Http\Controllers\CustomerController::class, 'editProfile'])->name('customer.profile.edit');
+        Route::post('/profile/update', [App\Http\Controllers\CustomerController::class, 'updateProfile'])->name('customer.profile.update');
+
         Route::get('/purchased-plans', [App\Http\Controllers\ClaimController::class, 'purchasedPlans'])->name('customer.purchased-plans');
         Route::get('/purchased-plan/{plan_unique_id}', [App\Http\Controllers\ClaimController::class, 'viewPlan'])->name('customer.purchased-plan.view');
         Route::get('/claim-management', [App\Http\Controllers\ClaimController::class, 'claimManagement'])->name('customer.claim-management');

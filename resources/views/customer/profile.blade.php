@@ -9,43 +9,48 @@
     <div class="relative flex flex-col flex-auto min-w-0 p-4 mx-6 -mt-16 overflow-hidden break-words border-0 shadow-blur rounded-2xl bg-white/80 bg-clip-border backdrop-blur-2xl backdrop-saturate-200">
         <div class="flex flex-wrap -mx-3">
             <div class="flex-none w-auto max-w-full px-3">
-                <div class="text-base ease-soft-in-out h-18.5 w-18.5 relative inline-flex items-center justify-center rounded-xl text-white transition-all duration-200">
-                    <img src="{{ asset('assets/img/bruce-mars.jpg') }}" alt="profile_image" class="w-full shadow-soft-sm rounded-xl" />
+                    <div class="text-base ease-soft-in-out h-18.5 w-18.5 relative inline-flex items-center justify-center rounded-xl text-white transition-all duration-200">
+                        @if($user->profile_image)
+                            <img src="{{ asset('storage/' . $user->profile_image) }}" alt="profile_image" class="w-full shadow-soft-sm rounded-xl" />
+                        @else
+                            <img src="{{ asset('assets/img/bruce-mars.jpg') }}" alt="profile_image" class="w-full shadow-soft-sm rounded-xl" />
+                        @endif
+                    </div>
                 </div>
-            </div>
-            <div class="flex-none w-auto max-w-full px-3 my-auto">
-                <div class="h-full">
-                    <h5 class="mb-1">{{ $user->name }}</h5>
-                    <p class="mb-0 font-semibold leading-normal text-sm">
-                        {{ ucfirst($user->role->name ?? 'Customer') }}
-                    </p>
+                <div class="flex-none w-auto max-w-full px-3 my-auto">
+                    <div class="h-full">
+                        <h5 class="mb-1">{{ $user->name }}</h5>
+                        <p class="mb-0 font-semibold leading-normal text-sm">
+                            {{ ucfirst($user->role->name ?? 'Customer') }}
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <div class="w-full max-w-full px-3 mx-auto mt-4 sm:my-auto sm:mr-0 md:w-1/2 md:flex-none lg:w-4/12">
-                <div class="relative right-0">
-                    <ul class="relative flex flex-wrap p-1 list-none bg-transparent rounded-xl" nav-pills role="tablist">
-                        <li class="z-30 flex-auto text-center">
-                            <a class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-soft-in-out bg-inherit text-slate-700"
-                                nav-link active href="javascript:;" role="tab" aria-selected="true">
-                                <i class="fas fa-cube text-slate-700 text-sm"></i>
-                                <span class="ml-1">Overview</span>
-                            </a>
-                        </li>
-                        <li class="z-30 flex-auto text-center">
-                            <a class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-soft-in-out bg-inherit text-slate-700"
-                                nav-link href="javascript:;" role="tab" aria-selected="false">
-                                <i class="fas fa-envelope text-slate-700 text-sm"></i>
-                                <span class="ml-1">Messages</span>
-                            </a>
-                        </li>
-                        <li class="z-30 flex-auto text-center">
-                            <a class="z-30 block w-full px-0 py-1 mb-0 transition-colors border-0 rounded-lg ease-soft-in-out bg-inherit text-slate-700"
-                                nav-link href="javascript:;" role="tab" aria-selected="false">
-                                <i class="fas fa-cog text-slate-700 text-sm"></i>
-                                <span class="ml-1">Settings</span>
-                            </a>
-                        </li>
-                    </ul>
+                <div class="w-full max-w-full px-3 mx-auto mt-4 sm:my-auto sm:mr-0 md:w-1/2 md:flex-none lg:w-4/12">
+                    <div class="relative right-0">
+                        <ul class="relative flex flex-wrap p-1 list-none bg-transparent rounded-xl" nav-pills role="tablist">
+                            <li class="z-30 flex-auto text-center">
+                                <a class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-soft-in-out bg-inherit text-slate-700"
+                                    nav-link active href="javascript:;" role="tab" aria-selected="true">
+                                    <i class="fas fa-cube text-slate-700 text-sm"></i>
+                                    <span class="ml-1">Overview</span>
+                                </a>
+                            </li>
+                            <li class="z-30 flex-auto text-center">
+                                <a class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-soft-in-out bg-inherit text-slate-700"
+                                    nav-link href="javascript:;" role="tab" aria-selected="false">
+                                    <i class="fas fa-envelope text-slate-700 text-sm"></i>
+                                    <span class="ml-1">Messages</span>
+                                </a>
+                            </li>
+                            <li class="z-30 flex-auto text-center">
+                                <a class="z-30 block w-full px-0 py-1 mb-0 transition-colors border-0 rounded-lg ease-soft-in-out bg-inherit text-slate-700"
+                                    nav-link href="javascript:;" role="tab" aria-selected="false">
+                                    <i class="fas fa-cog text-slate-700 text-sm"></i>
+                                    <span class="ml-1">Settings</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,6 +58,16 @@
 </div>
 
 <div class="w-full mt-6 mx-auto">
+    @if(session('success'))
+        <div class="relative w-full p-4 mb-4 text-white rounded-lg bg-gradient-to-tl from-green-600 to-lime-400">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="relative w-full p-4 mb-4 text-white rounded-lg bg-gradient-to-tl from-red-600 to-orange-400">
+            {{ session('error') }}
+        </div>
+    @endif
     <div class="flex flex-wrap -mx-3">
         <div class="w-full max-w-full px-3 xl:w-4/12">
             <div class="relative flex flex-col h-full min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
@@ -114,7 +129,7 @@
                             <h6 class="mb-0">Profile Information</h6>
                         </div>
                         <div class="w-full max-w-full px-3 text-right shrink-0 md:w-4/12 md:flex-none">
-                            <a href="javascript:;" data-target="tooltip_trigger" data-placement="top">
+                            <a href="{{ route('customer.profile.edit') }}">
                                 <i class="leading-normal fas fa-user-edit text-sm text-slate-400"></i>
                             </a>
                         </div>
@@ -139,7 +154,13 @@
                             <strong class="text-slate-700">Email:</strong> &nbsp; {{ $user->email }}
                         </li>
                         <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
+                            <strong class="text-slate-700">Address:</strong> &nbsp; {{ $user->customerDetail->address ?? 'N/A' }}
+                        </li>
+                        <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
                             <strong class="text-slate-700">Location:</strong> &nbsp; {{ $user->customerDetail->city ?? 'N/A' }}, {{ $user->customerDetail->state ?? '' }}, {{ $user->customerDetail->country ?? '' }}
+                        </li>
+                        <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
+                            <strong class="text-slate-700">Pincode:</strong> &nbsp; {{ $user->customerDetail->pincode ?? 'N/A' }}
                         </li>
                         <li class="relative block px-4 py-2 pb-0 pl-0 bg-white border-0 border-t-0 rounded-b-lg text-inherit">
                             <strong class="leading-normal text-sm text-slate-700">Social:</strong> &nbsp;

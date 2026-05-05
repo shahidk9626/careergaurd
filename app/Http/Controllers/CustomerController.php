@@ -44,6 +44,20 @@ class CustomerController extends Controller
     }
 
     /**
+     * Admin Side: View Customer Profile
+     */
+    public function show($id)
+    {
+        $customer = User::with(['customerDetail', 'customerDocuments', 'referredBy.staffDetail'])->findOrFail($id);
+
+        // Next/Previous Navigation
+        $prev = User::where('role_id', 0)->where('id', '<', $id)->orderBy('id', 'desc')->first();
+        $next = User::where('role_id', 0)->where('id', '>', $id)->orderBy('id', 'asc')->first();
+
+        return view('admin.customers.show', compact('customer', 'prev', 'next'));
+    }
+
+    /**
      * Customer Side: Registration Wizard View
      */
     public function registration()
@@ -119,6 +133,70 @@ class CustomerController extends Controller
     {
         $user = auth()->user()->load(['customerDetail', 'role']);
         return view('customer.profile', compact('user'));
+    }
+
+    /**
+     * Customer Side: Edit Profile View
+     */
+    public function editProfile()
+    {
+        $user = auth()->user()->load('customerDetail');
+        return view('customer.profile-edit', compact('user'));
+    }
+
+    /**
+     * Customer Side: Update Profile
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+        $customerDetail = $user->customerDetail;
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'whatsapp_number' => 'required|string|max:20',
+            'address' => 'required|string',
+            'city' => 'required|string|max:100',
+            'state' => 'required|string|max:100',
+            'pincode' => 'required|string|max:10',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $userData = [
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'whatsapp_number' => $request->whatsapp_number,
+            ];
+
+            // Handle Profile Image Upload
+            if ($request->hasFile('profile_image')) {
+                // Delete old image if exists
+                if ($user->profile_image) {
+                    Storage::disk('public')->delete($user->profile_image);
+                }
+                $path = $request->file('profile_image')->store('profile_images', 'public');
+                $userData['profile_image'] = $path;
+            }
+
+            $user->update($userData);
+
+            $customerDetail->update([
+                'address' => $request->address,
+                'city' => $request->city,
+                'state' => $request->state,
+                'pincode' => $request->pincode,
+            ]);
+
+            DB::commit();
+            return redirect()->route('customer.profile')->with('success', 'Profile updated successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -207,45 +285,83 @@ class CustomerController extends Controller
     /**
      * Admin Side: Edit View
      */
-    public function edit($slug)
+    public function edit($id)
     {
-        $customerDetail = CustomerDetail::with(['user', 'documents'])->where('slug', $slug)->firstOrFail();
-        return view('admin.customers.edit', compact('customerDetail'));
+        $customer = User::with(['customerDetail', 'customerDocuments', 'referredBy.staffDetail'])->findOrFail($id);
+        return view('admin.customers.edit', compact('customer'));
     }
 
     /**
      * Admin Side: Update Customer
      */
-    public function update(Request $request, $slug)
+    public function update(Request $request, $id)
     {
-        $customerDetail = CustomerDetail::where('slug', $slug)->firstOrFail();
-        $user = $customerDetail->user;
+        $user = User::with('customerDetail')->findOrFail($id);
+        $customerDetail = $user->customerDetail;
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'whatsapp_number' => 'required|string',
+            'referral_code' => 'nullable|string|exists:staff_details,emp_code',
+        ]);
 
         try {
             DB::beginTransaction();
 
-            $user->update([
+            $referredById = $user->referred_by_staff_id;
+            if ($request->has('referral_code')) {
+                if ($request->referral_code) {
+                    $staff = StaffDetail::where('emp_code', $request->referral_code)->first();
+                    if ($staff) {
+                        $referredById = $staff->user_id;
+                    }
+                } else {
+                    $referredById = null;
+                }
+            }
+
+            $userData = [
                 'name' => $request->name,
                 'email' => $request->email,
                 'whatsapp_number' => $request->whatsapp_number,
-                'status' => $request->status ?? 'pending',
-            ]);
+                'status' => $request->status ?? $user->status,
+                'referred_by_staff_id' => $referredById,
+                'profile_completed' => $request->has('force_complete') ? 1 : $user->profile_completed,
+            ];
 
-            $customerDetail->update($request->all());
+            if ($request->has('phone')) {
+                $userData['phone'] = $request->phone;
+            }
+
+            $user->update($userData);
+
+            if ($customerDetail) {
+                $customerDetail->update($request->all());
+            } else {
+                // In case it doesn't exist, create it
+                $slug = Str::slug($user->name . '-' . Str::random(5));
+                CustomerDetail::create(array_merge($request->all(), [
+                    'user_id' => $user->id,
+                    'slug' => $slug,
+                ]));
+            }
 
             // Handle New Documents
             if ($request->hasFile('documents')) {
                 foreach ($request->file('documents') as $key => $file) {
-                    $docName = $request->document_names[$key] ?? $file->getClientOriginalName();
-                    $path = $file->store('customer_docs', 'public');
+                    if ($file) {
+                        $docName = $request->document_names[$key] ?? $file->getClientOriginalName();
+                        $path = $file->store('customer_docs', 'public');
 
-                    CustomerDocument::create([
-                        'customer_detail_id' => $customerDetail->id,
-                        'document_name' => $docName,
-                        'file_path' => $path,
-                        'file_original_name' => $file->getClientOriginalName(),
-                        'file_type' => $file->getClientMimeType(),
-                    ]);
+                        CustomerDocument::create([
+                            'customer_detail_id' => $user->customerDetail->id,
+                            'document_name' => $docName,
+                            'file_path' => $path,
+                            'file_original_name' => $file->getClientOriginalName(),
+                            'file_type' => $file->getClientMimeType(),
+                        ]);
+                    }
                 }
             }
 

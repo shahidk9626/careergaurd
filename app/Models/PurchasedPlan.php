@@ -36,4 +36,9 @@ class PurchasedPlan extends Model
     {
         return $this->belongsTo(Plan::class);
     }
+
+    public function claim()
+    {
+        return $this->hasOne(Claim::class, 'plan_unique_id', 'plan_unique_id');
+    }
 }

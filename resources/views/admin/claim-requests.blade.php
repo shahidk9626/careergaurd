@@ -18,7 +18,9 @@
                                     <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
                                         Customer</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
-                                        Plan Details</th>
+                                        Plan Name</th>
+                                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
+                                        Plan Unique ID</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
                                         Submitted Date</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
@@ -40,10 +42,10 @@
                                         </div>
                                     </td>
                                     <td class="px-2 py-4 align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none">
-                                        <div class="flex flex-col">
-                                            <h6 class="mb-0 text-sm font-semibold leading-normal">{{ $claim->plan->name }}</h6>
-                                            <p class="mb-0 text-xxs leading-tight text-slate-400">{{ $claim->plan_unique_id }}</p>
-                                        </div>
+                                        <span class="text-sm font-semibold leading-normal">{{ $claim->plan->name }}</span>
+                                    </td>
+                                    <td class="px-2 py-4 align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none">
+                                        <span class="text-sm font-semibold leading-normal">{{ $claim->plan_unique_id }}</span>
                                     </td>
                                     <td class="px-2 py-4 text-center align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none">
                                         <span class="text-xs font-semibold leading-normal text-slate-400">{{ $claim->created_at->format('d M, Y') }}</span>

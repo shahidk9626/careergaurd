@@ -56,7 +56,7 @@ class ClaimController extends Controller
     public function claimManagement(Request $request)
     {
         $user = auth()->user();
-        $query = PurchasedPlan::with(['user', 'plan'])->latest();
+        $query = PurchasedPlan::with(['user', 'plan', 'claim'])->latest();
 
         // Role-based filtering
         if ($user->role_id === 0) {
@@ -172,11 +172,6 @@ class ClaimController extends Controller
      */
     public function adminClaimRequests()
     {
-        // Security check: Only Admin/Staff
-        if (auth()->user()->role_id === 0) {
-            abort(403);
-        }
-
         // Show ONLY status = pending as per requirements
         $claims = Claim::with(['user', 'plan'])->where('status', 'pending')->latest()->get();
         return view('admin.claim-requests', compact('claims'));
@@ -187,11 +182,6 @@ class ClaimController extends Controller
      */
     public function updateClaimStatus(Request $request)
     {
-        // Security check: Only Admin/Staff
-        if (auth()->user()->role_id === 0) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
         $request->validate([
             'claim_id' => 'required|exists:claims,id',
             'status' => 'required|in:approved,rejected',

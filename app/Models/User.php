@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'phone', 'whatsapp_number', 'password', 'role_id', 'referred_by_staff_id', 'profile_completed', 'status', 'verification_sent_at'])]
+#[Fillable(['name', 'email', 'profile_image', 'phone', 'whatsapp_number', 'password', 'role_id', 'referred_by_staff_id', 'profile_completed', 'status', 'verification_sent_at'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -60,6 +60,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function customerDocuments()
+    {
+        return $this->hasManyThrough(CustomerDocument::class, CustomerDetail::class, 'user_id', 'customer_detail_id');
     }
 
     /**
