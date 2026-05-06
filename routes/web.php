@@ -14,9 +14,7 @@ Route::get('/customer/verify/{id}/{hash}', [VerifyEmailController::class, 'verif
     ->middleware(['signed', 'throttle:6,1'])
     ->name('verification.verify.custom');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'customer.profile'])->name('dashboard');
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->middleware(['auth', 'customer.profile'])->name('dashboard');
 
 Route::middleware(['auth', 'customer.profile'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -83,6 +81,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         Route::middleware('permission:staff.edit')->group(function () {
             Route::get('/customers/{id}/edit', [App\Http\Controllers\CustomerController::class, 'edit'])->name('admin.customers.edit');
             Route::match(['POST', 'PUT'], '/customers/{id}/update', [App\Http\Controllers\CustomerController::class, 'update'])->name('admin.customers.update');
+            Route::post('/customers/{id}/verify', [App\Http\Controllers\CustomerController::class, 'verify'])->name('admin.customers.verify');
         });
         Route::middleware('permission:staff.delete')->delete('/customers/delete/{id}', [App\Http\Controllers\CustomerController::class, 'destroy'])->name('admin.customers.destroy');
 

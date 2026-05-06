@@ -40,6 +40,16 @@
                             Next <i class="fas fa-chevron-right ml-1"></i>
                         </a>
                     @endif
+                    @if($customer->verification_status !== 'verified')
+                        <button onclick="confirmVerify({{ $customer->id }})" class="inline-block px-4 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 hover:scale-102">
+                            <i class="fas fa-check-circle mr-1"></i> Verify Customer
+                        </button>
+                    @else
+                        <span class="inline-block px-4 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 opacity-70">
+                            <i class="fas fa-check-double mr-1"></i> Verified
+                        </span>
+                    @endif
+
                     <a href="{{ route('admin.customers.index') }}" class="inline-block px-4 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102">
                         Back
                     </a>
@@ -301,6 +311,46 @@
         window.scrollTo({
             top: offsetPosition,
             behavior: 'smooth'
+        });
+    }
+
+    function confirmVerify(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Are you sure you want to verify this customer?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#2dce89',
+            cancelButtonColor: '#344767',
+            confirmButtonText: 'Yes, Verify!',
+            customClass: {
+                confirmButton: 'bg-gradient-to-tl from-green-600 to-lime-400 text-white px-4 py-2 rounded-lg font-bold',
+                cancelButton: 'bg-gradient-to-tl from-gray-900 to-slate-800 text-white px-4 py-2 rounded-lg font-bold ml-2'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('/admin/customers') }}/" + id + "/verify",
+                    type: 'POST',
+                    data: { _token: "{{ csrf_token() }}" },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Verified!',
+                                text: 'Customer verified successfully',
+                                customClass: {
+                                    confirmButton: 'bg-gradient-to-tl from-gray-900 to-slate-800 text-white px-4 py-2 rounded-lg font-bold'
+                                },
+                                buttonsStyling: false
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    }
+                });
+            }
         });
     }
 </script>

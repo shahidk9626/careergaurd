@@ -11,11 +11,10 @@
                         <div class="flex-none w-2/3 max-w-full px-3">
                             <div>
                                 <p class="mb-0 font-sans font-semibold leading-normal text-sm">
-                                    Today's Money
+                                    Total Active Customers
                                 </p>
                                 <h5 class="mb-0 font-bold">
-                                    $53,000
-                                    <span class="leading-normal text-sm font-weight-bolder text-lime-500">+55%</span>
+                                    {{ number_format($totalActiveCustomers) }}
                                 </h5>
                             </div>
                         </div>
@@ -38,11 +37,10 @@
                         <div class="flex-none w-2/3 max-w-full px-3">
                             <div>
                                 <p class="mb-0 font-sans font-semibold leading-normal text-sm">
-                                    Today's Users
+                                    Total Plans Purchased
                                 </p>
                                 <h5 class="mb-0 font-bold">
-                                    2,300
-                                    <span class="leading-normal text-sm font-weight-bolder text-lime-500">+3%</span>
+                                    {{ number_format($totalPlansPurchased) }}
                                 </h5>
                             </div>
                         </div>
@@ -65,11 +63,10 @@
                         <div class="flex-none w-2/3 max-w-full px-3">
                             <div>
                                 <p class="mb-0 font-sans font-semibold leading-normal text-sm">
-                                    New Clients
+                                    Total Purchased Amount
                                 </p>
                                 <h5 class="mb-0 font-bold">
-                                    +3,462
-                                    <span class="leading-normal text-red-600 text-sm font-weight-bolder">-2%</span>
+                                    ₹ {{ number_format($totalPurchasedAmount, 0, '.', ',') }}
                                 </h5>
                             </div>
                         </div>
@@ -92,11 +89,10 @@
                         <div class="flex-none w-2/3 max-w-full px-3">
                             <div>
                                 <p class="mb-0 font-sans font-semibold leading-normal text-sm">
-                                    Sales
+                                    Total Active Staff
                                 </p>
                                 <h5 class="mb-0 font-bold">
-                                    $103,430
-                                    <span class="leading-normal text-sm font-weight-bolder text-lime-500">+5%</span>
+                                    {{ number_format($totalActiveStaff) }}
                                 </h5>
                             </div>
                         </div>

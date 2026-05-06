@@ -42,68 +42,6 @@
                 </li>
             <?php endif; ?>
             
-            <li class="w-full mt-4">
-                <h6 class="pl-6 ml-2 text-xs font-bold leading-tight uppercase opacity-60 text-slate-500">My Plans & Claims</h6>
-            </li>
-
-            <!-- Purchased Plans -->
-            <li class="w-full mt-0.5">
-                <?php 
-                    $isPurchasedPlansActive = request()->routeIs('customer.purchased-plans') || request()->routeIs('admin.purchased-plans');
-                    $purchasedPlansRoute = auth()->user()->role_id === 0 ? route('customer.purchased-plans') : route('admin.purchased-plans');
-                ?>
-                <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isPurchasedPlansActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
-                    href="<?php echo e($purchasedPlansRoute); ?>">
-                    <div
-                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isPurchasedPlansActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
-                        <i class="fas fa-receipt <?php echo e($isPurchasedPlansActive ? 'text-white' : 'text-slate-700'); ?>"></i>
-                    </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Purchased Plans</span>
-                </a>
-            </li>
-
-            <!-- Claim Parent Menu -->
-            <?php 
-                $isClaimManagementActive = request()->routeIs('customer.claim-management') || request()->routeIs('admin.claim-management');
-                $isClaimRequestsActive = request()->routeIs('admin.claim.requests');
-                $isClaimParentActive = $isClaimManagementActive || $isClaimRequestsActive;
-                
-                $claimManagementRoute = auth()->user()->role_id === 0 ? route('customer.claim-management') : route('admin.claim-management');
-            ?>
-            <li class="w-full mt-0.5">
-                <a id="link-claim-group"
-                    class="py-2.7 cursor-pointer text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isClaimParentActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
-                    onclick="toggleSubmenu('claim-group')">
-                    <div id="iconbox-claim-group"
-                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isClaimParentActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
-                        <i id="icon-claim-group"
-                            class="fas fa-hand-holding-usd <?php echo e($isClaimParentActive ? 'text-white' : 'text-slate-700'); ?>"></i>
-                    </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Claim</span>
-                    <i class="fas fa-chevron-down ml-auto text-xs transition-transform duration-300"
-                        id="arrow-claim-group" style="<?php echo e($isClaimParentActive ? 'transform: rotate(180deg);' : ''); ?>"></i>
-                </a>
-                <ul id="submenu-claim-group"
-                    class="<?php echo e($isClaimParentActive ? 'flex' : 'hidden'); ?> flex-col pl-0 mt-1 mb-0 list-none transition-all duration-300">
-                    
-                    <li class="w-full mt-1">
-                        <a class="py-2 mx-4 text-sm block <?php echo e($isClaimManagementActive ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700'); ?>"
-                            style="padding-left: 3.5rem;" href="<?php echo e($claimManagementRoute); ?>">
-                            Mature Claims
-                        </a>
-                    </li>
-
-                    <?php if(auth()->user()->role_id !== 0): ?>
-                    <li class="w-full mt-1">
-                        <a class="py-2 mx-4 text-sm block <?php echo e($isClaimRequestsActive ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700'); ?>"
-                            style="padding-left: 3.5rem;" href="<?php echo e(route('admin.claim.requests')); ?>">
-                            Claim Requests
-                        </a>
-                    </li>
-                    <?php endif; ?>
-                </ul>
-            </li>
-
             <?php if(auth()->user()->role_id !== 0): ?>
                 <?php if(hasPermission('roles.view') || hasPermission('staff.view')): ?>
                     <?php $isAccessActive = request()->is('*role*') || request()->is('*user*'); ?>
@@ -178,6 +116,51 @@
                         </ul>
                     </li>
                 <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if(auth()->user()->role_id !== 0): ?>
+                <?php $isCustomersActive = request()->is('*customer*'); ?>
+                <li class="w-full mt-0.5">
+                    <a id="link-customer-crm"
+                        class="py-2.7 cursor-pointer text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isCustomersActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
+                        onclick="toggleSubmenu('customer-crm')">
+                        <div id="iconbox-customer-crm"
+                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isCustomersActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
+                            <i id="icon-customer-crm"
+                                class="fas fa-user-friends <?php echo e($isCustomersActive ? 'text-white' : 'text-slate-700'); ?>"></i>
+                        </div>
+                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Customers</span>
+                        <i class="fas fa-chevron-down ml-auto text-xs transition-transform duration-300"
+                            id="arrow-customer-crm"></i>
+                    </a>
+                    <ul id="submenu-customer-crm"
+                        class="<?php echo e($isCustomersActive ? 'flex' : 'hidden'); ?> flex-col pl-0 mt-1 mb-0 list-none transition-all duration-300">
+                        <?php if(auth()->user()->role && auth()->user()->role->name === 'customer'): ?>
+                            <li class="w-full mt-1">
+                                <a class="py-2 mx-4 text-sm block <?php echo e(request()->routeIs('customer.dashboard') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700'); ?>"
+                                    style="padding-left: 3.5rem;" href="<?php echo e(route('customer.dashboard')); ?>">
+                                    My Dashboard
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                        <?php if(hasPermission('staff.view')): ?>
+                            <li class="w-full mt-1">
+                                <a class="py-2 mx-4 text-sm block <?php echo e(request()->routeIs('admin.customers.index') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700'); ?>"
+                                    style="padding-left: 3.5rem;" href="<?php echo e(route('admin.customers.index')); ?>">
+                                    Recruited Customers
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                        <?php if(hasPermission('staff.create')): ?>
+                            <li class="w-full mt-1">
+                                <a class="py-2 mx-4 text-sm block <?php echo e(request()->routeIs('admin.customers.create') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700'); ?>"
+                                    style="padding-left: 3.5rem;" href="<?php echo e(route('admin.customers.create')); ?>">
+                                    New Customer
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </li>
             <?php endif; ?>
 
             <?php if(auth()->user()->role_id !== 0): ?>
@@ -262,50 +245,73 @@
                 <?php endif; ?>
             <?php endif; ?>
 
-            <?php $isCustomersActive = request()->is('*customer*'); ?>
+            <?php if(auth()->user()->verification_status === 'verified' || auth()->user()->role_id !== 0): ?>
+            <li class="w-full mt-4">
+                <h6 class="pl-6 ml-2 text-xs font-bold leading-tight uppercase opacity-60 text-slate-500">My Plans & Claims</h6>
+            </li>
+
+            <!-- Purchased Plans -->
             <li class="w-full mt-0.5">
-                <?php if(auth()->user()->role_id !== 0): ?>
-                    <a id="link-customer-crm"
-                        class="py-2.7 cursor-pointer text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isCustomersActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
-                        onclick="toggleSubmenu('customer-crm')">
-                        <div id="iconbox-customer-crm"
-                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isCustomersActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
-                            <i id="icon-customer-crm"
-                                class="fas fa-user-friends <?php echo e($isCustomersActive ? 'text-white' : 'text-slate-700'); ?>"></i>
-                        </div>
-                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Customers</span>
-                        <i class="fas fa-chevron-down ml-auto text-xs transition-transform duration-300"
-                            id="arrow-customer-crm"></i>
-                    </a>
-                    <ul id="submenu-customer-crm"
-                        class="<?php echo e($isCustomersActive ? 'flex' : 'hidden'); ?> flex-col pl-0 mt-1 mb-0 list-none transition-all duration-300">
-                        <?php if(auth()->user()->role && auth()->user()->role->name === 'customer'): ?>
-                            <li class="w-full mt-1">
-                                <a class="py-2 mx-4 text-sm block <?php echo e(request()->routeIs('customer.dashboard') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700'); ?>"
-                                    style="padding-left: 3.5rem;" href="<?php echo e(route('customer.dashboard')); ?>">
-                                    My Dashboard
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                        <?php if(hasPermission('staff.view')): ?>
-                            <li class="w-full mt-1">
-                                <a class="py-2 mx-4 text-sm block <?php echo e(request()->routeIs('admin.customers.index') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700'); ?>"
-                                    style="padding-left: 3.5rem;" href="<?php echo e(route('admin.customers.index')); ?>">
-                                    Recruited Customers
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                        <?php if(hasPermission('staff.create')): ?>
-                            <li class="w-full mt-1">
-                                <a class="py-2 mx-4 text-sm block <?php echo e(request()->routeIs('admin.customers.create') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700'); ?>"
-                                    style="padding-left: 3.5rem;" href="<?php echo e(route('admin.customers.create')); ?>">
-                                    New Customer
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                <?php else: ?>
-                    <?php $isProfileActive = request()->routeIs('customer.profile') || request()->routeIs('customer.registration') || request()->routeIs('customer.profile.check'); ?>
+                <?php 
+                    $isPurchasedPlansActive = request()->routeIs('customer.purchased-plans') || request()->routeIs('admin.purchased-plans');
+                    $purchasedPlansRoute = auth()->user()->role_id === 0 ? route('customer.purchased-plans') : route('admin.purchased-plans');
+                ?>
+                <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isPurchasedPlansActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
+                    href="<?php echo e($purchasedPlansRoute); ?>">
+                    <div
+                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isPurchasedPlansActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
+                        <i class="fas fa-receipt <?php echo e($isPurchasedPlansActive ? 'text-white' : 'text-slate-700'); ?>"></i>
+                    </div>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Purchased Plans</span>
+                </a>
+            </li>
+
+            <!-- Claim Parent Menu -->
+            <?php 
+                $isClaimManagementActive = request()->routeIs('customer.claim-management') || request()->routeIs('admin.claim-management');
+                $isClaimRequestsActive = request()->routeIs('admin.claim.requests');
+                $isClaimParentActive = $isClaimManagementActive || $isClaimRequestsActive;
+                
+                $claimManagementRoute = auth()->user()->role_id === 0 ? route('customer.claim-management') : route('admin.claim-management');
+            ?>
+            <li class="w-full mt-0.5">
+                <a id="link-claim-group"
+                    class="py-2.7 cursor-pointer text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isClaimParentActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
+                    onclick="toggleSubmenu('claim-group')">
+                    <div id="iconbox-claim-group"
+                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isClaimParentActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
+                        <i id="icon-claim-group"
+                            class="fas fa-hand-holding-usd <?php echo e($isClaimParentActive ? 'text-white' : 'text-slate-700'); ?>"></i>
+                    </div>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Claim</span>
+                    <i class="fas fa-chevron-down ml-auto text-xs transition-transform duration-300"
+                        id="arrow-claim-group" style="<?php echo e($isClaimParentActive ? 'transform: rotate(180deg);' : ''); ?>"></i>
+                </a>
+                <ul id="submenu-claim-group"
+                    class="<?php echo e($isClaimParentActive ? 'flex' : 'hidden'); ?> flex-col pl-0 mt-1 mb-0 list-none transition-all duration-300">
+                    
+                    <li class="w-full mt-1">
+                        <a class="py-2 mx-4 text-sm block <?php echo e($isClaimManagementActive ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700'); ?>"
+                            style="padding-left: 3.5rem;" href="<?php echo e($claimManagementRoute); ?>">
+                            Mature Claims
+                        </a>
+                    </li>
+
+                    <?php if(auth()->user()->role_id !== 0): ?>
+                    <li class="w-full mt-1">
+                        <a class="py-2 mx-4 text-sm block <?php echo e($isClaimRequestsActive ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700'); ?>"
+                            style="padding-left: 3.5rem;" href="<?php echo e(route('admin.claim.requests')); ?>">
+                            Claim Requests
+                        </a>
+                    </li>
+                    <?php endif; ?>
+                </ul>
+            </li>
+            <?php endif; ?>
+
+            <?php if(auth()->user()->role_id === 0): ?>
+                <?php $isProfileActive = request()->routeIs('customer.profile') || request()->routeIs('customer.registration') || request()->routeIs('customer.profile.check'); ?>
+                <li class="w-full mt-0.5">
                     <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isProfileActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
                         href="<?php echo e(route('customer.profile.check')); ?>">
                         <div
@@ -314,8 +320,8 @@
                         </div>
                         <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Profile</span>
                     </a>
-                <?php endif; ?>
-            </li>
+                </li>
+            <?php endif; ?>
 
             <!-- <li class="w-full mt-0.5">
                 <a id="link-reports" class="py-2.7 cursor-pointer text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg text-slate-700 hover:bg-gray-50"

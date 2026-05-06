@@ -32,7 +32,7 @@ class CustomerController extends Controller
                     'email' => $user->email,
                     'whatsapp' => $user->whatsapp_number,
                     'referral' => $user->referredBy ? ($user->referredBy->name . ' (' . ($user->referredBy->staffDetail->emp_code ?? 'N/A') . ')') : 'None',
-                    'verified' => $user->email_verified_at ? 'Yes' : 'No',
+                    'verified' => $user->verification_status,
                     'profile_complete' => $user->profile_completed ? 'Yes' : 'No',
                     'status' => $user->status,
                     'slug' => $user->customerDetail->slug ?? '',
@@ -107,6 +107,7 @@ class CustomerController extends Controller
             // 3. Update User Status
             $user->update([
                 'profile_completed' => 1,
+                'verification_status' => 'pending',
                 'status' => 'active',
             ]);
 
@@ -123,6 +124,19 @@ class CustomerController extends Controller
      */
     public function dashboard()
     {
+        $user = auth()->user();
+
+        // CASE 1: Profile Not Completed (Handled by Middleware, but safe check)
+        if (!$user->profile_completed) {
+            return redirect()->route('customer.registration');
+        }
+
+        // CASE 3: Profile Verified AND Active -> Redirect to Profile
+        if ($user->verification_status === 'verified' && $user->status === 'active') {
+            return redirect()->route('customer.profile');
+        }
+
+        // CASE 2: Profile Completed but Pending Verification -> Show Dashboard with message
         return view('customer.dashboard');
     }
 
@@ -326,6 +340,7 @@ class CustomerController extends Controller
                 'email' => $request->email,
                 'whatsapp_number' => $request->whatsapp_number,
                 'status' => $request->status ?? $user->status,
+                'verification_status' => $request->verification_status ?? $user->verification_status,
                 'referred_by_staff_id' => $referredById,
                 'profile_completed' => $request->has('force_complete') ? 1 : $user->profile_completed,
             ];
@@ -377,6 +392,26 @@ class CustomerController extends Controller
     /**
      * Admin Side: Destroy Customer
      */
+    public function verify($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $user->verification_status = 'verified';
+            $user->status = 'active';
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer verified successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function destroy($id)
     {
         $user = User::findOrFail($id);

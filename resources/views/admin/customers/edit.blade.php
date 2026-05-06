@@ -142,7 +142,16 @@
                                             class="uppercase focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none" />
                                     </div>
                                     <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Status</label>
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Verification Status</label>
+                                        <select name="verification_status"
+                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none">
+                                            <option value="pending" {{ $customer->verification_status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                            <option value="verified" {{ $customer->verification_status == 'verified' ? 'selected' : '' }}>Verified</option>
+                                            <option value="rejected" {{ $customer->verification_status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                        </select>
+                                    </div>
+                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Account Status</label>
                                         <select name="status"
                                             class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none">
                                             <option value="active" {{ $customer->status == 'active' ? 'selected' : '' }}>Active</option>

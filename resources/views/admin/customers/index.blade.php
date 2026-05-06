@@ -94,8 +94,12 @@
                         data: 'verified',
                         className: 'text-center align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none',
                         render: function (data) {
-                            let badgeClass = data === 'Yes' ? 'bg-gradient-to-tl from-green-600 to-lime-400' : 'bg-gradient-to-tl from-slate-600 to-slate-300';
-                            return `<span class="text-xxs px-2.5 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white rounded-1.8 ${badgeClass}">${data === 'Yes' ? 'Verified' : 'Pending'}</span>`;
+                            let badgeClass = 'bg-gradient-to-tl from-slate-600 to-slate-300';
+                            if (data === 'verified') badgeClass = 'bg-gradient-to-tl from-green-600 to-lime-400';
+                            if (data === 'rejected') badgeClass = 'bg-gradient-to-tl from-red-600 to-rose-400';
+                            
+                            let label = data ? data.charAt(0).toUpperCase() + data.slice(1) : 'Pending';
+                            return `<span class="text-xxs px-2.5 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white rounded-1.8 ${badgeClass}">${label}</span>`;
                         }
                     },
                     {
@@ -120,11 +124,27 @@
                         render: function (data, type, row) {
                             let actions = `<div class="flex items-center justify-center gap-2">`;
 
+                            // Verify Button
+                            if (row.verified !== 'verified') {
+                                actions += `
+                                    <button onclick="confirmVerify(${row.id})" 
+                                            class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 hover:scale-110" 
+                                            title="Verify Customer">
+                                        <i class="fas fa-check-circle text-sm pointer-events-none"></i>
+                                    </button>`;
+                            } else {
+                                actions += `
+                                    <span class="inline-block p-2 mb-0 text-slate-400 transition-all bg-gray-100 border-0 rounded-lg shadow-none leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25" 
+                                          title="Already Verified">
+                                        <i class="fas fa-check-circle text-sm opacity-50"></i>
+                                    </span>`;
+                            }
+
                             // View Button
                             let viewUrl = "{{ url('admin/customers') }}/" + row.id + "/view";
                             actions += `
                                 <a href="${viewUrl}" 
-                                   class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-110 mx-2" 
+                                   class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-110" 
                                    title="View Profile">
                                     <i class="fas fa-eye text-sm pointer-events-none"></i>
                                 </a>`;
@@ -165,6 +185,45 @@
                 }
             });
         });
+
+        function confirmVerify(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Are you sure you want to verify this customer?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#2dce89',
+                cancelButtonColor: '#344767',
+                confirmButtonText: 'Yes, Verify!',
+                customClass: {
+                    confirmButton: 'bg-gradient-to-tl from-green-600 to-lime-400 text-white px-4 py-2 rounded-lg font-bold',
+                    cancelButton: 'bg-gradient-to-tl from-gray-900 to-slate-800 text-white px-4 py-2 rounded-lg font-bold ml-2'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ url('/admin/customers') }}/" + id + "/verify",
+                        type: 'POST',
+                        data: { _token: "{{ csrf_token() }}" },
+                        success: function (response) {
+                            if (response.success) {
+                                table.ajax.reload();
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Verified!',
+                                    text: 'Customer verified successfully',
+                                    customClass: {
+                                        confirmButton: 'bg-gradient-to-tl from-gray-900 to-slate-800 text-white px-4 py-2 rounded-lg font-bold'
+                                    },
+                                    buttonsStyling: false
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
 
         function confirmDelete(id) {
             Swal.fire({

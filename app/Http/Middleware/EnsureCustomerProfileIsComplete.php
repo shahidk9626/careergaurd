@@ -18,14 +18,29 @@ class EnsureCustomerProfileIsComplete
         $user = $request->user();
 
         if ($user && $user->role_id === 0) {
+            // CASE 1: Profile Incomplete
             if (
                 $user->profile_completed === 0 &&
                 !$request->routeIs('customer.registration') &&
                 !$request->routeIs('customer.plan-preview') &&
+                !$request->routeIs('customer.plan.show') &&
                 !$request->routeIs('logout') &&
                 !$request->routeIs('verification.*')
             ) {
                 return redirect()->route('customer.registration');
+            }
+
+            // CASE 2: Profile Completed but NOT Verified
+            if (
+                $user->profile_completed === 1 &&
+                $user->verification_status !== 'verified' &&
+                !$request->routeIs('customer.dashboard') &&
+                !$request->routeIs('customer.plan-preview') &&
+                !$request->routeIs('customer.plan.show') &&
+                !$request->routeIs('logout') &&
+                !$request->routeIs('verification.*')
+            ) {
+                return redirect()->route('customer.dashboard');
             }
         }
 

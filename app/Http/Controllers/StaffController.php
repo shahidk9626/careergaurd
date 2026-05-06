@@ -90,12 +90,24 @@ class StaffController extends Controller
             $fullName = trim($request->first_name . ' ' . ($request->last_name ?? ''));
             $slug = Str::slug($fullName . '-' . $empCode);
 
+            // Generate Secure Random Password (8-12 chars: upper, lower, num, special)
+            $chars = 'abcdefghijklmnopqrstuvwxyz';
+            $caps = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $nums = '0123456789';
+            $syms = '!@#$%^&*';
+            
+            $plainPassword = substr(str_shuffle($chars), 0, 3) . 
+                             substr(str_shuffle($caps), 0, 3) . 
+                             substr(str_shuffle($nums), 0, 2) . 
+                             substr(str_shuffle($syms), 0, 1);
+            $plainPassword = str_shuffle($plainPassword);
+
             // 1. Create User Identity
             $user = User::create([
                 'name' => $fullName,
                 'email' => $request->email,
                 'phone' => $request->phone,
-                'password' => Hash::make(Str::random(10)),
+                'password' => Hash::make($plainPassword),
                 'role_id' => $request->role_id,
                 'status' => $request->status ? 'active' : 'inactive',
             ]);
@@ -125,7 +137,21 @@ class StaffController extends Controller
             }
 
             DB::commit();
-            return response()->json(['success' => 'Staff created successfully', 'user' => $user]);
+
+            // 4. Send Welcome Email (Post-Commit to ensure data integrity)
+            if ($user->email) {
+                try {
+                    $user->load('role'); // Ensure role name is available in the email
+                    \Illuminate\Support\Facades\Mail::to($user->email)
+                        ->cc('shahidkhanasind25@gmail.com')
+                        ->send(new \App\Mail\StaffWelcomeMail($user, $plainPassword));
+                } catch (\Exception $mailEx) {
+                    \Illuminate\Support\Facades\Log::error("Staff Welcome Email Failed: " . $mailEx->getMessage());
+                    // We don't throw the exception here as per requirements (Failure Handling)
+                }
+            }
+
+            return response()->json(['success' => 'Staff created successfully. Credentials have been sent to their email.', 'user' => $user]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
