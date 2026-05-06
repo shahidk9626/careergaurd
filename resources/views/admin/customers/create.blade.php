@@ -415,7 +415,20 @@
                     },
                     error: function (xhr) {
                         btn.prop('disabled', false).html('Save Customer');
-                        Swal.fire('Error', xhr.responseJSON.error || 'Validation failed', 'error');
+                        
+                        let errorMessage = 'Something went wrong';
+                        
+                        // Check if Laravel sent back validation errors (plural)
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            // Grab the very first validation error message to show the user
+                            errorMessage = Object.values(xhr.responseJSON.errors)[0][0];
+                        } 
+                        // Fallback for custom exceptions (singular)
+                        else if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMessage = xhr.responseJSON.error;
+                        }
+
+                        Swal.fire('Validation Error', errorMessage, 'error');
                     }
                 });
             });

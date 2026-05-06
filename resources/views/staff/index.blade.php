@@ -121,20 +121,25 @@
 
                         // View Button
                         let viewUrl = "{{ url('/staff') }}/" + data.id + "/view";
-                        actions += `
-                                <a href="${viewUrl}" class="inline-block px-3 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 hover:shadow-soft-xs active:opacity-85" title="View Profile">
-                                    <i class="fas fa-eye mr-1"></i> View
-                                </a>`;
+
+actions += `
+    <a href="${viewUrl}" 
+       class="inline-block px-3 py-2 mx-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 hover:shadow-soft-xs active:opacity-85" 
+       title="View Profile">
+        <i class="fas fa-eye mr-1"></i> View
+    </a>`;
 
                         if (canStatus) {
-                            let statusIcon = data.status ? 'fa-toggle-on text-green-500' : 'fa-toggle-off text-slate-400';
-                            let statusTitle = data.status ? 'Deactivate' : 'Activate';
-                            actions += `
-                                    <button onclick="confirmToggleStatus(${data.id}, ${data.status})" class="inline-block px-3 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 hover:shadow-soft-xs active:opacity-85" title="${statusTitle}">
-                                        <i class="fas ${statusIcon} mr-1"></i> Status
-                                    </button>`;
-                        }
+    let statusIcon = data.status ? 'fa-toggle-on text-green-500' : 'fa-toggle-off text-slate-400';
+    let statusTitle = data.status ? 'Deactivate' : 'Activate';
 
+    actions += `
+        <button onclick="confirmToggleStatus(${data.id}, ${data.status})" 
+            class="inline-block px-3 py-2 mx-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 hover:shadow-soft-xs active:opacity-85" 
+            title="${statusTitle}">
+            <i class="fas ${statusIcon} mr-1"></i> Status
+        </button>`;
+}
                         if (canEdit) {
                             let editUrl = "{{ route('staff.edit', ':slug') }}".replace(':slug', data.slug);
                             actions += `

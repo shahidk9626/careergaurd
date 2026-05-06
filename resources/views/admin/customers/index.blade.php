@@ -124,7 +124,7 @@
                             let viewUrl = "{{ url('admin/customers') }}/" + row.id + "/view";
                             actions += `
                                 <a href="${viewUrl}" 
-                                   class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-110 mx-1" 
+                                   class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-110 mx-2" 
                                    title="View Profile">
                                     <i class="fas fa-eye text-sm pointer-events-none"></i>
                                 </a>`;
@@ -135,7 +135,7 @@
                                 
                                 actions += `
                                     <a href="${editUrl}" 
-                                       class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-110 mx-1" 
+                                       class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-110 mx-2" 
                                        title="Edit">
                                         <i class="fas fa-edit text-sm pointer-events-none"></i>
                                     </a>`;
@@ -144,7 +144,7 @@
                             if (canDelete) {
                                 actions += `
                                     <button onclick="confirmDelete(${row.id})" 
-                                            class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-110 mx-1" 
+                                            class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-110 mx-2" 
                                             title="Delete">
                                         <i class="fas fa-trash text-sm pointer-events-none"></i>
                                     </button>`;

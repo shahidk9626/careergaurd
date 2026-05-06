@@ -42,26 +42,27 @@
     </div>
 
     <!-- Question Modal -->
-    <div id="questionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-        <div style="background-color: #ffffff; width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 90vh; margin: 1rem;">
+    <div id="questionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div style="background-color: #ffffff; width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 90vh; margin: 1rem; overflow: hidden;">
             
-            <form id="questionForm" style="display: flex; flex-direction: column; height: 100%; margin: 0;">
+            <form id="questionForm" style="display: flex; flex-direction: column; flex: 1; overflow: hidden; margin: 0;">
                 @csrf
                 <input type="hidden" id="questionId" name="id">
                 
-                <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
                     <h6 id="modalTitle" style="margin: 0; font-weight: 700; color: #334155; font-size: 1.125rem;">Add Interview Question</h6>
                     <button type="button" onclick="closeModal()" style="background: none; border: none; font-size: 1.5rem; line-height: 1; color: #94a3b8; cursor: pointer; padding: 0;">&times;</button>
                 </div>
 
-                <div style="padding: 1.5rem; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 1rem;">
+                <!-- ADDED min-height: 0 and flex: 1 here to force proper scrolling inside the form -->
+                <div style="padding: 1.5rem; overflow-y: auto; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 1rem;">
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Title <span style="color: #ef4444;">*</span></label>
                         <input type="text" name="title" id="title" required style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. React Hook Basics">
                     </div>
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Categories</label>
-                        <div id="categoryCheckboxes" style="display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                        <div id="categoryCheckboxes" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; padding: 0.75rem; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem; max-height: 160px; overflow-y: auto;">
                         </div>
                     </div>
                     <div>
@@ -74,7 +75,7 @@
                     </div>
                 </div>
 
-                <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background-color: #f8fafc; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background-color: #f8fafc; display: flex; justify-content: flex-end; gap: 0.75rem; flex-shrink: 0;">
                     <button type="button" onclick="closeModal()" style="padding: 0.625rem 1.25rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569; background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; cursor: pointer;">Cancel</button>
                     <button type="submit" style="padding: 0.625rem 1.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: white; background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%); border: none; border-radius: 0.5rem; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Save Question</button>
                 </div>
@@ -130,13 +131,12 @@
                         data: 'id',
                         className: 'px-6 py-3 align-middle text-center bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data) {
-                            // UPDATED BUTTONS HERE
                             return `
                                 <div class="flex items-center justify-center gap-1.5 whitespace-nowrap">
-                                    <button onclick="editQuestion(${data})" class="edit-category-btn inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-110 mx-2">
+                                    <button onclick="editQuestion(${data})" class="btn-action-edit mx-2">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button onclick="deleteQuestion(${data})" class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-110 mx-2">
+                                    <button onclick="deleteQuestion(${data})" class="btn-action-delete mx-2">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -277,7 +277,7 @@
             border-radius: 0.5rem;
         }
 
-        /* NEW: Force table headers and data cells to have identical left padding */
+        /* Force table headers and data cells to have identical left padding */
         table.dataTable thead th,
         table.dataTable tbody td {
             padding-left: 1.5rem !important; /* Overrides the default DataTables squishing */
@@ -285,7 +285,7 @@
             vertical-align: middle !important;
         }
 
-        /* NEW: Exclude the Status and Action columns so they stay perfectly centered */
+        /* Exclude the Status and Action columns so they stay perfectly centered */
         table.dataTable thead th.text-center,
         table.dataTable tbody td.text-center {
             padding-left: 0.5rem !important;
@@ -293,7 +293,7 @@
             text-align: center !important;
         }
 
-        /* --- BULLETPROOF ACTION BUTTONS (Bypasses Tailwind JIT bugs) --- */
+        /* --- BULLETPROOF ACTION BUTTONS --- */
         .btn-action-edit {
             width: 38px; height: 38px;
             display: inline-flex; align-items: center; justify-content: center;

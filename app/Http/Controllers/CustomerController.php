@@ -339,9 +339,9 @@ class CustomerController extends Controller
             if ($customerDetail) {
                 $customerDetail->update($request->all());
             } else {
-                // In case it doesn't exist, create it
+                // BUG FIX: We must assign the created record back to the $customerDetail variable
                 $slug = Str::slug($user->name . '-' . Str::random(5));
-                CustomerDetail::create(array_merge($request->all(), [
+                $customerDetail = CustomerDetail::create(array_merge($request->all(), [
                     'user_id' => $user->id,
                     'slug' => $slug,
                 ]));
@@ -355,7 +355,8 @@ class CustomerController extends Controller
                         $path = $file->store('customer_docs', 'public');
 
                         CustomerDocument::create([
-                            'customer_detail_id' => $user->customerDetail->id,
+                            // BUG FIX: Use $customerDetail->id instead of $user->customerDetail->id
+                            'customer_detail_id' => $customerDetail->id, 
                             'document_name' => $docName,
                             'file_path' => $path,
                             'file_original_name' => $file->getClientOriginalName(),
