@@ -62,35 +62,47 @@
                 </a>
             </li>
 
-            <!-- Claim Management -->
+            <!-- Claim Parent Menu -->
+            <?php 
+                $isClaimManagementActive = request()->routeIs('customer.claim-management') || request()->routeIs('admin.claim-management');
+                $isClaimRequestsActive = request()->routeIs('admin.claim.requests');
+                $isClaimParentActive = $isClaimManagementActive || $isClaimRequestsActive;
+                
+                $claimManagementRoute = auth()->user()->role_id === 0 ? route('customer.claim-management') : route('admin.claim-management');
+            ?>
             <li class="w-full mt-0.5">
-                <?php 
-                    $isClaimManagementActive = request()->routeIs('customer.claim-management') || request()->routeIs('admin.claim-management');
-                    $claimManagementRoute = auth()->user()->role_id === 0 ? route('customer.claim-management') : route('admin.claim-management');
-                ?>
-                <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isClaimManagementActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
-                    href="<?php echo e($claimManagementRoute); ?>">
-                    <div
-                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isClaimManagementActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
-                        <i class="fas fa-hand-holding-usd <?php echo e($isClaimManagementActive ? 'text-white' : 'text-slate-700'); ?>"></i>
+                <a id="link-claim-group"
+                    class="py-2.7 cursor-pointer text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isClaimParentActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
+                    onclick="toggleSubmenu('claim-group')">
+                    <div id="iconbox-claim-group"
+                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isClaimParentActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
+                        <i id="icon-claim-group"
+                            class="fas fa-hand-holding-usd <?php echo e($isClaimParentActive ? 'text-white' : 'text-slate-700'); ?>"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Claim Management</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Claim</span>
+                    <i class="fas fa-chevron-down ml-auto text-xs transition-transform duration-300"
+                        id="arrow-claim-group" style="<?php echo e($isClaimParentActive ? 'transform: rotate(180deg);' : ''); ?>"></i>
                 </a>
-            </li>
+                <ul id="submenu-claim-group"
+                    class="<?php echo e($isClaimParentActive ? 'flex' : 'hidden'); ?> flex-col pl-0 mt-1 mb-0 list-none transition-all duration-300">
+                    
+                    <li class="w-full mt-1">
+                        <a class="py-2 mx-4 text-sm block <?php echo e($isClaimManagementActive ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700'); ?>"
+                            style="padding-left: 3.5rem;" href="<?php echo e($claimManagementRoute); ?>">
+                            Mature Claims
+                        </a>
+                    </li>
 
-            <?php if(auth()->user()->role_id !== 0): ?>
-            <!-- Claim Requests (Admin only) -->
-            <li class="w-full mt-0.5">
-                <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e(request()->routeIs('admin.claim.requests') ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
-                    href="<?php echo e(route('admin.claim.requests')); ?>">
-                    <div
-                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e(request()->routeIs('admin.claim.requests') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
-                        <i class="fas fa-list-alt <?php echo e(request()->routeIs('admin.claim.requests') ? 'text-white' : 'text-slate-700'); ?>"></i>
-                    </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Claim Requests</span>
-                </a>
+                    <?php if(auth()->user()->role_id !== 0): ?>
+                    <li class="w-full mt-1">
+                        <a class="py-2 mx-4 text-sm block <?php echo e($isClaimRequestsActive ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700'); ?>"
+                            style="padding-left: 3.5rem;" href="<?php echo e(route('admin.claim.requests')); ?>">
+                            Claim Requests
+                        </a>
+                    </li>
+                    <?php endif; ?>
+                </ul>
             </li>
-            <?php endif; ?>
 
             <?php if(auth()->user()->role_id !== 0): ?>
                 <?php if(hasPermission('roles.view') || hasPermission('staff.view')): ?>
@@ -418,7 +430,8 @@
                 'staff': 'staff-management',
                 'service': 'service-management',
                 'plan': 'plans-hub',
-                'customer': 'customer-crm'
+                'customer': 'customer-crm',
+                'claim': 'claim-group'
             };
 
             for (const [path, id] of Object.entries(mapping)) {

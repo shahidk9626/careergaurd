@@ -44,6 +44,20 @@ class StaffController extends Controller
         return view('staff.index');
     }
 
+    /**
+     * Admin Side: View Staff Profile
+     */
+    public function show($id)
+    {
+        $staff = User::with(['staffDetail', 'staffDocuments', 'role'])->findOrFail($id);
+
+        // Next/Previous Navigation
+        $prev = User::whereHas('staffDetail')->where('id', '<', $id)->orderBy('id', 'desc')->first();
+        $next = User::whereHas('staffDetail')->where('id', '>', $id)->orderBy('id', 'asc')->first();
+
+        return view('staff.show', compact('staff', 'prev', 'next'));
+    }
+
     public function create()
     {
         $roles = Role::where('status', 1)->get();
