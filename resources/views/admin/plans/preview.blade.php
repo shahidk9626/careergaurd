@@ -20,7 +20,8 @@
                         </span>
                         <h5 class="mb-0 font-bold text-slate-700">{{ $plan->name }}</h5>
                         <p class="mb-0 text-sm leading-normal text-slate-400">
-                            {{ $plan->short_description ?? 'Premium career services' }}</p>
+                            {{ $plan->short_description ?? 'Premium career services' }}
+                        </p>
 
                         <div class="my-6">
                             <h2 class="font-bold text-slate-700">
@@ -70,8 +71,8 @@
                                     class="flex items-center justify-center w-5 h-5 mr-3 rounded-lg bg-green-100 text-center flex-none">
                                     <i class="fas fa-hand-holding-usd text-green-600 text-xs"></i>
                                 </div>
-                                <span class="text-sm text-slate-600">Claim
-                                    <b>₹{{ number_format($plan->compensation_amount, 0) }}</b> after
+                                <span class="text-sm text-slate-600">Upto
+                                    <b>₹{{ number_format($plan->compensation_amount, 0) }}</b> support after
                                     {{ $plan->claim_duration_days }} days</span>
                             </li>
                         </ul>
@@ -102,65 +103,65 @@
     </div>
 
     @if(auth()->user()->role_id == 0)
-    <script>
-        function confirmPurchase(planId, planName) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'Are you sure you want to purchase this plan?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#cb0c9f',
-                cancelButtonColor: '#8392ab',
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    purchasePlan(planId);
-                }
-            })
-        }
-
-        function purchasePlan(planId) {
-            fetch("{{ route('customer.plan.purchase') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ plan_id: planId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: data.success,
-                        icon: 'success',
-                        confirmButtonColor: '#cb0c9f',
-                    }).then(() => {
-                        if (data.redirect) {
-                            window.location.href = data.redirect;
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: data.error || 'Something went wrong',
-                        icon: 'error',
-                        confirmButtonColor: '#cb0c9f',
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+        <script>
+            function confirmPurchase(planId, planName) {
                 Swal.fire({
-                    title: 'Error!',
-                    text: 'Failed to process purchase.',
-                    icon: 'error',
+                    title: 'Are you sure?',
+                    text: 'Are you sure you want to purchase this plan?',
+                    icon: 'warning',
+                    showCancelButton: true,
                     confirmButtonColor: '#cb0c9f',
-                });
-            });
-        }
-    </script>
+                    cancelButtonColor: '#8392ab',
+                    confirmButtonText: 'Confirm',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        purchasePlan(planId);
+                    }
+                })
+            }
+
+            function purchasePlan(planId) {
+                fetch("{{ route('customer.plan.purchase') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ plan_id: planId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: data.success,
+                                icon: 'success',
+                                confirmButtonColor: '#cb0c9f',
+                            }).then(() => {
+                                if (data.redirect) {
+                                    window.location.href = data.redirect;
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.error || 'Something went wrong',
+                                icon: 'error',
+                                confirmButtonColor: '#cb0c9f',
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to process purchase.',
+                            icon: 'error',
+                            confirmButtonColor: '#cb0c9f',
+                        });
+                    });
+            }
+        </script>
     @endif
 @endsection
