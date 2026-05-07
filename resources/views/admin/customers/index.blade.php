@@ -63,6 +63,7 @@
         const canEdit = {{ hasPermission('customers.edit') ? 'true' : 'false' }};
         const canDelete = {{ hasPermission('customers.delete') ? 'true' : 'false' }};
         const canVerify = {{ hasPermission('customers.verify') ? 'true' : 'false' }};
+        const canViewDetail = {{ hasPermission('customers.view_detail') ? 'true' : 'false' }};
 
         $(document).ready(function () {
             table = $('#customerTable').DataTable({
@@ -144,13 +145,15 @@
                             }
 
                             // View Button
-                            let viewUrl = "{{ url('admin/customers') }}/" + row.id + "/view";
-                            actions += `
-                                <a href="${viewUrl}" 
-                                   class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-110" 
-                                   title="View Profile">
-                                    <i class="fas fa-eye text-sm pointer-events-none"></i>
-                                </a>`;
+                            if (canViewDetail) {
+                                let viewUrl = "{{ url('admin/customers') }}/" + row.id + "/view";
+                                actions += `
+                                    <a href="${viewUrl}" 
+                                       class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-110" 
+                                       title="View Profile">
+                                        <i class="fas fa-eye text-sm pointer-events-none"></i>
+                                    </a>`;
+                            }
 
                             if (canEdit) {
                                 // FOOLPROOF URL: Uses the customer's ID to safely build the edit URL

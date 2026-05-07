@@ -38,6 +38,10 @@
                                         <th class="px-6 py-3 text-center border-b tracking-tight-soft opacity-70">Edit</th>
                                         <th class="px-6 py-3 text-center border-b tracking-tight-soft opacity-70">Delete</th>
                                         <th class="px-6 py-3 text-center border-b tracking-tight-soft opacity-70">Status</th>
+                                        <th class="px-6 py-3 text-center border-b tracking-tight-soft opacity-70">Verify</th>
+                                        <th class="px-6 py-3 text-center border-b tracking-tight-soft opacity-70">Approve</th>
+                                        <th class="px-6 py-3 text-center border-b tracking-tight-soft opacity-70">Reject</th>
+                                        <th class="px-6 py-3 text-center border-b tracking-tight-soft opacity-70">Detail</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -47,7 +51,7 @@
                                             <td class="px-6 py-4 text-center">
                                                 <input type="checkbox" class="row-select-all w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500">
                                             </td>
-                                            @foreach (['view', 'create', 'edit', 'delete', 'status'] as $action)
+                                            @foreach (['view', 'create', 'edit', 'delete', 'status', 'verify', 'approve', 'reject', 'view_detail'] as $action)
                                                 @php
                                                     $permission = $module->permissions->where('slug', $module->slug . '.' . $action)->first();
                                                 @endphp
