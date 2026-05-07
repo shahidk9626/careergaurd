@@ -318,14 +318,21 @@ class StaffController extends Controller
             UserPermission::where('user_id', $user->id)->delete();
 
             if ($request->has('user_permissions')) {
-                foreach ($request->user_permissions as $permissionId => $allowed) {
-                    if ($allowed == '1') {
-                        UserPermission::create([
-                            'user_id' => $user->id,
-                            'permission_id' => $permissionId,
-                            'allowed' => true,
-                        ]);
-                    }
+                // Get all permissions currently allowed by the role (the baseline shown in UI)
+                $rolePermissionIds = RolePermission::where('role_id', $user->role_id)
+                    ->where('allowed', true)
+                    ->pluck('permission_id')
+                    ->toArray();
+
+                foreach ($rolePermissionIds as $permId) {
+                    // Standard HTML: Unchecked boxes are missing from request
+                    $isAllowed = isset($request->user_permissions[$permId]) && $request->user_permissions[$permId] == '1';
+                    
+                    UserPermission::create([
+                        'user_id' => $user->id,
+                        'permission_id' => $permId,
+                        'allowed' => $isAllowed,
+                    ]);
                 }
             }
 

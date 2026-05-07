@@ -74,7 +74,7 @@
                                                     <td class="px-6 py-4 text-center">
                                                         @if ($permission)
                                                             <input type="checkbox" name="user_permissions[{{ $permission->id }}]" value="1"
-                                                                {{ isset($userPermissions[$permission->id]) && $userPermissions[$permission->id] ? 'checked' : '' }}
+                                                                {{ !isset($userPermissions[$permission->id]) || $userPermissions[$permission->id] ? 'checked' : '' }}
                                                                 class="permission-checkbox w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500">
                                                         @else
                                                             <span class="text-xs text-slate-300">-</span>
