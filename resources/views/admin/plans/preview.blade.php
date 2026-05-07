@@ -128,6 +128,7 @@
     </div>
 
     <!-- Pagination Section -->
+    @if($plans->hasPages())
     <div class="row mt-8">
         <div class="col-12 flex justify-center">
             <nav aria-label="Page navigation">
@@ -182,6 +183,7 @@
             </nav>
         </div>
     </div>
+    @endif
 
     @if(auth()->user()->role_id == 0)
         <script>
