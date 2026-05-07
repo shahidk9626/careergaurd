@@ -75,13 +75,10 @@ class CustomerController extends Controller
     public function storeProfile(Request $request)
     {
         $user = auth()->user();
-
         try {
             DB::beginTransaction();
-
             // Generate Slug
             $slug = Str::slug($user->name . '-' . Str::random(5));
-
             // 1. Create Customer Details
             $customerDetail = CustomerDetail::create(array_merge($request->all(), [
                 'user_id' => $user->id,
@@ -106,6 +103,8 @@ class CustomerController extends Controller
 
             // 3. Update User Status
             $user->update([
+                'name' => $request->name,
+                'whatsapp_number' => $request->whatsapp_number,
                 'profile_completed' => 1,
                 'verification_status' => 'pending',
                 'status' => 'active',
