@@ -143,9 +143,25 @@ class PlanController extends Controller
     /**
      * Public / Preview View
      */
-    public function preview()
+    public function preview(Request $request)
     {
-        $plans = Plan::with('planServices.category')->where('status', 'active')->get();
+        $search = $request->input('search');
+
+        $query = Plan::with('planServices.category')->where('status', 'active');
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('slug', 'like', "%{$search}%")
+                  ->orWhere('short_description', 'like', "%{$search}%")
+                  ->orWhereHas('planServices.category', function($cq) use ($search) {
+                      $cq->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $plans = $query->paginate(9)->withQueryString();
+
         return view('admin.plans.preview', compact('plans'));
     }
 

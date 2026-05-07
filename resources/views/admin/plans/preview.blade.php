@@ -2,15 +2,32 @@
 
 @section('content')
     <div class="row">
-        <div class="col-12 text-center mb-8">
+        <div class="col-12 text-center mb-4">
             <h3 class="font-bold text-slate-700">Choose Your Professional Membership</h3>
             <p class="text-slate-500">Premium bundles tailored for your career growth.</p>
         </div>
     </div>
 
+    <!-- Search Section -->
+    <div class="row mb-8">
+        <div class="col-12 flex justify-center">
+            <form action="{{ url()->current() }}" method="GET" class="w-full max-w-lg">
+                <div class="relative flex flex-wrap items-stretch w-full transition-all rounded-lg ease-soft">
+                    <span class="text-sm ease-soft leading-5.6 absolute z-50 -ml-px flex h-full items-center whitespace-nowrap rounded-lg rounded-tr-none rounded-br-none border border-r-0 border-transparent bg-transparent py-2 px-2.5 text-center font-normal text-slate-500 transition-all">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" name="search" value="{{ request('search') }}" 
+                        class="pl-8.75 text-sm focus:shadow-soft-primary-outline ease-soft w-1/100 leading-5.6 relative -ml-px block min-w-0 flex-auto rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 pr-3 text-gray-700 transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" 
+                        placeholder="Search Memberships..." />
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="flex flex-wrap -mx-3 justify-center">
-        @foreach($plans as $plan)
+        @forelse($plans as $plan)
             <div class="w-full max-w-full px-3 mb-6 md:w-6/12 lg:w-4/12 flex-none">
+                <!-- Card content remains the same -->
                 <div
                     class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border h-full">
                     <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl text-center">
@@ -99,7 +116,71 @@
                     </div>
                 </div>
             </div>
-        @endforeach
+        @empty
+            <div class="w-full text-center py-12">
+                <div class="mb-4 text-slate-300">
+                    <i class="fas fa-search fa-4x"></i>
+                </div>
+                <h5 class="text-slate-500">No memberships found.</h5>
+                <p class="text-slate-400">Try adjusting your search criteria.</p>
+            </div>
+        @endforelse
+    </div>
+
+    <!-- Pagination Section -->
+    <div class="row mt-8">
+        <div class="col-12 flex justify-center">
+            <nav aria-label="Page navigation">
+                <ul class="flex pl-0 list-none rounded-lg">
+                    {{-- Previous Page Link --}}
+                    @if ($plans->onFirstPage())
+                        <li class="mx-1">
+                            <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-slate-300 cursor-not-allowed">
+                                <i class="fas fa-angle-left"></i>
+                            </span>
+                        </li>
+                    @else
+                        <li class="mx-1">
+                            <a href="{{ $plans->previousPageUrl() }}" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-slate-600 hover:bg-gray-50 transition-all">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                    @endif
+
+                    {{-- Pagination Elements --}}
+                    @foreach ($plans->getUrlRange(1, $plans->lastPage()) as $page => $url)
+                        @if ($page == $plans->currentPage())
+                            <li class="mx-1">
+                                <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 text-white font-bold shadow-soft-md">
+                                    {{ $page }}
+                                </span>
+                            </li>
+                        @else
+                            <li class="mx-1">
+                                <a href="{{ $url }}" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-slate-600 hover:bg-gray-50 transition-all">
+                                    {{ $page }}
+                                </a>
+                            </li>
+                        @endif
+                    @endforeach
+
+                    {{-- Next Page Link --}}
+                    @if ($plans->hasMorePages())
+                        <li class="mx-1">
+                            <a href="{{ $plans->nextPageUrl() }}" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-slate-600 hover:bg-gray-50 transition-all">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                    @else
+                        <li class="mx-1">
+                            <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-slate-300 cursor-not-allowed">
+                                <i class="fas fa-angle-right"></i>
+                            </span>
+                        </li>
+                    @endif
+                </ul>
+            </nav>
+        </div>
     </div>
 
     @if(auth()->user()->role_id == 0)
