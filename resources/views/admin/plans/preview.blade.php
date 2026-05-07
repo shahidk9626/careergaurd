@@ -24,7 +24,7 @@
         </div>
     </div>
 
-    <div class="flex flex-wrap -mx-3 justify-center">
+    <div class="flex flex-wrap -mx-3 mt-4 justify-center">
         @forelse($plans as $plan)
             <div class="w-full max-w-full px-3 mb-6 md:w-6/12 lg:w-4/12 flex-none">
                 <!-- Card content remains the same -->
