@@ -17,7 +17,7 @@
             </div>
             <div class="flex-none w-auto max-w-full px-3 my-auto">
                 <div class="h-full">
-                    <h5 class="mb-1">Claim Application</h5>
+                    <h5 class="mb-1">Support Application</h5>
                     <p class="mb-0 font-semibold leading-normal text-sm">
                         {{ $purchasedPlan->plan_name }} ({{ $purchasedPlan->plan_unique_id }})
                     </p>
@@ -32,8 +32,8 @@
         <div class="w-full max-w-full px-3">
             <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
                 <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-                    <h6 class="mb-0 font-bold">Submit Your Claim</h6>
-                    <p class="text-sm">Please upload the required documents to process your claim.</p>
+                    <h6 class="mb-0 font-bold">Submit Your Support Request</h6>
+                    <p class="text-sm">Please upload the required documents to process your support request.</p>
                 </div>
                 <div class="flex-auto p-6">
                     <form action="{{ route('customer.claim.submit') }}" method="POST" enctype="multipart/form-data">
@@ -90,7 +90,7 @@
                         <div class="flex justify-end">
                             <button type="submit"
                                 class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85">
-                                Submit Claim Request
+                                Submit Support Request
                             </button>
                         </div>
                     </form>

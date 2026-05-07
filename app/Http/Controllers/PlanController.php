@@ -65,7 +65,7 @@ class PlanController extends Controller
             }
 
             DB::commit();
-            return response()->json(['success' => 'Plan created successfully!']);
+            return response()->json(['success' => 'Membership created successfully!']);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
@@ -118,7 +118,7 @@ class PlanController extends Controller
             }
 
             DB::commit();
-            return response()->json(['success' => 'Plan updated successfully!']);
+            return response()->json(['success' => 'Membership updated successfully!']);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
@@ -129,7 +129,7 @@ class PlanController extends Controller
     {
         $plan = Plan::findOrFail($id);
         $plan->delete();
-        return response()->json(['success' => 'Plan deleted successfully!']);
+        return response()->json(['success' => 'Membership deleted successfully!']);
     }
 
     public function toggleStatus($id)
@@ -166,7 +166,7 @@ class PlanController extends Controller
 
         // Access control: role_id = 0 (customer)
         if ($user->role_id != 0) {
-            return response()->json(['error' => 'Unauthorized. Only customers can purchase plans.'], 403);
+            return response()->json(['error' => 'Unauthorized. Only customers can purchase memberships.'], 403);
         }
 
         try {
@@ -215,7 +215,7 @@ class PlanController extends Controller
             DB::commit();
 
             return response()->json([
-                'success' => 'Plan purchased successfully!',
+                'success' => 'Membership purchased successfully!',
                 'redirect' => route('customer.plan-preview')
             ]);
         } catch (\Exception $e) {

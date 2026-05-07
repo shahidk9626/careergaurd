@@ -37,7 +37,7 @@
                         <div class="flex-none w-2/3 max-w-full px-3">
                             <div>
                                 <p class="mb-0 font-sans font-semibold leading-normal text-sm">
-                                    Total Plans Purchased
+                                    Total Memberships Purchased
                                 </p>
                                 <h5 class="mb-0 font-bold">
                                     {{ number_format($totalPlansPurchased) }}

@@ -3,7 +3,7 @@
 @section('content')
     <div class="row">
         <div class="col-12 text-center mb-8">
-            <h3 class="font-bold text-slate-700">Choose Your Professional Plan</h3>
+            <h3 class="font-bold text-slate-700">Choose Your Professional Membership</h3>
             <p class="text-slate-500">Premium bundles tailored for your career growth.</p>
         </div>
     </div>
@@ -107,7 +107,7 @@
             function confirmPurchase(planId, planName) {
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: 'Are you sure you want to purchase this plan?',
+                    text: 'Are you sure you want to purchase this membership?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#cb0c9f',

@@ -19,7 +19,7 @@
                 <div class="h-full">
                     <h5 class="mb-1">{{ $plan->name }}</h5>
                     <p class="mb-0 font-semibold leading-normal text-sm uppercase">
-                        {{ $plan->tenure_value }} {{ $plan->tenure_type }} Plan
+                        {{ $plan->tenure_value }} {{ $plan->tenure_type }} Membership
                     </p>
                 </div>
             </div>
@@ -39,7 +39,7 @@
         <div class="w-full max-w-full px-3 lg:w-4/12">
             <div class="relative flex flex-col h-full min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
                 <div class="p-4 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-                    <h6 class="mb-0">Plan Information</h6>
+                    <h6 class="mb-0">Membership Information</h6>
                 </div>
                 <div class="flex-auto p-4">
                     <p class="leading-normal text-sm">
@@ -54,10 +54,10 @@
                             <strong class="text-slate-700">Tenure:</strong> &nbsp; {{ $plan->tenure_value }} {{ ucfirst($plan->tenure_type) }}(s)
                         </li>
                         <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
-                            <strong class="text-slate-700">Compensation:</strong> &nbsp; ₹{{ number_format($plan->compensation_amount, 2) }}
+                            <strong class="text-slate-700">Support Amount:</strong> &nbsp; ₹{{ number_format($plan->compensation_amount, 2) }}
                         </li>
                         <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
-                            <strong class="text-slate-700">Claim Duration:</strong> &nbsp; {{ $plan->claim_duration_days }} Days
+                            <strong class="text-slate-700">Support Duration:</strong> &nbsp; {{ $plan->claim_duration_days }} Days
                         </li>
                         <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
                             <strong class="text-slate-700">Status:</strong> &nbsp; 
@@ -112,7 +112,7 @@
 
                     <hr class="h-px my-6 bg-transparent bg-gradient-to-r from-transparent via-black/10 to-transparent" />
                     
-                    <h6 class="mb-4">Plan Features</h6>
+                    <h6 class="mb-4">Membership Features</h6>
                     <div class="flex flex-wrap -mx-3">
                         <div class="w-full px-3">
                             <div class="flex flex-wrap gap-4">
@@ -148,7 +148,7 @@
     function confirmPurchase(planId, planName) {
         Swal.fire({
             title: 'Are you sure?',
-            text: 'Are you sure you want to purchase this plan?',
+            text: 'Are you sure you want to purchase this membership?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#cb0c9f',

@@ -5,7 +5,7 @@
         <div class="w-full max-w-full px-3 mt-0 mb-6 lg:mb-0 lg:w-full lg:flex-none">
             <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
                 <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-                    <h6 class="mb-0">Edit Plan: {{ $plan->name }}</h6>
+                    <h6 class="mb-0">Edit Membership: {{ $plan->name }}</h6>
                     <p class="text-sm">Modify pricing, tenure, and service category mappings.</p>
                 </div>
                 <div class="flex-auto p-6">
@@ -14,7 +14,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Row 1 -->
                             <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Plan Name</label>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">Membership Name</label>
                                 <input type="text" name="name" value="{{ $plan->name }}"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                                     required>
@@ -75,7 +75,7 @@
                                 <label class="block text-sm font-medium text-slate-600 mb-1">Short Description</label>
                                 <input type="text" name="description" value="{{ $plan->short_description }}"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                    placeholder="Quick highlight of the plan">
+                                    placeholder="Quick highlight of the membership">
                             </div>
                         </div>
 
@@ -132,7 +132,7 @@
                                 class="px-8 py-3 rounded-lg bg-gray-100 text-slate-700 font-bold uppercase text-xs hover:bg-gray-200 transition-all">Cancel</a>
                             <button type="submit"
                                 class="px-8 py-3 rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 text-white font-bold uppercase text-xs hover:scale-102 transition-all shadow-soft-md">Update
-                                Plan</button>
+                                Membership</button>
                         </div>
                     </form>
                 </div>

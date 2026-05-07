@@ -35,7 +35,7 @@
                                         access all our services.</p>
                                     <a class="mt-auto mb-0 font-semibold leading-normal cursor-pointer group text-sm"
                                         href="{{ route('customer.purchased-plans') }}">
-                                        View Purchased Plans
+                                        View Purchased Memberships
                                         <i
                                             class="fas fa-arrow-right ease-bounce ml-1 text-sm transition-all group-hover:translate-x-1.25"></i>
                                     </a>

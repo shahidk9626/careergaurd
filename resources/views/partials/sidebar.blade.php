@@ -37,7 +37,7 @@
                             class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ request()->routeIs('customer.plan-preview') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
                             <i class="fas fa-boxes {{ request()->routeIs('customer.plan-preview') ? 'text-white' : 'text-slate-700' }}"></i>
                         </div>
-                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Plan Preview</span>
+                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Membership Preview</span>
                     </a>
                 </li>
             @endif
@@ -222,7 +222,7 @@
                                 <i id="icon-plans-hub"
                                     class="fas fa-boxes {{ $isPlansActive ? 'text-white' : 'text-slate-700' }}"></i>
                             </div>
-                            <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Plans</span>
+                            <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Membership</span>
                             <i class="fas fa-chevron-down ml-auto text-xs transition-transform duration-300"
                                 id="arrow-plans-hub"></i>
                         </a>
@@ -231,13 +231,13 @@
                             <li class="w-full mt-1">
                                 <a class="py-2 mx-4 text-sm block {{ request()->is('admin/plans*') && !request()->is('admin/plan-preview*') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
                                     style="padding-left: 3.5rem;" href="{{ route('admin.plans.index') }}">
-                                    Manage Plans
+                                    Manage Memberships
                                 </a>
                             </li>
                             <li class="w-full mt-1">
                                 <a class="py-2 mx-4 text-sm block {{ request()->is('*plan-preview*') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
                                     style="padding-left: 3.5rem;" href="{{ route('admin.plans.preview') }}">
-                                    Plan Preview
+                                    Membership Preview
                                 </a>
                             </li>
                         </ul>
@@ -247,7 +247,7 @@
 
             @if(auth()->user()->verification_status === 'verified' || auth()->user()->role_id !== 0)
             <li class="w-full mt-4">
-                <h6 class="pl-6 ml-2 text-xs font-bold leading-tight uppercase opacity-60 text-slate-500">My Plans & Claims</h6>
+                <h6 class="pl-6 ml-2 text-xs font-bold leading-tight uppercase opacity-60 text-slate-500">My Memberships & Support</h6>
             </li>
 
             <!-- Purchased Plans -->
@@ -262,7 +262,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ $isPurchasedPlansActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
                         <i class="fas fa-receipt {{ $isPurchasedPlansActive ? 'text-white' : 'text-slate-700' }}"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Purchased Plans</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Purchased Memberships</span>
                 </a>
             </li>
 
@@ -283,7 +283,7 @@
                         <i id="icon-claim-group"
                             class="fas fa-hand-holding-usd {{ $isClaimParentActive ? 'text-white' : 'text-slate-700' }}"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Claim</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Support</span>
                     <i class="fas fa-chevron-down ml-auto text-xs transition-transform duration-300"
                         id="arrow-claim-group" style="{{ $isClaimParentActive ? 'transform: rotate(180deg);' : '' }}"></i>
                 </a>
@@ -293,7 +293,7 @@
                     <li class="w-full mt-1">
                         <a class="py-2 mx-4 text-sm block {{ $isClaimManagementActive ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
                             style="padding-left: 3.5rem;" href="{{ $claimManagementRoute }}">
-                            Mature Claims
+                            Mature Support Requests
                         </a>
                     </li>
 
@@ -301,7 +301,7 @@
                     <li class="w-full mt-1">
                         <a class="py-2 mx-4 text-sm block {{ $isClaimRequestsActive ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
                             style="padding-left: 3.5rem;" href="{{ route('admin.claim.requests') }}">
-                            Claim Requests
+                            Support Requests
                         </a>
                     </li>
                     @endif

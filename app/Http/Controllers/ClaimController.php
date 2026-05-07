@@ -42,7 +42,7 @@ class ClaimController extends Controller
 
         // Customer security check
         if ($user->role_id === 0 && $purchasedPlan->user_id !== $user->id) {
-            abort(403, 'Unauthorized access to this plan.');
+            abort(403, 'Unauthorized access to this membership.');
         }
 
         $transactions = Transaction::where('plan_unique_id', $plan_unique_id)->latest()->get();
@@ -103,11 +103,11 @@ class ClaimController extends Controller
         $maturityDate = $purchaseDate->copy()->addDays($claimDuration);
 
         if (now()->lessThan($maturityDate)) {
-            return redirect()->back()->with('error', 'This plan has not matured yet.');
+            return redirect()->back()->with('error', 'This membership has not matured yet.');
         }
 
         if ($purchasedPlan->status === 'claimed') {
-            return redirect()->back()->with('error', 'This plan has already been claimed.');
+            return redirect()->back()->with('error', 'This membership has already been supported.');
         }
 
         return view('customer.claim-form', compact('purchasedPlan'));
@@ -164,7 +164,7 @@ class ClaimController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('customer.claim-management')->with('success', 'Your claim request has been submitted successfully.');
+        return redirect()->route('customer.claim-management')->with('success', 'Your support request has been submitted successfully.');
     }
 
     /**
@@ -199,6 +199,6 @@ class ClaimController extends Controller
             }
         }
 
-        return response()->json(['success' => 'Claim status updated successfully!']);
+        return response()->json(['success' => 'Support status updated successfully!']);
     }
 }

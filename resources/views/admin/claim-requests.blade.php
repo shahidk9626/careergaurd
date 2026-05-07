@@ -5,8 +5,8 @@
         <div class="flex-none w-full max-w-full px-3">
             <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
                 <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-                    <h6 class="mb-0 font-bold">Claim Requests</h6>
-                    <p class="text-sm">Manage and review submitted claim applications.</p>
+                    <h6 class="mb-0 font-bold">Support Requests</h6>
+                    <p class="text-sm">Manage and review submitted support applications.</p>
                 </div>
                 <div class="flex-auto px-0 pt-0 pb-2">
                     <div class="p-6 overflow-x-auto">
@@ -18,9 +18,9 @@
                                     <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
                                         Customer</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
-                                        Plan Name</th>
+                                        Membership Name</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
-                                        Plan Unique ID</th>
+                                        Membership Unique ID</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
                                         Submitted Date</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
@@ -107,7 +107,7 @@
             }
 
             Swal.fire({
-                title: 'Claim Documents',
+                title: 'Support Documents',
                 html: `
                     <div class="text-left">
                         <p><strong>Termination Letter:</strong> <a href="/storage/${claim.termination_letter}" target="_blank" class="text-fuchsia-500">View File</a></p>
@@ -128,8 +128,8 @@
         }
 
         function updateStatus(claimId, status) {
-            const title = status === 'approved' ? 'Approve Claim?' : 'Reject Claim?';
-            const text = status === 'approved' ? 'This will mark the plan as claimed.' : 'This will reject the claim application.';
+            const title = status === 'approved' ? 'Approve Support?' : 'Reject Support?';
+            const text = status === 'approved' ? 'This will mark the membership as supported.' : 'This will reject the support application.';
             
             Swal.fire({
                 title: title,

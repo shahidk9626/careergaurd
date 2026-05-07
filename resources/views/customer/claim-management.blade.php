@@ -5,8 +5,8 @@
         <div class="flex-none w-full max-w-full px-3">
             <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
                 <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-                    <h6 class="mb-0 font-bold">Mature Claims</h6>
-                    <p class="text-sm">Manage and process compensation claims for matured plans.</p>
+                    <h6 class="mb-0 font-bold">Mature Support Requests</h6>
+                    <p class="text-sm">Manage and process compensation support for matured memberships.</p>
                 </div>
                 <div class="flex-auto px-0 pt-0 pb-2">
                     <div class="p-6 overflow-x-auto">
@@ -20,11 +20,11 @@
                                         Customer</th>
                                     @endif
                                     <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
-                                        Plan Name</th>
+                                        Membership Name</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
                                         Maturity Date</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
-                                        Compensation</th>
+                                        Support Amount</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
                                         Status</th>
                                     <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
@@ -67,17 +67,17 @@
                                             @if(!$plan->claim)
                                                 <a href="{{ route('customer.claim.form', $plan->plan_unique_id) }}"
                                                     class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85">
-                                                    Claim
+                                                    Get Support
                                                 </a>
                                             @elseif($plan->claim->status === 'pending')
                                                 <button disabled
                                                     class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg opacity-50 cursor-not-allowed leading-pro text-xs ease-soft-in shadow-none bg-150 bg-x-25 bg-gradient-to-tl from-slate-600 to-slate-300">
-                                                    Claimed
+                                                    Support Requested
                                                 </button>
                                             @elseif($plan->claim->status === 'approved')
                                                 <button disabled
                                                     class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg opacity-80 cursor-not-allowed leading-pro text-xs ease-soft-in shadow-none bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400">
-                                                    Claim Passed
+                                                    Support Approved
                                                 </button>
                                             @elseif($plan->claim->status === 'rejected')
                                                 <button disabled
@@ -86,7 +86,7 @@
                                                 </button>
                                             @endif
                                         @else
-                                            <span class="text-xs font-semibold text-slate-400">Review in Claim Requests</span>
+                                            <span class="text-xs font-semibold text-slate-400">Review in Support Requests</span>
                                         @endif
                                     </td>
                                 </tr>

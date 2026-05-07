@@ -7,12 +7,12 @@
                 <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
                     <div class="flex flex-wrap -mx-3">
                         <div class="flex items-center flex-none w-1/2 max-w-full px-3">
-                            <h6 class="mb-0">Plans Management</h6>
+                            <h6 class="mb-0">Memberships Management</h6>
                         </div>
                         <div class="flex-none w-1/2 max-w-full px-3 text-right">
                             <a href="{{ route('admin.plans.create') }}"
                                 class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-plus"></i>&nbsp;&nbsp;Create New Plan
+                                <i class="fas fa-plus"></i>&nbsp;&nbsp;Create New Membership
                             </a>
                         </div>
                     </div>
@@ -23,7 +23,7 @@
                             <thead class="align-bottom">
                                 <tr>
                                     <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">
-                                        Plan Name</th>
+                                        Membership Name</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">
                                         Price</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">

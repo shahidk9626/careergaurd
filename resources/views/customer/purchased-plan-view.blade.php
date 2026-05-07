@@ -54,12 +54,12 @@
             <div class="w-full max-w-full px-3 xl:w-4/12">
                 <div class="relative flex flex-col h-full min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
                     <div class="p-4 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0">Plan Information</h6>
+                        <h6 class="mb-0">Membership Information</h6>
                     </div>
                     <div class="flex-auto p-4">
                         <ul class="flex flex-col pl-0 mb-0 rounded-lg">
                             <li class="relative block px-4 py-2 pt-0 pl-0 leading-normal bg-white border-0 rounded-t-lg text-sm text-inherit">
-                                <strong class="text-slate-700">Plan Name:</strong> &nbsp; {{ $purchasedPlan->plan_name }}
+                                <strong class="text-slate-700">Membership Name:</strong> &nbsp; {{ $purchasedPlan->plan_name }}
                             </li>
                             <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
                                 <strong class="text-slate-700">Unique ID:</strong> &nbsp; {{ $purchasedPlan->plan_unique_id }}
@@ -116,10 +116,10 @@
                     <div class="flex-auto p-4">
                         <ul class="flex flex-col pl-0 mb-0 rounded-lg">
                             <li class="relative block px-4 py-2 pt-0 pl-0 leading-normal bg-white border-0 rounded-t-lg text-sm text-inherit">
-                                <strong class="text-slate-700">Claim Duration:</strong> &nbsp; {{ $purchasedPlan->plan->claim_duration_days ?? 0 }} Days
+                                <strong class="text-slate-700">Support Duration:</strong> &nbsp; {{ $purchasedPlan->plan->claim_duration_days ?? 0 }} Days
                             </li>
                             <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
-                                <strong class="text-slate-700">Compensation:</strong> &nbsp; ₹{{ number_format($purchasedPlan->plan->compensation_amount ?? 0, 2) }}
+                                <strong class="text-slate-700">Support Amount:</strong> &nbsp; ₹{{ number_format($purchasedPlan->plan->compensation_amount ?? 0, 2) }}
                             </li>
                             <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
                                 <strong class="text-slate-700">Included Services:</strong>
@@ -145,7 +145,7 @@
                 <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
                     <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
                         <h6 class="mb-0">Transaction Records</h6>
-                        <p class="text-sm">List of all payments made for this plan.</p>
+                        <p class="text-sm">List of all payments made for this membership.</p>
                     </div>
                     <div class="flex-auto px-0 pt-0 pb-2">
                         <div class="p-6 overflow-x-auto">
