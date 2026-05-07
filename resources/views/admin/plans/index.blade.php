@@ -10,10 +10,12 @@
                             <h6 class="mb-0">Memberships Management</h6>
                         </div>
                         <div class="flex-none w-1/2 max-w-full px-3 text-right">
-                            <a href="{{ route('admin.plans.create') }}"
-                                class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-plus"></i>&nbsp;&nbsp;Create New Membership
-                            </a>
+                            @if(hasPermission('plans.create'))
+                                <a href="{{ route('admin.plans.create') }}"
+                                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 active:opacity-85">
+                                    <i class="fas fa-plus"></i>&nbsp;&nbsp;Create New Membership
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -46,6 +48,9 @@
 @push('scripts')
     <script>
         let table;
+        const canEdit = {{ hasPermission('plans.edit') ? 'true' : 'false' }};
+        const canDelete = {{ hasPermission('plans.delete') ? 'true' : 'false' }};
+        const canStatus = {{ hasPermission('plans.status') ? 'true' : 'false' }};
         $(document).ready(function () {
             table = $('#planTable').DataTable({
                 ajax: "{{ route('admin.plans.index') }}",
@@ -78,25 +83,35 @@
                         data: null,
                         className: 'text-center align-middle bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data) {
-    let editUrl = "{{ url('admin/plans/edit') }}/" + data.id;
-    let statusIcon = data.status === 'active' ? 'fa-toggle-on text-green-500' : 'fa-toggle-off text-slate-400';
-    
-    return `
-        <div class="flex items-center justify-center">
-            <button onclick="toggleStatus(${data.id})" class="inline-block px-3 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 hover:shadow-soft-xs active:opacity-85">
-                <i class="fas ${statusIcon} mr-1"></i> Status
-            </button>
+                            let editUrl = "{{ url('admin/plans/edit') }}/" + data.id;
+                            let statusIcon = data.status === 'active' ? 'fa-toggle-on text-green-500' : 'fa-toggle-off text-slate-400';
+                            
+                            let actions = `<div class="flex items-center justify-center">`;
+                            
+                            if (canStatus) {
+                                actions += `
+                                    <button onclick="toggleStatus(${data.id})" class="inline-block px-3 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 hover:shadow-soft-xs active:opacity-85">
+                                        <i class="fas ${statusIcon} mr-1"></i> Status
+                                    </button>`;
+                            }
 
-            <a href="${editUrl}" class="inline-block ml-2 px-3 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-102 hover:shadow-soft-xs active:opacity-85">
-                <i class="fas fa-edit mr-1"></i> Edit
-            </a>
+                            if (canEdit) {
+                                actions += `
+                                    <a href="${editUrl}" class="inline-block ml-2 px-3 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-102 hover:shadow-soft-xs active:opacity-85">
+                                        <i class="fas fa-edit mr-1"></i> Edit
+                                    </a>`;
+                            }
 
-            <button onclick="deletePlan(${data.id})" class="inline-block ml-2 px-3 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-102 hover:shadow-soft-xs active:opacity-85">
-                <i class="fas fa-trash mr-1"></i> Delete
-            </button>
-        </div>
-    `;
-}
+                            if (canDelete) {
+                                actions += `
+                                    <button onclick="deletePlan(${data.id})" class="inline-block ml-2 px-3 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-102 hover:shadow-soft-xs active:opacity-85">
+                                        <i class="fas fa-trash mr-1"></i> Delete
+                                    </button>`;
+                            }
+
+                            actions += `</div>`;
+                            return actions;
+                        }
                     }
                 ],
                 language: {

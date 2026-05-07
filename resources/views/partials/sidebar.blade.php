@@ -43,7 +43,7 @@
             @endif
             
             @if(auth()->user()->role_id !== 0)
-                @if(hasPermission('roles.view') || hasPermission('staff.view'))
+                @if(hasPermission('roles.view') || hasPermission('user-permissions.view'))
                     @php $isAccessActive = request()->is('*role*') || request()->is('*user*'); @endphp
                     <li class="w-full mt-0.5">
                         <a id="link-access-control"
@@ -68,7 +68,7 @@
                                     </a>
                                 </li>
                             @endif
-                            @if(hasPermission('staff.view'))
+                            @if(hasPermission('user-permissions.view'))
                                 <li class="w-full mt-1">
                                     <a class="py-2 mx-4 text-sm block {{ request()->is('*user*') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
                                         style="padding-left: 3.5rem;" href="{{ url('user-permissions') }}">
@@ -143,7 +143,7 @@
                                 </a>
                             </li>
                         @endif
-                        @if(hasPermission('staff.view'))
+                        @if(hasPermission('customers.view'))
                             <li class="w-full mt-1">
                                 <a class="py-2 mx-4 text-sm block {{ request()->routeIs('admin.customers.index') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
                                     style="padding-left: 3.5rem;" href="{{ route('admin.customers.index') }}">
@@ -151,7 +151,7 @@
                                 </a>
                             </li>
                         @endif
-                        @if(hasPermission('staff.create'))
+                        @if(hasPermission('customers.create'))
                             <li class="w-full mt-1">
                                 <a class="py-2 mx-4 text-sm block {{ request()->routeIs('admin.customers.create') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
                                     style="padding-left: 3.5rem;" href="{{ route('admin.customers.create') }}">
@@ -164,7 +164,7 @@
             @endif
 
             @if(auth()->user()->role_id !== 0)
-                @if(hasPermission('staff.view'))
+                @if(hasPermission('service-categories.view') || hasPermission('resumes.view') || hasPermission('job-links.view') || hasPermission('questions.view'))
                     @php $isServicesActive = request()->is('*service*'); @endphp
                     <li class="w-full mt-0.5">
                         <a id="link-service-management"
@@ -181,37 +181,45 @@
                         </a>
                         <ul id="submenu-service-management"
                             class="{{ $isServicesActive ? 'flex' : 'hidden' }} flex-col pl-0 mt-1 mb-0 list-none transition-all duration-300">
-                            <li class="w-full mt-1">
-                                <a class="py-2 mx-4 text-sm block {{ request()->is('*categories*') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
-                                    style="padding-left: 3.5rem;" href="{{ route('admin.services.categories.index') }}">
-                                    Service Categories
-                                </a>
-                            </li>
-                            <li class="w-full mt-1">
-                                <a class="py-2 mx-4 text-sm block {{ request()->is('*resumes*') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
-                                    style="padding-left: 3.5rem;" href="{{ route('admin.services.resumes.index') }}">
-                                    Resume Templates
-                                </a>
-                            </li>
-                            <li class="w-full mt-1">
-                                <a class="py-2 mx-4 text-sm block {{ request()->is('*job-links*') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
-                                    style="padding-left: 3.5rem;" href="{{ route('admin.services.job-links.index') }}">
-                                    Job Links
-                                </a>
-                            </li>
-                            <li class="w-full mt-1">
-                                <a class="py-2 mx-4 text-sm block {{ request()->is('*questions*') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
-                                    style="padding-left: 3.5rem;" href="{{ route('admin.services.questions.index') }}">
-                                    Interview Q&A
-                                </a>
-                            </li>
+                            @if(hasPermission('service-categories.view'))
+                                <li class="w-full mt-1">
+                                    <a class="py-2 mx-4 text-sm block {{ request()->is('*categories*') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
+                                        style="padding-left: 3.5rem;" href="{{ route('admin.services.categories.index') }}">
+                                        Service Categories
+                                    </a>
+                                </li>
+                            @endif
+                            @if(hasPermission('resumes.view'))
+                                <li class="w-full mt-1">
+                                    <a class="py-2 mx-4 text-sm block {{ request()->is('*resumes*') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
+                                        style="padding-left: 3.5rem;" href="{{ route('admin.services.resumes.index') }}">
+                                        Resume Templates
+                                    </a>
+                                </li>
+                            @endif
+                            @if(hasPermission('job-links.view'))
+                                <li class="w-full mt-1">
+                                    <a class="py-2 mx-4 text-sm block {{ request()->is('*job-links*') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
+                                        style="padding-left: 3.5rem;" href="{{ route('admin.services.job-links.index') }}">
+                                        Job Links
+                                    </a>
+                                </li>
+                            @endif
+                            @if(hasPermission('questions.view'))
+                                <li class="w-full mt-1">
+                                    <a class="py-2 mx-4 text-sm block {{ request()->is('*questions*') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
+                                        style="padding-left: 3.5rem;" href="{{ route('admin.services.questions.index') }}">
+                                        Interview Q&A
+                                    </a>
+                                </li>
+                            @endif
                         </ul>
                     </li>
                 @endif
             @endif
 
             @if(auth()->user()->role_id !== 0)
-                @if(hasPermission('staff.view'))
+                @if(hasPermission('plans.view'))
                     @php $isPlansActive = request()->is('*plan*'); @endphp
                     <li class="w-full mt-0.5">
                         <a id="link-plans-hub"
@@ -275,6 +283,7 @@
                 $claimManagementRoute = auth()->user()->role_id === 0 ? route('customer.claim-management') : route('admin.claim-management');
             @endphp
             <li class="w-full mt-0.5">
+                @if(auth()->user()->role_id === 0 || hasPermission('claims.view') || hasPermission('purchased-plans.view'))
                 <a id="link-claim-group"
                     class="py-2.7 cursor-pointer text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isClaimParentActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
                     onclick="toggleSubmenu('claim-group')">
@@ -290,14 +299,16 @@
                 <ul id="submenu-claim-group"
                     class="{{ $isClaimParentActive ? 'flex' : 'hidden' }} flex-col pl-0 mt-1 mb-0 list-none transition-all duration-300">
                     
+                    @if(auth()->user()->role_id === 0 || hasPermission('purchased-plans.view'))
                     <li class="w-full mt-1">
                         <a class="py-2 mx-4 text-sm block {{ $isClaimManagementActive ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
                             style="padding-left: 3.5rem;" href="{{ $claimManagementRoute }}">
                             Mature Support Requests
                         </a>
                     </li>
+                    @endif
 
-                    @if(auth()->user()->role_id !== 0)
+                    @if(auth()->user()->role_id !== 0 && hasPermission('claims.view'))
                     <li class="w-full mt-1">
                         <a class="py-2 mx-4 text-sm block {{ $isClaimRequestsActive ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
                             style="padding-left: 3.5rem;" href="{{ route('admin.claim.requests') }}">
@@ -306,6 +317,7 @@
                     </li>
                     @endif
                 </ul>
+                @endif
             </li>
             @endif
 

@@ -11,10 +11,12 @@
                             <h6 class="mb-0">Resume Templates</h6>
                         </div>
                         <div class="flex-none w-1/2 max-w-full px-3 text-right">
-                            <button onclick="openCreateModal()"
-                                class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Template
-                            </button>
+                            @if(hasPermission('resumes.create'))
+                                <button onclick="openCreateModal()"
+                                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 active:opacity-85">
+                                    <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Template
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -95,6 +97,9 @@
 @push('scripts')
     <script>
         let table;
+        const canEdit = {{ hasPermission('resumes.edit') ? 'true' : 'false' }};
+        const canDelete = {{ hasPermission('resumes.delete') ? 'true' : 'false' }};
+        const canStatus = {{ hasPermission('resumes.status') ? 'true' : 'false' }};
         $(document).ready(function () {
             table = $('#templateTable').DataTable({
                 ajax: "{{ route('admin.services.resumes.index') }}",
@@ -127,9 +132,16 @@
                     {
                         data: 'status',
                         className: 'text-center align-middle bg-transparent border-b whitespace-nowrap shadow-none',
-                        render: function (data) {
+                        render: function (data, type, row) {
                             let badgeClass = data === 'active' ? 'bg-gradient-to-tl from-green-600 to-lime-400' : 'bg-gradient-to-tl from-slate-600 to-slate-300';
-                            return `<span class="text-xxs px-2.5 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white rounded-1.8 ${badgeClass}">${data}</span>`;
+                            let html = '<span ';
+                            if (canStatus) {
+                                html += 'onclick="toggleStatus(' + row.id + ')" class="cursor-pointer ';
+                            } else {
+                                html += 'class="';
+                            }
+                            html += `text-xxs px-2.5 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white rounded-1.8 ${badgeClass}">${data}</span>`;
+                            return html;
                         }
                     },
                     {
@@ -143,19 +155,31 @@
                         data: null,
                         className: 'text-center align-middle bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data) {
-                            return `
-                                <div class="flex items-center justify-center gap-1.5 whitespace-nowrap">
+                            let actions = `<div class="flex items-center justify-center gap-1.5 whitespace-nowrap">`;
+                            
+                            if (canStatus) {
+                                actions += `
                                     <button onclick="toggleStatus(${data.id})" class="mr-2 text-slate-400 hover:text-slate-700 transition-colors" title="Toggle Status">
                                         <i class="fas ${data.status === 'active' ? 'fa-toggle-on text-green-500' : 'fa-toggle-off'} fa-lg"></i>
-                                    </button>
+                                    </button>`;
+                            }
+
+                            if (canEdit) {
+                                actions += `
                                     <button onclick="editTemplate(${data.id})" class="btn-action-edit" title="Edit">
                                         <i class="fas fa-edit"></i>
-                                    </button>
+                                    </button>`;
+                            }
+
+                            if (canDelete) {
+                                actions += `
                                     <button onclick="deleteTemplate(${data.id})" class="btn-action-delete" title="Delete">
                                         <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            `;
+                                    </button>`;
+                            }
+
+                            actions += `</div>`;
+                            return actions;
                         }
                     }
                 ],

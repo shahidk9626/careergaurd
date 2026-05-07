@@ -11,7 +11,7 @@
                             <h6 class="mb-0 font-bold">Recruited Customers</h6>
                         </div>
                         <div class="flex-none w-1/2 max-w-full px-3 text-right">
-                            @if(hasPermission('staff.create'))
+                            @if(hasPermission('customers.create'))
                                 <a href="{{ route('admin.customers.create') }}"
                                     class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 active:opacity-85">
                                     <i class="fas fa-plus mr-1"></i> Add Customer
@@ -60,8 +60,9 @@
 @push('scripts')
     <script>
         let table;
-        const canEdit = {{ hasPermission('staff.edit') ? 'true' : 'false' }};
-        const canDelete = {{ hasPermission('staff.delete') ? 'true' : 'false' }};
+        const canEdit = {{ hasPermission('customers.edit') ? 'true' : 'false' }};
+        const canDelete = {{ hasPermission('customers.delete') ? 'true' : 'false' }};
+        const canVerify = {{ hasPermission('customers.verify') ? 'true' : 'false' }};
 
         $(document).ready(function () {
             table = $('#customerTable').DataTable({
@@ -126,12 +127,14 @@
 
                             // Verify Button
                             if (row.verified !== 'verified') {
-                                actions += `
-                                    <button onclick="confirmVerify(${row.id})" 
-                                            class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 hover:scale-110" 
-                                            title="Verify Customer">
-                                        <i class="fas fa-check-circle text-sm pointer-events-none"></i>
-                                    </button>`;
+                                if (canVerify) {
+                                    actions += `
+                                        <button onclick="confirmVerify(${row.id})" 
+                                                class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 hover:scale-110" 
+                                                title="Verify Customer">
+                                            <i class="fas fa-check-circle text-sm pointer-events-none"></i>
+                                        </button>`;
+                                }
                             } else {
                                 actions += `
                                     <span class="inline-block p-2 mb-0 text-slate-400 transition-all bg-gray-100 border-0 rounded-lg shadow-none leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25" 

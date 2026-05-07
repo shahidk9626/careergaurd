@@ -34,9 +34,9 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
     Route::middleware('permission:roles.edit')->get('/role-permissions/{id}', [App\Http\Controllers\RoleController::class, 'manageRolePermissions'])->name('role-permissions.manage');
 
     // User Permissions management
-    Route::middleware('permission:staff.view')->get('/user-permissions', [App\Http\Controllers\StaffController::class, 'userPermissionsIndex'])->name('user-permissions.index');
-    Route::middleware('permission:staff.edit')->get('/user-permissions/{id}', [App\Http\Controllers\StaffController::class, 'manageUserPermissions'])->name('user-permissions.manage');
-    Route::middleware('permission:staff.edit')->post('/user-permissions/{id}', [App\Http\Controllers\StaffController::class, 'saveUserPermissions'])->name('user-permissions.save');
+    Route::middleware('permission:user-permissions.view')->get('/user-permissions', [App\Http\Controllers\StaffController::class, 'userPermissionsIndex'])->name('user-permissions.index');
+    Route::middleware('permission:user-permissions.edit')->get('/user-permissions/{id}', [App\Http\Controllers\StaffController::class, 'manageUserPermissions'])->name('user-permissions.manage');
+    Route::middleware('permission:user-permissions.edit')->post('/user-permissions/{id}', [App\Http\Controllers\StaffController::class, 'saveUserPermissions'])->name('user-permissions.save');
 
     Route::middleware('permission:staff.view')->group(function () {
         Route::get('/staff', [App\Http\Controllers\StaffController::class, 'index'])->name('staff.index');
@@ -70,73 +70,85 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
 
     // Admin Customer Management
     Route::prefix('admin')->group(function () {
-        Route::middleware('permission:staff.view')->group(function () {
+        Route::middleware('permission:customers.view')->group(function () {
             Route::get('/customers', [App\Http\Controllers\CustomerController::class, 'index'])->name('admin.customers.index');
             Route::get('/customers/{id}/view', [App\Http\Controllers\CustomerController::class, 'show'])->name('admin.customers.show');
         });
-        Route::middleware('permission:staff.create')->group(function () {
+        Route::middleware('permission:customers.create')->group(function () {
             Route::get('/customers/create', [App\Http\Controllers\CustomerController::class, 'create'])->name('admin.customers.create');
             Route::post('/customers/store', [App\Http\Controllers\CustomerController::class, 'store'])->name('admin.customers.store');
         });
-        Route::middleware('permission:staff.edit')->group(function () {
+        Route::middleware('permission:customers.edit')->group(function () {
             Route::get('/customers/{id}/edit', [App\Http\Controllers\CustomerController::class, 'edit'])->name('admin.customers.edit');
             Route::match(['POST', 'PUT'], '/customers/{id}/update', [App\Http\Controllers\CustomerController::class, 'update'])->name('admin.customers.update');
             Route::post('/customers/{id}/verify', [App\Http\Controllers\CustomerController::class, 'verify'])->name('admin.customers.verify');
         });
-        Route::middleware('permission:staff.delete')->delete('/customers/delete/{id}', [App\Http\Controllers\CustomerController::class, 'destroy'])->name('admin.customers.destroy');
+        Route::middleware('permission:customers.delete')->delete('/customers/delete/{id}', [App\Http\Controllers\CustomerController::class, 'destroy'])->name('admin.customers.destroy');
 
         // Categories
-        Route::prefix('categories')->group(function () {
+        Route::prefix('categories')->middleware('permission:service-categories.view')->group(function () {
             Route::get('/', [ServiceCategoryController::class, 'index'])->name('admin.services.categories.index');
-            Route::post('/store', [ServiceCategoryController::class, 'store'])->name('admin.services.categories.store');
-            Route::get('/edit/{id}', [ServiceCategoryController::class, 'edit'])->name('admin.services.categories.edit');
-            Route::post('/update/{id}', [ServiceCategoryController::class, 'update'])->name('admin.services.categories.update');
-            Route::post('/status/{id}', [ServiceCategoryController::class, 'status'])->name('admin.services.categories.status');
-            Route::delete('/delete/{id}', [ServiceCategoryController::class, 'destroy'])->name('admin.services.categories.delete');
+            Route::post('/store', [ServiceCategoryController::class, 'store'])->middleware('permission:service-categories.create')->name('admin.services.categories.store');
+            Route::get('/edit/{id}', [ServiceCategoryController::class, 'edit'])->middleware('permission:service-categories.edit')->name('admin.services.categories.edit');
+            Route::post('/update/{id}', [ServiceCategoryController::class, 'update'])->middleware('permission:service-categories.edit')->name('admin.services.categories.update');
+            Route::post('/status/{id}', [ServiceCategoryController::class, 'status'])->middleware('permission:service-categories.status')->name('admin.services.categories.status');
+            Route::delete('/delete/{id}', [ServiceCategoryController::class, 'destroy'])->middleware('permission:service-categories.delete')->name('admin.services.categories.delete');
         });
 
         // Resume Templates
-        Route::get('/services/resumes', [App\Http\Controllers\ResumeTemplateController::class, 'index'])->name('admin.services.resumes.index');
-        Route::post('/services/resumes/store', [App\Http\Controllers\ResumeTemplateController::class, 'store'])->name('admin.services.resumes.store');
-        Route::get('/services/resumes/edit/{id}', [App\Http\Controllers\ResumeTemplateController::class, 'edit'])->name('admin.services.resumes.edit');
-        Route::post('/services/resumes/update/{id}', [App\Http\Controllers\ResumeTemplateController::class, 'update'])->name('admin.services.resumes.update');
-        Route::delete('/services/resumes/delete/{id}', [App\Http\Controllers\ResumeTemplateController::class, 'destroy'])->name('admin.services.resumes.destroy');
-        Route::post('/services/resumes/status/{id}', [App\Http\Controllers\ResumeTemplateController::class, 'toggleStatus'])->name('admin.services.resumes.status');
+        Route::prefix('services/resumes')->middleware('permission:resumes.view')->group(function () {
+            Route::get('/', [App\Http\Controllers\ResumeTemplateController::class, 'index'])->name('admin.services.resumes.index');
+            Route::post('/store', [App\Http\Controllers\ResumeTemplateController::class, 'store'])->middleware('permission:resumes.create')->name('admin.services.resumes.store');
+            Route::get('/edit/{id}', [App\Http\Controllers\ResumeTemplateController::class, 'edit'])->middleware('permission:resumes.edit')->name('admin.services.resumes.edit');
+            Route::post('/update/{id}', [App\Http\Controllers\ResumeTemplateController::class, 'update'])->middleware('permission:resumes.edit')->name('admin.services.resumes.update');
+            Route::delete('/delete/{id}', [App\Http\Controllers\ResumeTemplateController::class, 'destroy'])->middleware('permission:resumes.delete')->name('admin.services.resumes.destroy');
+            Route::post('/status/{id}', [App\Http\Controllers\ResumeTemplateController::class, 'toggleStatus'])->middleware('permission:resumes.status')->name('admin.services.resumes.status');
+        });
 
         // Job Links
-        Route::get('/services/job-links', [App\Http\Controllers\JobLinkController::class, 'index'])->name('admin.services.job-links.index');
-        Route::post('/services/job-links/store', [App\Http\Controllers\JobLinkController::class, 'store'])->name('admin.services.job-links.store');
-        Route::get('/services/job-links/edit/{id}', [App\Http\Controllers\JobLinkController::class, 'edit'])->name('admin.services.job-links.edit');
-        Route::post('/services/job-links/update/{id}', [App\Http\Controllers\JobLinkController::class, 'update'])->name('admin.services.job-links.update');
-        Route::delete('/services/job-links/delete/{id}', [App\Http\Controllers\JobLinkController::class, 'destroy'])->name('admin.services.job-links.destroy');
-        Route::post('/services/job-links/status/{id}', [App\Http\Controllers\JobLinkController::class, 'toggleStatus'])->name('admin.services.job-links.status');
+        Route::prefix('services/job-links')->middleware('permission:job-links.view')->group(function () {
+            Route::get('/', [App\Http\Controllers\JobLinkController::class, 'index'])->name('admin.services.job-links.index');
+            Route::post('/store', [App\Http\Controllers\JobLinkController::class, 'store'])->middleware('permission:job-links.create')->name('admin.services.job-links.store');
+            Route::get('/edit/{id}', [App\Http\Controllers\JobLinkController::class, 'edit'])->middleware('permission:job-links.edit')->name('admin.services.job-links.edit');
+            Route::post('/update/{id}', [App\Http\Controllers\JobLinkController::class, 'update'])->middleware('permission:job-links.edit')->name('admin.services.job-links.update');
+            Route::delete('/delete/{id}', [App\Http\Controllers\JobLinkController::class, 'destroy'])->middleware('permission:job-links.delete')->name('admin.services.job-links.destroy');
+            Route::post('/status/{id}', [App\Http\Controllers\JobLinkController::class, 'toggleStatus'])->middleware('permission:job-links.status')->name('admin.services.job-links.status');
+        });
 
         // Interview Questions
-        Route::get('/services/questions', [App\Http\Controllers\InterviewQuestionController::class, 'index'])->name('admin.services.questions.index');
-        Route::post('/services/questions/store', [App\Http\Controllers\InterviewQuestionController::class, 'store'])->name('admin.services.questions.store');
-        Route::get('/services/questions/edit/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'edit'])->name('admin.services.questions.edit');
-        Route::post('/services/questions/update/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'update'])->name('admin.services.questions.update');
-        Route::delete('/services/questions/delete/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'destroy'])->name('admin.services.questions.destroy');
-        Route::post('/services/questions/status/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'toggleStatus'])->name('admin.services.questions.status');
+        Route::prefix('services/questions')->middleware('permission:questions.view')->group(function () {
+            Route::get('/', [App\Http\Controllers\InterviewQuestionController::class, 'index'])->name('admin.services.questions.index');
+            Route::post('/store', [App\Http\Controllers\InterviewQuestionController::class, 'store'])->middleware('permission:questions.create')->name('admin.services.questions.store');
+            Route::get('/edit/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'edit'])->middleware('permission:questions.edit')->name('admin.services.questions.edit');
+            Route::post('/update/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'update'])->middleware('permission:questions.edit')->name('admin.services.questions.update');
+            Route::delete('/delete/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'destroy'])->middleware('permission:questions.delete')->name('admin.services.questions.destroy');
+            Route::post('/status/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'toggleStatus'])->middleware('permission:questions.status')->name('admin.services.questions.status');
+        });
 
         // Plans
-        Route::get('/plans', [App\Http\Controllers\PlanController::class, 'index'])->name('admin.plans.index');
-        Route::get('/plans/create', [App\Http\Controllers\PlanController::class, 'create'])->name('admin.plans.create');
-        Route::post('/plans/store', [App\Http\Controllers\PlanController::class, 'store'])->name('admin.plans.store');
-        Route::get('/plans/edit/{id}', [App\Http\Controllers\PlanController::class, 'edit'])->name('admin.plans.edit');
-        Route::post('/plans/update/{id}', [App\Http\Controllers\PlanController::class, 'update'])->name('admin.plans.update');
-        Route::delete('/plans/delete/{id}', [App\Http\Controllers\PlanController::class, 'destroy'])->name('admin.plans.destroy');
-        Route::post('/plans/status/{id}', [App\Http\Controllers\PlanController::class, 'toggleStatus'])->name('admin.plans.status');
-        Route::get('/plan-preview', [App\Http\Controllers\PlanController::class, 'preview'])->name('admin.plans.preview');
+        Route::prefix('plans')->middleware('permission:plans.view')->group(function () {
+            Route::get('/', [App\Http\Controllers\PlanController::class, 'index'])->name('admin.plans.index');
+            Route::get('/create', [App\Http\Controllers\PlanController::class, 'create'])->middleware('permission:plans.create')->name('admin.plans.create');
+            Route::post('/store', [App\Http\Controllers\PlanController::class, 'store'])->middleware('permission:plans.create')->name('admin.plans.store');
+            Route::get('/edit/{id}', [App\Http\Controllers\PlanController::class, 'edit'])->middleware('permission:plans.edit')->name('admin.plans.edit');
+            Route::post('/update/{id}', [App\Http\Controllers\PlanController::class, 'update'])->middleware('permission:plans.edit')->name('admin.plans.update');
+            Route::delete('/delete/{id}', [App\Http\Controllers\PlanController::class, 'destroy'])->middleware('permission:plans.delete')->name('admin.plans.destroy');
+            Route::post('/status/{id}', [App\Http\Controllers\PlanController::class, 'toggleStatus'])->middleware('permission:plans.status')->name('admin.plans.status');
+            Route::get('/plan-preview', [App\Http\Controllers\PlanController::class, 'preview'])->middleware('permission:plans.preview')->name('admin.plans.preview');
+        });
 
         // Purchased Plans & Claim Management
-        Route::get('/purchased-plans', [App\Http\Controllers\ClaimController::class, 'purchasedPlans'])->name('admin.purchased-plans');
-        Route::get('/purchased-plan/{plan_unique_id}', [App\Http\Controllers\ClaimController::class, 'viewPlan'])->name('admin.purchased-plan.view');
-        Route::get('/claim-management', [App\Http\Controllers\ClaimController::class, 'claimManagement'])->name('admin.claim-management');
+        Route::middleware('permission:purchased-plans.view')->group(function () {
+            Route::get('/purchased-plans', [App\Http\Controllers\ClaimController::class, 'purchasedPlans'])->name('admin.purchased-plans');
+            Route::get('/purchased-plan/{plan_unique_id}', [App\Http\Controllers\ClaimController::class, 'viewPlan'])->name('admin.purchased-plan.view');
+            Route::get('/claim-management', [App\Http\Controllers\ClaimController::class, 'claimManagement'])->name('admin.claim-management');
+        });
         
         // Claim Requests
-        Route::get('/claim-requests', [App\Http\Controllers\ClaimController::class, 'adminClaimRequests'])->name('admin.claim.requests');
-        Route::post('/claim-requests/update-status', [App\Http\Controllers\ClaimController::class, 'updateClaimStatus'])->name('admin.claim.update-status');
+        Route::middleware('permission:claims.view')->group(function () {
+            Route::get('/claim-requests', [App\Http\Controllers\ClaimController::class, 'adminClaimRequests'])->name('admin.claim.requests');
+            Route::post('/claim-requests/update-status', [App\Http\Controllers\ClaimController::class, 'updateClaimStatus'])->middleware('permission:claims.approve')->name('admin.claim.update-status');
+        });
     });
     // Customer-specific routes
     Route::middleware(['auth', 'is_customer'])->prefix('customer')->group(function () {

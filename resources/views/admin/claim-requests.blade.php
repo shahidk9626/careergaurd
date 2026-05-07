@@ -56,19 +56,25 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-center align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none">
-                                        <button onclick="viewDocuments({{ json_encode($claim) }})"
-                                            class="inline-block px-3 py-2 mr-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102">
-                                            View
-                                        </button>
+                                        @if(hasPermission('claims.view_detail'))
+                                            <button onclick="viewDocuments({{ json_encode($claim) }})"
+                                                class="inline-block px-3 py-2 mr-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102">
+                                                View
+                                            </button>
+                                        @endif
                                         @if($claim->status === 'pending')
-                                            <button onclick="updateStatus({{ $claim->id }}, 'approved')"
-                                                class="inline-block px-3 py-2 mr-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 hover:scale-102">
-                                                Approve
-                                            </button>
-                                            <button onclick="updateStatus({{ $claim->id }}, 'rejected')"
-                                                class="inline-block px-3 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-102">
-                                                Reject
-                                            </button>
+                                            @if(hasPermission('claims.approve'))
+                                                <button onclick="updateStatus({{ $claim->id }}, 'approved')"
+                                                    class="inline-block px-3 py-2 mr-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 hover:scale-102">
+                                                    Approve
+                                                </button>
+                                            @endif
+                                            @if(hasPermission('claims.reject'))
+                                                <button onclick="updateStatus({{ $claim->id }}, 'rejected')"
+                                                    class="inline-block px-3 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-102">
+                                                    Reject
+                                                </button>
+                                            @endif
                                         @endif
                                     </td>
                                 </tr>

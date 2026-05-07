@@ -10,10 +10,12 @@
                             <h6 class="mb-0">Service Categories</h6>
                         </div>
                         <div class="w-full max-w-full px-3 text-right lg:w-1/2 lg:flex-none">
-                            <button onclick="openCreateModal()"
-                                class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85">
-                                <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Category
-                            </button>
+                            @if(hasPermission('service-categories.create'))
+                                <button onclick="openCreateModal()"
+                                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85">
+                                    <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Category
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -77,6 +79,9 @@
 @push('scripts')
     <script>
         let table;
+        const canEdit = {{ hasPermission('service-categories.edit') ? 'true' : 'false' }};
+        const canDelete = {{ hasPermission('service-categories.delete') ? 'true' : 'false' }};
+        const canStatus = {{ hasPermission('service-categories.status') ? 'true' : 'false' }};
         $(document).ready(function () {
             table = $('#categoriesTable').DataTable({
                 processing: true,
@@ -106,28 +111,42 @@
                         className: 'px-6 py-3 align-middle text-center text-sm bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data, type, row) {
                             const badgeColor = data === 'active' ? 'bg-gradient-to-tl from-green-600 to-lime-400' : 'bg-gradient-to-tl from-slate-600 to-slate-300';
-                            return '<span onclick="toggleStatus(' + row.id + ')" class="cursor-pointer text-xxs px-2.5 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white rounded-1.8 ' + badgeColor + '">' + data + '</span>';
+                            let html = '<span ';
+                            if (canStatus) {
+                                html += 'onclick="toggleStatus(' + row.id + ')" class="cursor-pointer ';
+                            } else {
+                                html += 'class="';
+                            }
+                            html += 'text-xxs px-2.5 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white rounded-1.8 ' + badgeColor + '">' + data + '</span>';
+                            return html;
                         }
                     },
                     {
                         data: 'id',
                         className: 'px-6 py-3 align-middle text-center bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data, type, row) {
-                            return `
-                                <div class="flex items-center justify-center gap-3">
+                            let actions = `<div class="flex items-center justify-center gap-3">`;
+                            
+                            if (canEdit) {
+                                actions += `
                                     <button type="button" 
                                             class="edit-category-btn inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-110 mx-2" 
                                             title="Edit">
                                         <i class="fas fa-edit text-sm pointer-events-none"></i>
-                                    </button>
+                                    </button>`;
+                            }
 
+                            if (canDelete) {
+                                actions += `
                                     <button type="button" onclick="deleteCategory(${data})" 
                                             class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-110 mx-2"
                                             title="Delete">
                                         <i class="fas fa-trash text-sm pointer-events-none"></i>
-                                    </button>
-                                </div>
-                            `;
+                                    </button>`;
+                            }
+
+                            actions += `</div>`;
+                            return actions;
                         }
                     }
                 ],
