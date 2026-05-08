@@ -361,7 +361,6 @@
 @endsection
 
 @push('scripts')
-
 <!-- jQuery Validation Script -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -498,7 +497,6 @@ $(document).ready(function() {
     $('input[name="account_number"], input[name="pan_number"], input[name="aadhar_number"]').on('blur', validateStep4);
 });
 </script>
-
     <script>
         $(document).ready(function () {
             let currentStep = 1;
