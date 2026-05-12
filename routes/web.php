@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceCategoryController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -14,7 +14,9 @@ Route::get('/customer/verify/{id}/{hash}', [VerifyEmailController::class, 'verif
     ->middleware(['signed', 'throttle:6,1'])
     ->name('verification.verify.custom');
 
-Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->middleware(['auth', 'customer.profile'])->name('dashboard');
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
+    ->middleware(['auth', 'customer.profile'])
+    ->name('dashboard');
 
 Route::middleware(['auth', 'customer.profile'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -38,6 +40,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
     Route::middleware('permission:user-permissions.edit')->get('/user-permissions/{id}', [App\Http\Controllers\StaffController::class, 'manageUserPermissions'])->name('user-permissions.manage');
     Route::middleware('permission:user-permissions.edit')->post('/user-permissions/{id}', [App\Http\Controllers\StaffController::class, 'saveUserPermissions'])->name('user-permissions.save');
 
+    // Staff Management
     Route::middleware('permission:staff.view')->group(function () {
         Route::get('/staff', [App\Http\Controllers\StaffController::class, 'index'])->name('staff.index');
         Route::get('/staff/{id}/view', [App\Http\Controllers\StaffController::class, 'show'])->name('staff.show');
@@ -150,6 +153,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
             Route::post('/claim-requests/update-status', [App\Http\Controllers\ClaimController::class, 'updateClaimStatus'])->middleware('permission:claims.approve')->name('admin.claim.update-status');
         });
     });
+
     // Customer-specific routes
     Route::middleware(['auth', 'is_customer'])->prefix('customer')->group(function () {
         Route::get('/plan-preview', [App\Http\Controllers\PlanController::class, 'preview'])->name('customer.plan-preview');
@@ -177,4 +181,5 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
     });
 });
 
+// This explicitly loads your authentication logic (Login, Register, and your newly added Forgot/Reset Password endpoints)
 require __DIR__ . '/auth.php';
