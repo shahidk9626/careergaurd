@@ -5,25 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Transaction extends Model
+class PaymentFailure extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
         'plan_id',
-        'plan_unique_id',
-        'amount',
-        'payment_status',
-        'payment_method',
-        'transaction_reference',
-        'cashfree_order_id',
-        'cashfree_payment_id',
+        'order_id',
+        'error_message',
         'gateway_response',
-    ];
-
-    protected $casts = [
-        'gateway_response' => 'array',
+        'status',
     ];
 
     public function user()

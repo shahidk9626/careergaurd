@@ -186,65 +186,102 @@
     @endif
 
     @if(auth()->user()->role_id == 0)
-        <script>
-            function confirmPurchase(planId, planName) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Are you sure you want to purchase this membership?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#cb0c9f',
-                    cancelButtonColor: '#8392ab',
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        purchasePlan(planId);
-                    }
-                })
-            }
-
-            function purchasePlan(planId) {
-                fetch("{{ route('customer.plan.purchase') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ plan_id: planId })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({
-                                title: 'Success!',
-                                text: data.success,
-                                icon: 'success',
-                                confirmButtonColor: '#cb0c9f',
-                            }).then(() => {
-                                if (data.redirect) {
-                                    window.location.href = data.redirect;
-                                }
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: data.error || 'Something went wrong',
-                                icon: 'error',
-                                confirmButtonColor: '#cb0c9f',
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
+        @push('scripts')
+            <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    @if(session('success'))
+                        Swal.fire({
+                            title: 'Success!',
+                            text: "{{ session('success') }}",
+                            icon: 'success',
+                            confirmButtonColor: '#cb0c9f',
+                        });
+                    @endif
+                    @if(session('error'))
                         Swal.fire({
                             title: 'Error!',
-                            text: 'Failed to process purchase.',
+                            text: "{{ session('error') }}",
                             icon: 'error',
                             confirmButtonColor: '#cb0c9f',
                         });
+                    @endif
+                });
+
+                function confirmPurchase(planId, planName) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'Are you sure you want to purchase this membership?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#cb0c9f',
+                        cancelButtonColor: '#8392ab',
+                        confirmButtonText: 'Confirm',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            purchasePlan(planId);
+                        }
+                    })
+                }
+
+                function purchasePlan(planId) {
+                    Swal.fire({
+                        title: 'Initiating Payment...',
+                        text: 'Please wait while we redirect you to the payment gateway.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
                     });
-            }
-        </script>
+
+                    fetch("{{ route('customer.plan.purchase') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ plan_id: planId })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.payment_session_id) {
+                                const cashfree = Cashfree({
+                                    mode: data.environment === 'sandbox' ? 'sandbox' : 'production'
+                                });
+                                
+                                cashfree.checkout({
+                                    paymentSessionId: data.payment_session_id
+                                }).then((result) => {
+                                    console.log("Cashfree checkout page loaded");
+                                });
+                            } else if (data.error) {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: data.error,
+                                    icon: 'error',
+                                    confirmButtonColor: '#cb0c9f',
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Something went wrong',
+                                    icon: 'error',
+                                    confirmButtonColor: '#cb0c9f',
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Failed to process purchase.',
+                                icon: 'error',
+                                confirmButtonColor: '#cb0c9f',
+                            });
+                        });
+                }
+            </script>
+        @endpush
     @endif
 @endsection

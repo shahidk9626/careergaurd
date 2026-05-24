@@ -67,6 +67,12 @@
                                         Role Permissions
                                     </a>
                                 </li>
+                                 <li class="w-full mt-1">
+                                    <a class="py-2 mx-4 text-sm block {{ request()->is('*role*') ? 'font-bold text-slate-700' : 'text-slate-500 hover:text-slate-700' }}"
+                                        style="padding-left: 3.5rem;" href="{{ url('roles') }}">
+                                        Role
+                                    </a>
+                                </li>
                             @endif
                             @if(hasPermission('user-permissions.view'))
                                 <li class="w-full mt-1">

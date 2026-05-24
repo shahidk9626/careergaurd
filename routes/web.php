@@ -14,6 +14,9 @@ Route::get('/customer/verify/{id}/{hash}', [VerifyEmailController::class, 'verif
     ->middleware(['signed', 'throttle:6,1'])
     ->name('verification.verify.custom');
 
+// Public Cashfree Webhook Route
+Route::post('/customer/payment/webhook', [App\Http\Controllers\PlanController::class, 'webhook'])->name('customer.payment.webhook');
+
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->middleware(['auth', 'customer.profile'])->name('dashboard');
 
 Route::middleware(['auth', 'customer.profile'])->group(function () {
@@ -155,6 +158,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         Route::get('/plan-preview', [App\Http\Controllers\PlanController::class, 'preview'])->name('customer.plan-preview');
         Route::get('/plan/{slug}', [App\Http\Controllers\PlanController::class, 'show'])->name('customer.plan.show');
         Route::post('/plan/purchase', [App\Http\Controllers\PlanController::class, 'purchase'])->name('customer.plan.purchase');
+        Route::get('/payment/callback', [App\Http\Controllers\PlanController::class, 'callback'])->name('customer.payment.callback');
         
         // Profile check logic
         Route::get('/profile-redirect', function () {

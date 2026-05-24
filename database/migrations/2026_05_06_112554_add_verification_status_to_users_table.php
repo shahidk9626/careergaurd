@@ -10,9 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('verification_status')->default('pending')->after('profile_completed'); // pending, verified, rejected
-        });
+        if (!Schema::hasColumn('users', 'verification_status')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('verification_status')->default('pending')->after('profile_completed'); // pending, verified, rejected
+            });
+        }
     }
 
     /**

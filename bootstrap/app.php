@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'customer.profile' => \App\Http\Middleware\EnsureCustomerProfileIsComplete::class,
             'is_customer' => \App\Http\Middleware\EnsureIsCustomer::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            '/customer/payment/webhook',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
