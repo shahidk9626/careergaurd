@@ -65,11 +65,15 @@ class ClaimController extends Controller
         }
 
         // Maturity Condition: current_date >= purchase_date + claim_duration
-        // maturity_date = created_at + plan.claim_duration_days
+        // or prematurity_available is enabled, or the plan has already been claimed/requested
         $plans = $query->get()->filter(function ($purchasedPlan) {
 
             if (!$purchasedPlan->plan) {
                 return false;
+            }
+
+            if ($purchasedPlan->plan->prematurity_available || $purchasedPlan->claim) {
+                return true;
             }
 
             $purchaseDate = Carbon::parse($purchasedPlan->start_date);
@@ -89,7 +93,7 @@ class ClaimController extends Controller
     public function showClaimForm($plan_unique_id)
     {
         $user = auth()->user();
-        $purchasedPlan = PurchasedPlan::with('plan')
+        $purchasedPlan = PurchasedPlan::with(['plan', 'claim'])
             ->where('plan_unique_id', $plan_unique_id)
             ->firstOrFail();
 
@@ -103,8 +107,12 @@ class ClaimController extends Controller
         $claimDuration = $purchasedPlan->plan->claim_duration_days ?? 0;
         $maturityDate = $purchaseDate->copy()->addDays($claimDuration);
 
-        if (now()->lessThan($maturityDate)) {
+        if (!$purchasedPlan->plan->prematurity_available && now()->lessThan($maturityDate)) {
             return redirect()->back()->with('error', 'This membership has not matured yet.');
+        }
+
+        if ($purchasedPlan->claim) {
+            return redirect()->back()->with('error', 'A support request has already been submitted for this membership.');
         }
 
         if ($purchasedPlan->status === 'claimed') {
@@ -129,12 +137,25 @@ class ClaimController extends Controller
             'remarks' => 'nullable|string',
         ]);
 
-        $purchasedPlan = PurchasedPlan::where('plan_unique_id', $request->plan_unique_id)->firstOrFail();
+        $purchasedPlan = PurchasedPlan::with(['plan', 'claim'])->where('plan_unique_id', $request->plan_unique_id)->firstOrFail();
         $user = auth()->user();
 
         // Security check
         if ($purchasedPlan->user_id !== $user->id) {
             abort(403);
+        }
+
+        // Maturity check for submission
+        $purchaseDate = Carbon::parse($purchasedPlan->start_date);
+        $claimDuration = $purchasedPlan->plan->claim_duration_days ?? 0;
+        $maturityDate = $purchaseDate->copy()->addDays($claimDuration);
+
+        if (!$purchasedPlan->plan->prematurity_available && now()->lessThan($maturityDate)) {
+            return redirect()->back()->with('error', 'This membership has not matured yet.');
+        }
+
+        if ($purchasedPlan->claim) {
+            return redirect()->back()->with('error', 'A support request has already been submitted for this membership.');
         }
 
         // File uploads

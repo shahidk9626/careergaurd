@@ -113,29 +113,36 @@
 
     <!-- Admin Status Update Modal -->
     @if(hasPermission('request-callback.status'))
-        <x-modal id="updateStatusModal" title="Update Callback Status">
-            <form id="updateStatusForm" action="{{ route('admin.request-callback.update-status') }}" method="POST">
-                @csrf
-                <input type="hidden" name="request_id" id="status_request_id" value="">
-                <div class="mb-4">
-                    <label for="status_select" class="block mb-2 text-sm font-bold text-slate-700">Select Status</label>
-                    <select name="status" id="status_select" class="w-full px-3 py-2 text-sm text-slate-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-fuchsia-300 focus:shadow-soft-primary-outline">
-                        <option value="pending">Pending</option>
-                        <option value="contacted">Contacted</option>
-                        <option value="resolved">Resolved</option>
-                        <option value="closed">Closed</option>
-                    </select>
-                </div>
-                <div class="flex justify-end pt-3 border-t border-gray-100">
-                    <button type="button" onclick="window.closeGlobalModal('updateStatusModal')" class="inline-block px-6 py-3 mr-2 font-bold text-center text-slate-700 uppercase align-middle transition-all bg-transparent border border-solid rounded-lg cursor-pointer leading-pro text-xs ease-soft-in tracking-tight-soft border-slate-300 hover:scale-102">
-                        Cancel
-                    </button>
-                    <button type="submit" class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-x-25 bg-150 tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102">
-                        Save Changes
-                    </button>
-                </div>
-            </form>
-        </x-modal>
+        <div id="updateStatusModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+            <div style="background-color: #ffffff; width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 90vh; margin: 1rem;">
+                <form id="updateStatusForm" action="{{ route('admin.request-callback.update-status') }}" method="POST" style="display: flex; flex-direction: column; height: 100%; margin: 0;">
+                    @csrf
+                    <input type="hidden" name="request_id" id="status_request_id" value="">
+                    
+                    <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                        <h6 style="margin: 0; font-weight: 700; color: #334155; font-size: 1.125rem;">Update Callback Status</h6>
+                        <button type="button" onclick="closeStatusModal()" style="background: none; border: none; font-size: 1.5rem; line-height: 1; color: #94a3b8; cursor: pointer; padding: 0;">&times;</button>
+                    </div>
+
+                    <div style="padding: 1.5rem; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Select Status <span style="color: #ef4444;">*</span></label>
+                            <select name="status" id="status_select" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none; background-color: #fff; cursor: pointer;">
+                                <option value="pending">Pending</option>
+                                <option value="contacted">Contacted</option>
+                                <option value="resolved">Resolved</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background-color: #f8fafc; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                        <button type="button" onclick="closeStatusModal()" style="padding: 0.625rem 1.25rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569; background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; cursor: pointer;">Cancel</button>
+                        <button type="submit" style="padding: 0.625rem 1.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: white; background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%); border: none; border-radius: 0.5rem; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     @endif
 @endsection
 
@@ -156,7 +163,7 @@
                         type: 'POST',
                         data: $(this).serialize(),
                         success: function(response) {
-                            window.closeGlobalModal('updateStatusModal');
+                            closeStatusModal();
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success!',
@@ -234,10 +241,25 @@
             });
         }
 
+        function openStatusModalLogic() {
+            let modal = document.getElementById('updateStatusModal');
+            if (modal) {
+                document.body.appendChild(modal); // Escapes parent layout traps
+                modal.style.display = 'flex';     // Triggers centering
+            }
+        }
+
+        function closeStatusModal() {
+            let modal = document.getElementById('updateStatusModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
         function openStatusModal(requestId, currentStatus) {
             document.getElementById('status_request_id').value = requestId;
             document.getElementById('status_select').value = currentStatus;
-            window.openGlobalModal('updateStatusModal');
+            openStatusModalLogic();
         }
     </script>
 @endpush

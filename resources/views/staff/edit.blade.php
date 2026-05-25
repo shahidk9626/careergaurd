@@ -443,6 +443,7 @@
 
             // Initialize Validator
             let validator = $("#staffForm").validate({
+                ignore: [],
                 rules: {
                     role_id: { required: true },
                     first_name: { required: true, lettersnspaces: true, minlength: 3 },

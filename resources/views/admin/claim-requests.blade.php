@@ -178,11 +178,26 @@
             });
         }
 
+        function openApprovalModalLogic() {
+            let modal = document.getElementById('claimApprovalModal');
+            if (modal) {
+                document.body.appendChild(modal); // Escapes parent layout traps
+                modal.style.display = 'flex';     // Triggers centering
+            }
+        }
+
+        function closeApprovalModal() {
+            let modal = document.getElementById('claimApprovalModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
         function openApprovalModal(claimId) {
             document.getElementById('approval_claim_id').value = claimId;
             document.getElementById('transaction_screenshot').value = '';
             document.getElementById('approval_remarks').value = '';
-            window.openGlobalModal('claimApprovalModal');
+            openApprovalModalLogic();
         }
 
         $(document).ready(function() {
@@ -208,7 +223,7 @@
                     processData: false,
                     contentType: false,
                     success: function (response) {
-                        window.closeGlobalModal('claimApprovalModal');
+                        closeApprovalModal();
                         Swal.fire({
                             icon: 'success',
                             title: 'Success!',
@@ -233,36 +248,37 @@
 
     <!-- Claim Approval Modal -->
     @if(hasPermission('claims.approve') || hasPermission('support.approve'))
-        <x-modal id="claimApprovalModal" title="Approve Support Request">
-            <form id="claimApprovalForm" action="{{ route('admin.claim.update-status') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <input type="hidden" name="claim_id" id="approval_claim_id" value="">
-                <input type="hidden" name="status" value="approved">
+        <div id="claimApprovalModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+            <div style="background-color: #ffffff; width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 90vh; margin: 1rem;">
+                <form id="claimApprovalForm" action="{{ route('admin.claim.update-status') }}" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; height: 100%; margin: 0;">
+                    @csrf
+                    <input type="hidden" name="claim_id" id="approval_claim_id" value="">
+                    <input type="hidden" name="status" value="approved">
+                    
+                    <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                        <h6 style="margin: 0; font-weight: 700; color: #334155; font-size: 1.125rem;">Approve Support Request</h6>
+                        <button type="button" onclick="closeApprovalModal()" style="background: none; border: none; font-size: 1.5rem; line-height: 1; color: #94a3b8; cursor: pointer; padding: 0;">&times;</button>
+                    </div>
 
-                <div class="mb-4">
-                    <label for="transaction_screenshot" class="block mb-2 text-sm font-bold text-slate-700">Transaction Screenshot / Payment Proof</label>
-                    <input type="file" name="transaction_screenshot" id="transaction_screenshot" required
-                        accept="image/png, image/jpeg, image/jpg, application/pdf"
-                        class="w-full px-3 py-2 text-sm text-slate-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-fuchsia-300 focus:shadow-soft-primary-outline">
-                    <p class="text-xs text-slate-400 mt-1">Accepted types: JPG, JPEG, PNG, PDF (Max: 5MB)</p>
-                </div>
+                    <div style="padding: 1.5rem; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Transaction Screenshot / Payment Proof <span style="color: #ef4444;">*</span></label>
+                            <input type="file" name="transaction_screenshot" id="transaction_screenshot" required accept="image/png, image/jpeg, image/jpg, application/pdf" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;">
+                            <p style="margin-top: 0.25rem; font-size: 0.75rem; color: #94a3b8;">Accepted types: JPG, JPEG, PNG, PDF (Max: 5MB)</p>
+                        </div>
 
-                <div class="mb-4">
-                    <label for="approval_remarks" class="block mb-2 text-sm font-bold text-slate-700">Remarks (Optional)</label>
-                    <textarea name="remarks" id="approval_remarks" rows="3"
-                        class="w-full px-3 py-2 text-sm text-slate-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-fuchsia-300 focus:shadow-soft-primary-outline"
-                        placeholder="Any payment references or notes..."></textarea>
-                </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Remarks (Optional)</label>
+                            <textarea name="remarks" id="approval_remarks" rows="3" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none; resize: vertical;" placeholder="Any payment references or notes..."></textarea>
+                        </div>
+                    </div>
 
-                <div class="flex justify-end pt-3 border-t border-gray-100">
-                    <button type="button" onclick="window.closeGlobalModal('claimApprovalModal')" class="inline-block px-6 py-3 mr-2 font-bold text-center text-slate-700 uppercase align-middle transition-all bg-transparent border border-solid rounded-lg cursor-pointer leading-pro text-xs ease-soft-in tracking-tight-soft border-slate-300 hover:scale-102">
-                        Cancel
-                    </button>
-                    <button type="submit" class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-x-25 bg-150 tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102">
-                        Submit & Approve
-                    </button>
-                </div>
-            </form>
-        </x-modal>
+                    <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background-color: #f8fafc; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                        <button type="button" onclick="closeApprovalModal()" style="padding: 0.625rem 1.25rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569; background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; cursor: pointer;">Cancel</button>
+                        <button type="submit" style="padding: 0.625rem 1.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: white; background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%); border: none; border-radius: 0.5rem; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Submit & Approve</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     @endif
 @endpush

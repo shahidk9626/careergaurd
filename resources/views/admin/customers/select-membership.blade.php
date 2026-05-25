@@ -118,7 +118,7 @@
                                         class="flex items-center justify-center w-5 h-5 mr-3 rounded-lg bg-cyan-100 text-center flex-none">
                                         <i class="fas fa-wallet text-cyan-600 text-xs"></i>
                                     </div>
-                                    <span class="text-sm text-slate-600">One-Time Amount: <b>₹{{ number_format($plan->one_time_payment_amount, 0) }}</b></span>
+                                    <span class="text-sm text-slate-600">Discount if One-Time Payment: <b>₹{{ number_format($plan->one_time_payment_amount, 0) }}</b></span>
                                 </li>
                             @endif
                         </ul>

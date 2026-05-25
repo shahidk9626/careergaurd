@@ -436,6 +436,7 @@
 
             // Initialize Validator
             let validator = $("#customerForm").validate({
+                ignore: [],
                 rules: {
                     name: { required: true, lettersnspaces: true, minlength: 3 },
                     father_name: { required: true, lettersnspaces: true, minlength: 3 },

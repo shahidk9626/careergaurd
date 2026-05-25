@@ -379,6 +379,7 @@
 
             // Initialize Validator
             let validator = $("#adminCustomerForm").validate({
+                ignore: [],
                 rules: {
                     name: { required: true, lettersnspaces: true, minlength: 3 },
                     email: { required: true, email: true },
