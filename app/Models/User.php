@@ -80,4 +80,20 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        \Illuminate\Support\Facades\Mail::to($this->email)->send(new \App\Mail\ResetPasswordMail($this, $token));
+    }
+
+    public function profileUpdateRequests()
+    {
+        return $this->hasMany(CustomerUpdateRequest::class, 'customer_id');
+    }
 }

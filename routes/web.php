@@ -17,6 +17,10 @@ Route::get('/customer/verify/{id}/{hash}', [VerifyEmailController::class, 'verif
 // Public Cashfree Webhook Route
 Route::post('/customer/payment/webhook', [App\Http\Controllers\PlanController::class, 'webhook'])->name('customer.payment.webhook');
 
+// Public Referral Payment Routes
+Route::get('/customers/pay-referral/{order_id}', [App\Http\Controllers\StaffReferralController::class, 'payReferral'])->name('pay-referral');
+Route::get('/customers/payment-success/{order_id}', [App\Http\Controllers\StaffReferralController::class, 'paymentSuccess'])->name('payment-success');
+
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->middleware(['auth', 'customer.profile'])->name('dashboard');
 
 Route::middleware(['auth', 'customer.profile'])->group(function () {
@@ -88,6 +92,11 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         });
         Route::middleware('permission:customers.delete')->delete('/customers/delete/{id}', [App\Http\Controllers\CustomerController::class, 'destroy'])->name('admin.customers.destroy');
 
+        Route::middleware('permission:customers.purchase_membership')->group(function () {
+            Route::get('/customers/{id}/purchase-membership', [App\Http\Controllers\StaffReferralController::class, 'selectMembership'])->name('admin.customers.purchase-membership');
+            Route::post('/customers/{id}/purchase-membership', [App\Http\Controllers\StaffReferralController::class, 'generatePaymentLink'])->name('admin.customers.generate-link');
+        });
+
         // Categories
         Route::prefix('categories')->middleware('permission:service-categories.view')->group(function () {
             Route::get('/', [ServiceCategoryController::class, 'index'])->name('admin.services.categories.index');
@@ -144,6 +153,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         Route::middleware('permission:purchased-plans.view')->group(function () {
             Route::get('/purchased-plans', [App\Http\Controllers\ClaimController::class, 'purchasedPlans'])->name('admin.purchased-plans');
             Route::get('/purchased-plan/{plan_unique_id}', [App\Http\Controllers\ClaimController::class, 'viewPlan'])->name('admin.purchased-plan.view');
+            Route::get('/purchased-plan/{plan_unique_id}/pdf', [App\Http\Controllers\ClaimController::class, 'downloadPDF'])->name('admin.purchased-plan.pdf');
             Route::get('/claim-management', [App\Http\Controllers\ClaimController::class, 'claimManagement'])->name('admin.claim-management');
         });
         
@@ -151,6 +161,28 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         Route::middleware('permission:claims.view')->group(function () {
             Route::get('/claim-requests', [App\Http\Controllers\ClaimController::class, 'adminClaimRequests'])->name('admin.claim.requests');
             Route::post('/claim-requests/update-status', [App\Http\Controllers\ClaimController::class, 'updateClaimStatus'])->middleware('permission:claims.approve')->name('admin.claim.update-status');
+        });
+
+        // Callback Requests
+        Route::middleware('permission:request-callback.view')->group(function () {
+            Route::get('/request-callback', [App\Http\Controllers\CallbackRequestController::class, 'adminIndex'])->name('admin.request-callback.index');
+            Route::post('/request-callback/update-status', [App\Http\Controllers\CallbackRequestController::class, 'updateStatus'])->middleware('permission:request-callback.status')->name('admin.request-callback.update-status');
+        });
+
+        // Profile Update Requests
+        Route::middleware('permission:profile-update-requests.view')->group(function () {
+            Route::get('/profile-update-requests', [App\Http\Controllers\ProfileUpdateRequestController::class, 'index'])->name('admin.profile-update-requests.index');
+            Route::get('/profile-update-requests/{id}', [App\Http\Controllers\ProfileUpdateRequestController::class, 'show'])->name('admin.profile-update-requests.show');
+        });
+        Route::middleware('permission:profile-update-requests.approve')->post('/profile-update-requests/{id}/approve', [App\Http\Controllers\ProfileUpdateRequestController::class, 'approve'])->name('admin.profile-update-requests.approve');
+        Route::middleware('permission:profile-update-requests.reject')->post('/profile-update-requests/{id}/reject', [App\Http\Controllers\ProfileUpdateRequestController::class, 'reject'])->name('admin.profile-update-requests.reject');
+
+        // Staff Commission Management
+        Route::middleware('permission:staff-commission.view')->group(function () {
+            Route::get('/staff-commission', [App\Http\Controllers\StaffCommissionController::class, 'index'])->name('admin.staff-commission.index');
+        });
+        Route::middleware('permission:staff-commission.status')->group(function () {
+            Route::post('/staff-commission/{id}/status', [App\Http\Controllers\StaffCommissionController::class, 'updateStatus'])->name('admin.staff-commission.status');
         });
     });
     // Customer-specific routes
@@ -175,9 +207,12 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
 
         Route::get('/purchased-plans', [App\Http\Controllers\ClaimController::class, 'purchasedPlans'])->name('customer.purchased-plans');
         Route::get('/purchased-plan/{plan_unique_id}', [App\Http\Controllers\ClaimController::class, 'viewPlan'])->name('customer.purchased-plan.view');
+        Route::get('/purchased-plan/{plan_unique_id}/pdf', [App\Http\Controllers\ClaimController::class, 'downloadPDF'])->name('customer.purchased-plan.pdf');
         Route::get('/claim-management', [App\Http\Controllers\ClaimController::class, 'claimManagement'])->name('customer.claim-management');
         Route::get('/claim/{plan_unique_id}', [App\Http\Controllers\ClaimController::class, 'showClaimForm'])->name('customer.claim.form');
         Route::post('/claim/submit', [App\Http\Controllers\ClaimController::class, 'submitClaim'])->name('customer.claim.submit');
+
+        Route::post('/callback-request', [App\Http\Controllers\CallbackRequestController::class, 'store'])->name('customer.callback-request.store');
     });
 });
 

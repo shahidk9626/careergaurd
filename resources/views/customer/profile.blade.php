@@ -25,6 +25,11 @@
                         </p>
                     </div>
                 </div>
+                <div class="flex-none w-auto max-w-full px-3 my-auto sm:ml-auto">
+                    <button type="button" onclick="openCallbackModal('direct')" class="inline-block px-4 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-soft-md cursor-pointer leading-pro ease-soft-in bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85">
+                        Request Callback
+                    </button>
+                </div>
                 <div class="w-full max-w-full px-3 mx-auto mt-4 sm:my-auto sm:mr-0 md:w-1/2 md:flex-none lg:w-4/12">
                     <div class="relative right-0">
                         <ul class="relative flex flex-wrap p-1 list-none bg-transparent rounded-xl" nav-pills role="tablist">
@@ -66,6 +71,17 @@
     @if(session('error'))
         <div class="relative w-full p-4 mb-4 text-white rounded-lg bg-gradient-to-tl from-red-600 to-orange-400">
             {{ session('error') }}
+        </div>
+    @endif
+    @php
+        $pendingProfileRequest = \App\Models\CustomerUpdateRequest::where('customer_id', $user->id)
+            ->where('status', 'pending')
+            ->first();
+    @endphp
+    @if($pendingProfileRequest)
+        <div class="relative w-full p-4 mb-4 text-white rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400">
+            <i class="fas fa-info-circle mr-2"></i>
+            Your profile update request has been submitted successfully and is pending admin approval (Submitted on {{ $pendingProfileRequest->created_at->format('d M, Y H:i') }}).
         </div>
     @endif
     <div class="flex flex-wrap -mx-3">

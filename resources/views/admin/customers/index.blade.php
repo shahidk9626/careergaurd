@@ -64,6 +64,7 @@
         const canDelete = {{ hasPermission('customers.delete') ? 'true' : 'false' }};
         const canVerify = {{ hasPermission('customers.verify') ? 'true' : 'false' }};
         const canViewDetail = {{ hasPermission('customers.view_detail') ? 'true' : 'false' }};
+        const canPurchaseMembership = {{ hasPermission('customers.purchase_membership') ? 'true' : 'false' }};
 
         $(document).ready(function () {
             table = $('#customerTable').DataTable({
@@ -142,6 +143,17 @@
                                           title="Already Verified">
                                         <i class="fas fa-check-circle text-sm opacity-50"></i>
                                     </span>`;
+                            }
+
+                            // Purchase Membership Button
+                            if (canPurchaseMembership) {
+                                let purchaseUrl = "{{ url('admin/customers') }}/" + row.id + "/purchase-membership";
+                                actions += `
+                                    <a href="${purchaseUrl}" 
+                                       class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-110" 
+                                       title="Purchase Membership">
+                                        <i class="fas fa-shopping-cart text-sm pointer-events-none"></i>
+                                    </a>`;
                             }
 
                             // View Button

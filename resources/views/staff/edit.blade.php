@@ -441,6 +441,117 @@
 
             updateStepUI();
 
+            // Initialize Validator
+            let validator = $("#staffForm").validate({
+                rules: {
+                    role_id: { required: true },
+                    first_name: { required: true, lettersnspaces: true, minlength: 3 },
+                    last_name: { lettersnspaces: true, minlength: 3 },
+                    father_name: { required: true, lettersnspaces: true, minlength: 3 },
+                    mother_name: { lettersnspaces: true, minlength: 3 },
+                    dob: { pastdate: true },
+                    email: { email: true },
+                    phone: { required: true, indianmobile: true },
+                    pincode: { required: true, pincode_custom: true },
+                    address: { required: true },
+                    city: { required: true, lettersnspaces: true },
+                    state: { required: true, lettersnspaces: true },
+                    joining_date: { required: true, pastdate: true },
+                    salary: { number: true, min: 0 }
+                },
+                messages: {
+                    first_name: { required: "First Name is required" },
+                    father_name: { required: "Father Name is required" },
+                    phone: { required: "Phone number is required" },
+                    pincode: { required: "Pincode is required" },
+                    address: { required: "Address is required" },
+                    city: { required: "City is required" },
+                    state: { required: "State is required" },
+                    joining_date: { required: "Joining date is required" }
+                }
+            });
+
+            function validateFileElement(element) {
+                let file = element.files ? element.files[0] : null;
+                let parent = $(element).closest('.w-full') || $(element).parent() || $(element).closest('.doc-row');
+                parent.find('.error-message').remove();
+                $(element).removeClass('border-red-500');
+
+                if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                        $(element).addClass('border-red-500');
+                        parent.append('<p class="text-red-500 text-xs mt-1 error-message">File size must not exceed 2 MB.</p>');
+                        return false;
+                    }
+                    let ext = file.name.split('.').pop().toLowerCase();
+                    if (!['jpg', 'jpeg', 'png', 'pdf'].includes(ext)) {
+                        $(element).addClass('border-red-500');
+                        parent.append('<p class="text-red-500 text-xs mt-1 error-message">Invalid file type. Only jpg, jpeg, png, pdf are allowed.</p>');
+                        return false;
+                    }
+                } else if ($(element).prop('required')) {
+                    $(element).addClass('border-red-500');
+                    parent.append('<p class="text-red-500 text-xs mt-1 error-message">This field is required.</p>');
+                    return false;
+                }
+                return true;
+            }
+
+            function validateDocNameElement(element) {
+                let val = $(element).val().trim();
+                let parent = $(element).closest('.w-full') || $(element).parent() || $(element).closest('.doc-row');
+                parent.find('.error-message').remove();
+                $(element).removeClass('border-red-500');
+
+                if (!val && $(element).prop('required')) {
+                    $(element).addClass('border-red-500');
+                    parent.append('<p class="text-red-500 text-xs mt-1 error-message">This field is required.</p>');
+                    return false;
+                }
+                return true;
+            }
+
+            // File input validation triggers
+            $(document).on('change', '.validate-file', function() {
+                validateFileElement(this);
+            });
+
+            $(document).on('blur keyup', '.validate-doc-name', function() {
+                validateDocNameElement(this);
+            });
+
+            function validateCurrentStep() {
+                let isValid = true;
+                let firstInvalid = null;
+
+                // Validate standard jQuery Validate fields in current step
+                $(`#step-${currentStep}`).find('input, select, textarea').not('.validate-file, .validate-doc-name').each(function () {
+                    if (!validator.element(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+
+                // Validate file and doc-name fields in current step
+                $(`#step-${currentStep}`).find('.validate-file').each(function() {
+                    if (!validateFileElement(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+                $(`#step-${currentStep}`).find('.validate-doc-name').each(function() {
+                    if (!validateDocNameElement(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+
+                if (!isValid && firstInvalid) {
+                    firstInvalid.focus();
+                }
+                return isValid;
+            }
+
             $('.next-step').on('click', function () {
                 if (validateCurrentStep()) {
                     currentStep++;
@@ -463,15 +574,6 @@
                 }
             });
 
-            function validateCurrentStep() {
-                let isValid = true;
-                $(`#step-${currentStep} [required]`).each(function () {
-                    if (!$(this).val()) { $(this).addClass('border-red-500'); isValid = false; }
-                    else { $(this).removeClass('border-red-500'); }
-                });
-                return isValid;
-            }
-
             function generatePreview() {
                 let roleName = $('select[name="role_id"] option:selected').text();
                 $('#previewContainer').html(`<div class="text-sm">Summary for ${$('input[name="first_name"]').val()} (${roleName})</div>`);
@@ -480,25 +582,76 @@
             // Docs handling
             $('#addDocRow').on('click', function () {
                 $('#documentRows').append(`
-                        <div class="flex gap-2 mb-2 doc-row">
-                            <input type="text" name="document_names[]" class="text-xs border p-1 rounded w-1/2" placeholder="Doc Name">
-                            <input type="file" name="documents[]" class="text-xs w-1/2">
-                            <button type="button" class="remove-row text-red-500">×</button>
+                        <div class="flex gap-2 mb-2 doc-row items-end w-full">
+                            <div class="w-1/2">
+                                <input type="text" name="document_names[]" class="validate-doc-name text-xs border p-1 rounded w-full" placeholder="Doc Name">
+                            </div>
+                            <div class="w-1/2 flex items-center gap-2">
+                                <input type="file" name="documents[]" class="validate-file text-xs w-full">
+                                <button type="button" class="remove-row text-red-500 font-bold px-2">×</button>
+                            </div>
                         </div>
                     `);
             });
-            $(document).on('click', '.remove-row', function () { $(this).parent().remove(); });
+            $(document).on('click', '.remove-row', function () { $(this).closest('.doc-row').remove(); });
 
             $('#staffForm').on('submit', function (e) {
                 e.preventDefault();
+                let isValid = true;
+                let firstInvalid = null;
+
+                if (!$(this).valid()) {
+                    isValid = false;
+                }
+
+                $('.validate-file').each(function() {
+                    if (!validateFileElement(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+                $('.validate-doc-name').each(function() {
+                    if (!validateDocNameElement(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+
+                if (!isValid) {
+                    if (firstInvalid) firstInvalid.focus();
+                    return false;
+                }
+
+                let formData = new FormData(this);
+                let submitBtn = $('#submitBtn');
+                submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Saving...');
+
                 $.ajax({
                     url: $(this).attr('action'),
                     type: 'POST',
-                    data: new FormData(this),
+                    data: formData,
                     processData: false,
                     contentType: false,
                     success: function (response) {
-                        Swal.fire('Success', response.success, 'success').then(() => { window.location.href = "{{ route('staff.index') }}"; });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.success,
+                            confirmButtonClass: 'bg-gradient-to-tl from-gray-900 to-slate-800 text-white px-4 py-2 rounded-lg'
+                        }).then(() => { window.location.href = "{{ route('staff.index') }}"; });
+                    },
+                    error: function(xhr) {
+                        submitBtn.prop('disabled', false).html('Save');
+                        let errors = xhr.responseJSON.errors;
+                        let errorMsg = '';
+                        if (errors) {
+                            Object.keys(errors).forEach(key => {
+                                errorMsg += errors[key][0] + '\n';
+                            });
+                        } else {
+                            errorMsg = xhr.responseJSON.error || 'Something went wrong';
+                        }
+                        Swal.fire('Error', errorMsg, 'error');
                     }
                 });
             });

@@ -92,6 +92,33 @@
                                     <b>₹{{ number_format($plan->compensation_amount, 0) }}</b> support after
                                     {{ $plan->claim_duration_days }} days</span>
                             </li>
+
+                            @if($plan->prematurity_available)
+                                <li class="relative flex items-center py-2 border-0 text-inherit">
+                                    <div
+                                        class="flex items-center justify-center w-5 h-5 mr-3 rounded-lg bg-purple-100 text-center flex-none">
+                                        <i class="fas fa-history text-purple-600 text-xs"></i>
+                                    </div>
+                                    <span class="text-sm text-slate-600">Prematurity Available: <b>Yes</b></span>
+                                </li>
+                            @endif
+
+                            @if($plan->one_time_payment_applicable)
+                                <li class="relative flex items-center py-2 border-0 text-inherit">
+                                    <div
+                                        class="flex items-center justify-center w-5 h-5 mr-3 rounded-lg bg-blue-100 text-center flex-none">
+                                        <i class="fas fa-coins text-blue-600 text-xs"></i>
+                                    </div>
+                                    <span class="text-sm text-slate-600">One-Time Payment: <b>Available</b></span>
+                                </li>
+                                <li class="relative flex items-center py-2 border-0 text-inherit">
+                                    <div
+                                        class="flex items-center justify-center w-5 h-5 mr-3 rounded-lg bg-cyan-100 text-center flex-none">
+                                        <i class="fas fa-wallet text-cyan-600 text-xs"></i>
+                                    </div>
+                                    <span class="text-sm text-slate-600">One-Time Amount: <b>₹{{ number_format($plan->one_time_payment_amount, 0) }}</b></span>
+                                </li>
+                            @endif
                         </ul>
                     </div>
 

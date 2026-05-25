@@ -354,12 +354,12 @@
                                         <div class="w-full max-w-full px-3 md:w-5/12">
                                             <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Document Name</label>
                                             <input type="text" name="document_names[]" placeholder="e.g. Aadhar Card"
-                                                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                                                class="validate-doc-name focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                         </div>
                                         <div class="w-full max-w-full px-3 mt-2 md:w-5/12 md:mt-0">
                                             <label class="mb-2 ml-1 font-bold text-xs text-slate-700">File</label>
                                             <input type="file" name="documents[]"
-                                                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                                                class="validate-file focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                         </div>
                                         <div class="w-full max-w-full px-3 mt-2 md:w-2/12 md:mt-0 text-center">
                                             <button type="button"
@@ -466,17 +466,114 @@
             // Initial UI update
             updateStepUI();
 
+            // Initialize Validator
+            let validator = $("#staffForm").validate({
+                rules: {
+                    role_id: { required: true },
+                    first_name: { required: true, lettersnspaces: true, minlength: 3 },
+                    last_name: { lettersnspaces: true, minlength: 3 },
+                    father_name: { required: true, lettersnspaces: true, minlength: 3 },
+                    mother_name: { lettersnspaces: true, minlength: 3 },
+                    nominee_name: { lettersnspaces: true, minlength: 3 },
+                    dob: { pastdate: true },
+                    email: { email: true },
+                    phone: { required: true, indianmobile: true },
+                    alternate_phone: { indianmobile: true },
+                    pincode: { required: true, pincode_custom: true },
+                    address: { required: true },
+                    city: { required: true, lettersnspaces: true },
+                    state: { required: true, lettersnspaces: true },
+                    country: { required: true, lettersnspaces: true },
+                    joining_date: { required: true, pastdate: true },
+                    salary: { number: true, min: 0 },
+                    pan_number: { pan: true },
+                    aadhar_number: { aadhar: true }
+                },
+                messages: {
+                    first_name: { required: "First Name is required" },
+                    father_name: { required: "Father Name is required" },
+                    phone: { required: "Phone number is required" },
+                    pincode: { required: "Pincode is required" },
+                    address: { required: "Address is required" },
+                    city: { required: "City is required" },
+                    state: { required: "State is required" },
+                    country: { required: "Country is required" },
+                    joining_date: { required: "Joining date is required" }
+                }
+            });
+
+            function validateFileElement(element) {
+                let file = element.files ? element.files[0] : null;
+                let parent = $(element).closest('.w-full') || $(element).parent();
+                parent.find('.error-message').remove();
+                $(element).removeClass('border-red-500');
+
+                if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                        $(element).addClass('border-red-500');
+                        parent.append('<p class="text-red-500 text-xs mt-1 error-message">File size must not exceed 2 MB.</p>');
+                        return false;
+                    }
+                    let ext = file.name.split('.').pop().toLowerCase();
+                    if (!['jpg', 'jpeg', 'png', 'pdf'].includes(ext)) {
+                        $(element).addClass('border-red-500');
+                        parent.append('<p class="text-red-500 text-xs mt-1 error-message">Invalid file type. Only jpg, jpeg, png, pdf are allowed.</p>');
+                        return false;
+                    }
+                } else if ($(element).prop('required')) {
+                    $(element).addClass('border-red-500');
+                    parent.append('<p class="text-red-500 text-xs mt-1 error-message">This field is required.</p>');
+                    return false;
+                }
+                return true;
+            }
+
+            function validateDocNameElement(element) {
+                let val = $(element).val().trim();
+                let parent = $(element).closest('.w-full') || $(element).parent();
+                parent.find('.error-message').remove();
+                $(element).removeClass('border-red-500');
+
+                if (!val && $(element).prop('required')) {
+                    $(element).addClass('border-red-500');
+                    parent.append('<p class="text-red-500 text-xs mt-1 error-message">This field is required.</p>');
+                    return false;
+                }
+                return true;
+            }
+
+            // File input validation triggers
+            $(document).on('change', '.validate-file', function() {
+                validateFileElement(this);
+            });
+
+            $(document).on('blur keyup', '.validate-doc-name', function() {
+                validateDocNameElement(this);
+            });
+
             function validateCurrentStep() {
                 let isValid = true;
                 let firstInvalid = null;
 
-                $(`#step-${currentStep} [required]`).each(function () {
-                    if (!$(this).val()) {
+                // Validate standard jQuery Validate fields in current step
+                $(`#step-${currentStep}`).find('input, select, textarea').not('.validate-file, .validate-doc-name').each(function () {
+                    if (!validator.element(this)) {
                         isValid = false;
-                        $(this).addClass('border-red-500');
                         if (!firstInvalid) firstInvalid = $(this);
-                    } else {
-                        $(this).removeClass('border-red-500');
+                    }
+                });
+
+                // Validate file and doc-name fields in current step
+                $(`#step-${currentStep}`).find('.validate-file').each(function() {
+                    if (!validateFileElement(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+                $(`#step-${currentStep}`).find('.validate-doc-name').each(function() {
+                    if (!validateDocNameElement(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
                     }
                 });
 
@@ -542,12 +639,12 @@
                             <div class="w-full max-w-full px-3 md:w-5/12">
                                 <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Document Name</label>
                                 <input type="text" name="document_names[]" placeholder="Document Name"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                                    class="validate-doc-name focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                             <div class="w-full max-w-full px-3 mt-2 md:w-5/12 md:mt-0">
                                 <label class="mb-2 ml-1 font-bold text-xs text-slate-700">File</label>
                                 <input type="file" name="documents[]"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                                    class="validate-file focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                             <div class="w-full max-w-full px-3 mt-2 md:w-2/12 md:mt-0 text-center">
                                 <button type="button" class="remove-row text-red-500 hover:text-red-700 transition-all font-bold py-2">
@@ -564,11 +661,38 @@
                     $(this).closest('.doc-row').remove();
                 } else {
                     $(this).closest('.doc-row').find('input').val('');
+                    $(this).closest('.doc-row').find('.error-message').remove();
+                    $(this).closest('.doc-row').find('input').removeClass('border-red-500');
                 }
             });
 
             $('#staffForm').on('submit', function (e) {
                 e.preventDefault();
+                let isValid = true;
+                let firstInvalid = null;
+
+                if (!$(this).valid()) {
+                    isValid = false;
+                }
+
+                $('.validate-file').each(function() {
+                    if (!validateFileElement(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+                $('.validate-doc-name').each(function() {
+                    if (!validateDocNameElement(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+
+                if (!isValid) {
+                    if (firstInvalid) firstInvalid.focus();
+                    return false;
+                }
+
                 let formData = new FormData(this);
                 let submitBtn = $('#submitBtn');
 

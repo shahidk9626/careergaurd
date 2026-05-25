@@ -29,6 +29,13 @@
                 </div>
             </div>
             <ul class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
+                @if(Auth::check() && Auth::user()->role_id === 0)
+                <li class="flex items-center pr-4">
+                    <button type="button" onclick="openCallbackModal('direct')" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-soft-md cursor-pointer leading-pro ease-soft-in bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85">
+                        Request Callback
+                    </button>
+                </li>
+                @endif
                 <li class="flex items-center">
                     <a href="{{ route('profile.edit') }}"
                         class="block px-0 py-2 font-semibold transition-all ease-nav-brand text-sm text-slate-500">

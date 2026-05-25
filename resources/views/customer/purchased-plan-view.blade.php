@@ -144,8 +144,25 @@
             <div class="w-full max-w-full px-3">
                 <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
                     <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0">Transaction Records</h6>
-                        <p class="text-sm">List of all payments made for this membership.</p>
+                        <div class="flex flex-wrap justify-between items-center">
+                            <div>
+                                <h6 class="mb-0">Transaction Records</h6>
+                                <p class="text-sm">List of all payments made for this membership.</p>
+                            </div>
+                            <div>
+                                @if($transactions->isNotEmpty())
+                                    <a href="{{ route(auth()->user()->role_id === 0 ? 'customer.purchased-plan.pdf' : 'admin.purchased-plan.pdf', $purchasedPlan->plan_unique_id) }}" 
+                                       class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102">
+                                        <i class="fas fa-file-pdf mr-1"></i> Download PDF
+                                    </a>
+                                @else
+                                    <button disabled 
+                                            class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-not-allowed opacity-50 leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-slate-600 to-slate-300">
+                                        <i class="fas fa-file-pdf mr-1"></i> Download PDF
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                     <div class="flex-auto px-0 pt-0 pb-2">
                         <div class="p-6 overflow-x-auto">
@@ -187,7 +204,7 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="5" class="p-4 text-center text-sm">No transaction records found.</td>
+                                        <td colspan="5" class="p-4 text-center text-sm">No repayment history available.</td>
                                     </tr>
                                     @endforelse
                                 </tbody>

@@ -108,13 +108,19 @@
                                                 <p class="text-red-500 text-xs mt-1">{{ $errors->first('password') }}</p>
                                             @endif
                                         </div>
-                                        <div class="min-h-6 mb-0.5 block pl-12">
-                                            <input id="remember_me" name="remember"
-                                                class="mt-0.54 rounded-10 duration-250 ease-soft-in-out after:rounded-circle after:shadow-soft-2xl after:duration-250 checked:after:translate-x-5.25 h-5 relative float-left -ml-12 w-10 cursor-pointer appearance-none border border-solid border-gray-200 bg-slate-800/10 bg-none bg-contain bg-left bg-no-repeat align-top transition-all after:absolute after:top-px after:h-4 after:w-4 after:translate-x-px after:bg-white after:content-[''] checked:border-slate-800/95 checked:bg-slate-800/95 checked:bg-none checked:bg-right"
-                                                type="checkbox" />
-                                            <label
-                                                class="mb-2 ml-1 font-normal cursor-pointer select-none text-sm text-slate-700"
-                                                for="remember_me">Remember me for a while</label>
+                                        <div class="flex justify-between items-center mb-4">
+                                            <div class="min-h-6 block pl-12">
+                                                <input id="remember_me" name="remember"
+                                                    class="mt-0.54 rounded-10 duration-250 ease-soft-in-out after:rounded-circle after:shadow-soft-2xl after:duration-250 checked:after:translate-x-5.25 h-5 relative float-left -ml-12 w-10 cursor-pointer appearance-none border border-solid border-gray-200 bg-slate-800/10 bg-none bg-contain bg-left bg-no-repeat align-top transition-all after:absolute after:top-px after:h-4 after:w-4 after:translate-x-px after:bg-white after:content-[''] checked:border-slate-800/95 checked:bg-slate-800/95 checked:bg-none checked:bg-right"
+                                                    type="checkbox" />
+                                                <label
+                                                    class="mb-0 ml-1 font-normal cursor-pointer select-none text-sm text-slate-700"
+                                                    for="remember_me">Remember me</label>
+                                            </div>
+                                            @if (Route::has('password.request'))
+                                                <a href="{{ route('password.request') }}"
+                                                    class="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors">Forgot Password?</a>
+                                            @endif
                                         </div>
                                         <div class="text-center">
                                             <button type="submit"
@@ -126,12 +132,6 @@
                                 </div>
                                 <div
                                     class="p-6 px-1 pt-0 text-center bg-transparent border-t-0 border-t-solid rounded-b-2xl lg:px-2">
-                                    @if (Route::has('password.request'))
-                                        <p class="mx-auto mb-4 leading-normal text-sm">
-                                            <a href="{{ route('password.request') }}"
-                                                class="font-semibold text-slate-700">Forgot your password?</a>
-                                        </p>
-                                    @endif
                                     <p class="mx-auto mb-6 leading-normal text-sm">
                                         Don't have an account?
                                         <a href="{{ route('register') }}"
@@ -209,4 +209,19 @@
             </div>
         </div>
     </footer>
+    @if (session('success'))
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            $(document).ready(function() {
+                Swal.fire({
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    icon: 'success',
+                    confirmButtonColor: '#17c1e8',
+                    confirmButtonText: 'OK'
+                });
+            });
+        </script>
+    @endif
 @endsection

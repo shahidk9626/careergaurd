@@ -63,8 +63,8 @@
                                             </button>
                                         @endif
                                         @if($claim->status === 'pending')
-                                            @if(hasPermission('claims.approve'))
-                                                <button onclick="updateStatus({{ $claim->id }}, 'approved')"
+                                            @if(hasPermission('claims.approve') || hasPermission('support.approve'))
+                                                <button onclick="openApprovalModal({{ $claim->id }})"
                                                     class="inline-block px-3 py-2 mr-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 hover:scale-102">
                                                     Approve
                                                 </button>
@@ -75,6 +75,12 @@
                                                     Reject
                                                 </button>
                                             @endif
+                                        @endif
+                                        @if($claim->claimedTransaction && $claim->claimedTransaction->transaction_screenshot)
+                                            <a href="{{ asset('storage/' . $claim->claimedTransaction->transaction_screenshot) }}" target="_blank"
+                                                class="inline-block px-3 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border border-solid rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-102">
+                                                View Transaction Proof
+                                            </a>
                                         @endif
                                     </td>
                                 </tr>
@@ -171,5 +177,92 @@
                 }
             });
         }
+
+        function openApprovalModal(claimId) {
+            document.getElementById('approval_claim_id').value = claimId;
+            document.getElementById('transaction_screenshot').value = '';
+            document.getElementById('approval_remarks').value = '';
+            window.openGlobalModal('claimApprovalModal');
+        }
+
+        $(document).ready(function() {
+            $('#claimApprovalForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                let fileInput = document.getElementById('transaction_screenshot');
+                if (!fileInput.files.length) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Required Field',
+                        text: 'Please select a transaction screenshot before submitting.',
+                    });
+                    return;
+                }
+
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        window.closeGlobalModal('claimApprovalModal');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.success || 'Claim approved successfully.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: xhr.responseJSON.error || 'Unable to approve claim. Please try again.'
+                        });
+                    }
+                });
+            });
+        });
     </script>
+
+    <!-- Claim Approval Modal -->
+    @if(hasPermission('claims.approve') || hasPermission('support.approve'))
+        <x-modal id="claimApprovalModal" title="Approve Support Request">
+            <form id="claimApprovalForm" action="{{ route('admin.claim.update-status') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="claim_id" id="approval_claim_id" value="">
+                <input type="hidden" name="status" value="approved">
+
+                <div class="mb-4">
+                    <label for="transaction_screenshot" class="block mb-2 text-sm font-bold text-slate-700">Transaction Screenshot / Payment Proof</label>
+                    <input type="file" name="transaction_screenshot" id="transaction_screenshot" required
+                        accept="image/png, image/jpeg, image/jpg, application/pdf"
+                        class="w-full px-3 py-2 text-sm text-slate-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-fuchsia-300 focus:shadow-soft-primary-outline">
+                    <p class="text-xs text-slate-400 mt-1">Accepted types: JPG, JPEG, PNG, PDF (Max: 5MB)</p>
+                </div>
+
+                <div class="mb-4">
+                    <label for="approval_remarks" class="block mb-2 text-sm font-bold text-slate-700">Remarks (Optional)</label>
+                    <textarea name="remarks" id="approval_remarks" rows="3"
+                        class="w-full px-3 py-2 text-sm text-slate-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-fuchsia-300 focus:shadow-soft-primary-outline"
+                        placeholder="Any payment references or notes..."></textarea>
+                </div>
+
+                <div class="flex justify-end pt-3 border-t border-gray-100">
+                    <button type="button" onclick="window.closeGlobalModal('claimApprovalModal')" class="inline-block px-6 py-3 mr-2 font-bold text-center text-slate-700 uppercase align-middle transition-all bg-transparent border border-solid rounded-lg cursor-pointer leading-pro text-xs ease-soft-in tracking-tight-soft border-slate-300 hover:scale-102">
+                        Cancel
+                    </button>
+                    <button type="submit" class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-x-25 bg-150 tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102">
+                        Submit & Approve
+                    </button>
+                </div>
+            </form>
+        </x-modal>
+    @endif
 @endpush

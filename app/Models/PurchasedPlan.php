@@ -20,6 +20,7 @@ class PurchasedPlan extends Model
         'start_date',
         'end_date',
         'status',
+        'referred_by',
     ];
 
     protected $casts = [
@@ -40,5 +41,10 @@ class PurchasedPlan extends Model
     public function claim()
     {
         return $this->hasOne(Claim::class, 'plan_unique_id', 'plan_unique_id');
+    }
+
+    public function referredByStaff()
+    {
+        return $this->belongsTo(User::class, 'referred_by');
     }
 }

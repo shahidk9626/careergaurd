@@ -38,12 +38,15 @@ class PlanController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'premium_amount' => 'required|numeric',
+            'premium_amount' => 'required|numeric|min:0',
             'tenure_type' => 'required|string',
-            'tenure_value' => 'nullable|integer',
-            'claim_duration_days' => 'required|integer',
-            'compensation_amount' => 'required|numeric',
+            'tenure_value' => 'nullable|integer|min:0',
+            'claim_duration_days' => 'required|integer|min:0',
+            'compensation_amount' => 'required|numeric|min:0',
             'status' => 'required|string',
+            'prematurity_available' => 'required|boolean',
+            'one_time_payment_applicable' => 'required|boolean',
+            'one_time_payment_amount' => 'required_if:one_time_payment_applicable,1|nullable|numeric|min:0',
         ]);
 
         try {
@@ -88,12 +91,15 @@ class PlanController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'premium_amount' => 'required|numeric',
+            'premium_amount' => 'required|numeric|min:0',
             'tenure_type' => 'required|string',
-            'tenure_value' => 'nullable|integer',
-            'claim_duration_days' => 'required|integer',
-            'compensation_amount' => 'required|numeric',
+            'tenure_value' => 'nullable|integer|min:0',
+            'claim_duration_days' => 'required|integer|min:0',
+            'compensation_amount' => 'required|numeric|min:0',
             'status' => 'required|string',
+            'prematurity_available' => 'required|boolean',
+            'one_time_payment_applicable' => 'required|boolean',
+            'one_time_payment_amount' => 'required_if:one_time_payment_applicable,1|nullable|numeric|min:0',
         ]);
 
         try {
@@ -179,6 +185,7 @@ class PlanController extends Controller
     {
         $request->validate([
             'plan_id' => 'required|exists:plans,id',
+            'payment_type' => 'nullable|string|in:regular,one_time',
         ]);
 
         $plan = Plan::findOrFail($request->plan_id);
@@ -202,6 +209,12 @@ class PlanController extends Controller
             return response()->json(['error' => 'Your account status is currently inactive.'], 400);
         }
 
+        // Resolve purchase amount
+        $amount = $plan->premium_amount;
+        if ($request->payment_type === 'one_time' && $plan->one_time_payment_applicable) {
+            $amount = $plan->one_time_payment_amount;
+        }
+
         // Generate unique order ID: MEM_YYYYMMDD_XXXXXX (format: MEM_Ymd_Str::upper(Str::random(6)))
         $orderId = 'MEM_' . date('Ymd') . '_' . Str::upper(Str::random(6));
 
@@ -217,7 +230,7 @@ class PlanController extends Controller
                 'user_id' => $user->id,
                 'plan_id' => $plan->id,
                 'plan_unique_id' => $planUniqueId,
-                'amount' => $plan->premium_amount,
+                'amount' => $amount,
                 'status' => 'pending',
             ]);
 
@@ -237,7 +250,7 @@ class PlanController extends Controller
                 'Content-Type' => 'application/json',
             ])->post($baseUrl . '/orders', [
                 'order_id' => $orderId,
-                'order_amount' => (float)$plan->premium_amount,
+                'order_amount' => (float)$amount,
                 'order_currency' => 'INR',
                 'customer_details' => [
                     'customer_id' => (string)$user->id,
@@ -488,7 +501,7 @@ class PlanController extends Controller
         return response()->json(['message' => 'Event ignored'], 200);
     }
 
-    private function activatePaymentOrder(PaymentOrder $paymentOrder, array $paymentDetails, array $gatewayResponse)
+    public function activatePaymentOrder(PaymentOrder $paymentOrder, array $paymentDetails, array $gatewayResponse)
     {
         // Prevent duplicate processing
         if ($paymentOrder->status === 'success') {
@@ -508,6 +521,17 @@ class PlanController extends Controller
                     'status' => 'success',
                     'gateway_response' => json_encode(['order' => $gatewayResponse, 'payment' => $paymentDetails]),
                 ]);
+
+                // Check if a staff referral exists for this order
+                $referral = \App\Models\StaffMembershipReferral::where('cashfree_order_id', $paymentOrder->order_id)->first();
+                $referredBy = null;
+                if ($referral) {
+                    $referredBy = $referral->staff_id;
+                    $referral->update([
+                        'status' => 'paid',
+                        'payment_status' => 'success'
+                    ]);
+                }
 
                 // Extract payment method group (e.g. upi, card, netbanking, wallet)
                 $paymentMethodString = $paymentDetails['payment_group'] ?? 'cashfree';
@@ -561,6 +585,7 @@ class PlanController extends Controller
                         'start_date' => $startDate,
                         'end_date' => $endDate,
                         'status' => 'active',
+                        'referred_by' => $referredBy,
                     ]
                 );
             });

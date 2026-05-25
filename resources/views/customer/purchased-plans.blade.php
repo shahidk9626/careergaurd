@@ -74,6 +74,12 @@
                                             class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102">
                                             View
                                         </a>
+                                        @if(auth()->user()->role_id === 0)
+                                            <button type="button" onclick="openCallbackModal('purchased', '{{ $plan->id }}')"
+                                                class="inline-block ml-2 px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-soft-md cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85">
+                                                Request Callback
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach

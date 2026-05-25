@@ -19,8 +19,22 @@ class NewPasswordController extends Controller
     /**
      * Display the password reset view.
      */
-    public function create(Request $request): View
+    public function create(Request $request)
     {
+        $token = $request->route('token');
+        $email = $request->email;
+
+        // Check if user exists
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            return redirect()->route('password.request')->withErrors(['email' => 'Reset link has expired or is invalid.']);
+        }
+
+        // Check if token exists and is valid (not expired)
+        if (!Password::broker()->tokenExists($user, $token)) {
+            return redirect()->route('password.request')->withErrors(['email' => 'Reset link has expired or is invalid.']);
+        }
+
         return view('auth.reset-password', ['request' => $request]);
     }
 
@@ -56,7 +70,7 @@ class NewPasswordController extends Controller
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
         return $status == Password::PASSWORD_RESET
-                    ? redirect()->route('login')->with('status', __($status))
+                    ? redirect()->route('login')->with('success', 'Password updated successfully. Please login.')
                     : back()->withInput($request->only('email'))
                         ->withErrors(['email' => __($status)]);
     }

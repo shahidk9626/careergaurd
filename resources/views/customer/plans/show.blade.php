@@ -63,7 +63,43 @@
                             <strong class="text-slate-700">Status:</strong> &nbsp; 
                             <span class="px-2 py-1 text-xs font-bold text-white bg-green-500 rounded-lg">{{ strtoupper($plan->status) }}</span>
                         </li>
+                        @if($plan->prematurity_available)
+                            <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
+                                <strong class="text-slate-700">Prematurity Available:</strong> &nbsp; Yes
+                            </li>
+                        @endif
+                        @if($plan->one_time_payment_applicable)
+                            <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
+                                <strong class="text-slate-700">One-Time Payment:</strong> &nbsp; Available
+                            </li>
+                            <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
+                                <strong class="text-slate-700">One-Time Amount:</strong> &nbsp; ₹{{ number_format($plan->one_time_payment_amount, 2) }}
+                            </li>
+                        @endif
                     </ul>
+
+                    @if($plan->one_time_payment_applicable)
+                        <hr class="h-px my-6 bg-transparent bg-gradient-to-r from-transparent via-black/10 to-transparent" />
+                        <div class="mb-4">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Select Payment Option</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-all w-1/2">
+                                    <input type="radio" name="selected_payment_type" value="regular" checked class="mr-2 text-purple-600 focus:ring-purple-500">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-bold text-slate-700">Standard Payment</span>
+                                        <span class="text-xxs text-slate-500">₹{{ number_format($plan->premium_amount, 2) }}</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-all w-1/2">
+                                    <input type="radio" name="selected_payment_type" value="one_time" class="mr-2 text-purple-600 focus:ring-purple-500">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-bold text-slate-700">One-Time Payment</span>
+                                        <span class="text-xxs text-slate-500">₹{{ number_format($plan->one_time_payment_amount, 2) }}</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -193,13 +229,16 @@
                     }
                 });
 
+                const selectedTypeInput = document.querySelector('input[name="selected_payment_type"]:checked');
+                const paymentType = selectedTypeInput ? selectedTypeInput.value : 'regular';
+
                 fetch("{{ route('customer.plan.purchase') }}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({ plan_id: planId })
+                    body: JSON.stringify({ plan_id: planId, payment_type: paymentType })
                 })
                     .then(response => response.json())
                     .then(data => {

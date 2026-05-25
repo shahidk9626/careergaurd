@@ -37,7 +37,7 @@
                     <h6 class="mb-0">Edit Profile Information</h6>
                 </div>
                 <div class="flex-auto p-4">
-                    <form action="{{ route('customer.profile.update') }}" method="POST" enctype="multipart/form-data">
+                    <form id="profileEditForm" action="{{ route('customer.profile.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="flex flex-wrap -mx-3">
                             <div class="w-full max-w-full px-3 mb-4 md:w-6/12">
@@ -113,4 +113,35 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            $("#profileEditForm").validate({
+                rules: {
+                    name: { required: true, lettersnspaces: true, minlength: 3 },
+                    phone: { required: true, indianmobile: true },
+                    whatsapp_number: { required: true, indianmobile: true },
+                    address: { required: true },
+                    city: { required: true, lettersnspaces: true },
+                    state: { required: true, lettersnspaces: true },
+                    pincode: { required: true, pincode_custom: true },
+                    profile_image: {
+                        filesize: 2 * 1024 * 1024,
+                        extension_custom: "jpg|jpeg|png|pdf"
+                    }
+                },
+                messages: {
+                    name: { required: "Full Name is required" },
+                    phone: { required: "Phone number is required" },
+                    whatsapp_number: { required: "WhatsApp number is required" },
+                    address: { required: "Address is required" },
+                    city: { required: "City is required" },
+                    state: { required: "State is required" },
+                    pincode: { required: "Pincode is required" }
+                }
+            });
+        });
+    </script>
+@endpush
 @endsection

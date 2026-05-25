@@ -104,7 +104,7 @@
                                     </div>
                                 @endif
 
-                                <form method="POST" action="{{ route('register') }}" role="form">
+                                <form id="registerForm" method="POST" action="{{ route('register') }}" role="form">
                                     @csrf
                                     <div class="mb-4">
                                         <input type="text" name="name" id="name" value="{{ old('name') }}" required
@@ -219,4 +219,85 @@
             </div>
         </footer>
     </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Add custom validation methods locally since auth layout doesn't load them
+            $.validator.addMethod("lettersnspaces", function(value, element) {
+                return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+            }, "Only alphabets and spaces are allowed");
+
+            $.validator.addMethod("indianmobile", function(value, element) {
+                return this.optional(element) || /^[6-9]\d{9}$/.test(value);
+            }, "Please enter a valid 10-digit Indian mobile number starting with 6-9");
+
+            $.validator.addMethod("strong_password", function(value, element) {
+                return this.optional(element) || /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
+            }, "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character");
+
+            $("#registerForm").validate({
+                rules: {
+                    name: {
+                        required: true,
+                        lettersnspaces: true,
+                        minlength: 3
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    whatsapp_number: {
+                        required: true,
+                        indianmobile: true
+                    },
+                    password: {
+                        required: true,
+                        minlength: 8,
+                        strong_password: true
+                    },
+                    password_confirmation: {
+                        required: true,
+                        equalTo: "#password"
+                    }
+                },
+                messages: {
+                    name: {
+                        required: "Full Name is required",
+                        minlength: "Name must be at least 3 characters"
+                    },
+                    email: {
+                        required: "Email address is required",
+                        email: "Please enter a valid email address"
+                    },
+                    whatsapp_number: {
+                        required: "WhatsApp number is required"
+                    },
+                    password: {
+                        required: "Password is required",
+                        minlength: "Password must be at least 8 characters long"
+                    },
+                    password_confirmation: {
+                        required: "Please confirm your password",
+                        equalTo: "Passwords do not match"
+                    }
+                },
+                errorElement: 'p',
+                errorClass: 'text-red-500 text-xs mt-1 error-message',
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('border-red-500');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('border-red-500');
+                },
+                errorPlacement: function(error, element) {
+                    let parent = element.closest('.mb-4') || element.parent();
+                    parent.find('.error-message').remove();
+                    error.appendTo(parent);
+                }
+            });
+        });
+    </script>
 @endsection

@@ -338,6 +338,54 @@
             </li>
             @endif
 
+            @if(auth()->user()->role_id !== 0)
+                @if(hasPermission('request-callback.view'))
+                    @php $isCallbackActive = request()->routeIs('admin.request-callback.index') || request()->is('*request-callback*'); @endphp
+                    <li class="w-full mt-0.5">
+                        <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isCallbackActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
+                            href="{{ route('admin.request-callback.index') }}">
+                            <div
+                                class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ $isCallbackActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
+                                <i class="fas fa-phone-alt {{ $isCallbackActive ? 'text-white' : 'text-slate-700' }}"></i>
+                            </div>
+                            <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Request Callback</span>
+                        </a>
+                    </li>
+                @endif
+            @endif
+
+            @if(auth()->user()->role_id !== 0)
+                @if(hasPermission('profile-update-requests.view'))
+                    @php $isProfileRequestsActive = request()->routeIs('admin.profile-update-requests.index') || request()->is('*profile-update-requests*'); @endphp
+                    <li class="w-full mt-0.5">
+                        <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isProfileRequestsActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
+                            href="{{ route('admin.profile-update-requests.index') }}">
+                            <div
+                                class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ $isProfileRequestsActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
+                                <i class="fas fa-user-edit {{ $isProfileRequestsActive ? 'text-white' : 'text-slate-700' }}"></i>
+                            </div>
+                            <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Profile Update Requests</span>
+                        </a>
+                    </li>
+                @endif
+            @endif
+
+            @if(auth()->user()->role_id !== 0)
+                @if(hasPermission('staff-commission.view'))
+                    @php $isCommissionActive = request()->routeIs('admin.staff-commission.index') || request()->is('*staff-commission*'); @endphp
+                    <li class="w-full mt-0.5">
+                        <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isCommissionActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
+                            href="{{ route('admin.staff-commission.index') }}">
+                            <div
+                                class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ $isCommissionActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
+                                <i class="fas fa-percentage {{ $isCommissionActive ? 'text-white' : 'text-slate-700' }}"></i>
+                            </div>
+                            <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Staff Commission</span>
+                        </a>
+                    </li>
+                @endif
+            @endif
+
             @if(auth()->user()->role_id === 0)
                 @php $isProfileActive = request()->routeIs('customer.profile') || request()->routeIs('customer.registration') || request()->routeIs('customer.profile.check'); @endphp
                 <li class="w-full mt-0.5">

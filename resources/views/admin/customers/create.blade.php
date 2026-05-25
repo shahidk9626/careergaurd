@@ -277,11 +277,11 @@
                                     <div class="flex flex-wrap -mx-3 mb-4 doc-row items-end">
                                         <div class="w-full max-w-full px-3 md:w-5/12">
                                             <input type="text" name="document_names[]" placeholder="Document Name"
-                                                class="focus:shadow-soft-primary-outline text-sm block w-full rounded-lg border border-solid border-gray-300 bg-white px-3 py-2 font-normal text-gray-700" />
+                                                class="validate-doc-name focus:shadow-soft-primary-outline text-sm block w-full rounded-lg border border-solid border-gray-300 bg-white px-3 py-2 font-normal text-gray-700" />
                                         </div>
                                         <div class="w-full max-w-full px-3 md:w-5/12">
                                             <input type="file" name="documents[]"
-                                                class="focus:shadow-soft-primary-outline text-sm block w-full rounded-lg border border-solid border-gray-300 bg-white px-3 py-1 font-normal text-gray-700" />
+                                                class="validate-file focus:shadow-soft-primary-outline text-sm block w-full rounded-lg border border-solid border-gray-300 bg-white px-3 py-1 font-normal text-gray-700" />
                                         </div>
                                         <div class="w-full max-w-full px-3 md:w-2/12 text-center">
                                             <button type="button" class="remove-row text-red-500 py-2"><i
@@ -377,29 +377,172 @@
                 }
             }
 
+            // Initialize Validator
+            let validator = $("#adminCustomerForm").validate({
+                rules: {
+                    name: { required: true, lettersnspaces: true, minlength: 3 },
+                    email: { required: true, email: true },
+                    whatsapp_number: { required: true, indianmobile: true },
+                    father_name: { lettersnspaces: true, minlength: 3 },
+                    dob: { pastdate: true },
+                    city: { lettersnspaces: true },
+                    state: { lettersnspaces: true },
+                    pincode: { pincode_custom: true },
+                    pan_number: { pan: true },
+                    aadhar_number: { aadhar: true }
+                },
+                messages: {
+                    name: { required: "Name is required" },
+                    email: { required: "Email is required" },
+                    whatsapp_number: { required: "WhatsApp number is required" }
+                }
+            });
+
+            function validateFileElement(element) {
+                let file = element.files ? element.files[0] : null;
+                let parent = $(element).closest('.w-full') || $(element).parent() || $(element).closest('.doc-row');
+                parent.find('.error-message').remove();
+                $(element).removeClass('border-red-500');
+
+                if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                        $(element).addClass('border-red-500');
+                        parent.append('<p class="text-red-500 text-xs mt-1 error-message">File size must not exceed 2 MB.</p>');
+                        return false;
+                    }
+                    let ext = file.name.split('.').pop().toLowerCase();
+                    if (!['jpg', 'jpeg', 'png', 'pdf'].includes(ext)) {
+                        $(element).addClass('border-red-500');
+                        parent.append('<p class="text-red-500 text-xs mt-1 error-message">Invalid file type. Only jpg, jpeg, png, pdf are allowed.</p>');
+                        return false;
+                    }
+                } else if ($(element).prop('required')) {
+                    $(element).addClass('border-red-500');
+                    parent.append('<p class="text-red-500 text-xs mt-1 error-message">This field is required.</p>');
+                    return false;
+                }
+                return true;
+            }
+
+            function validateDocNameElement(element) {
+                let val = $(element).val().trim();
+                let parent = $(element).closest('.w-full') || $(element).parent() || $(element).closest('.doc-row');
+                parent.find('.error-message').remove();
+                $(element).removeClass('border-red-500');
+
+                if (!val && $(element).prop('required')) {
+                    $(element).addClass('border-red-500');
+                    parent.append('<p class="text-red-500 text-xs mt-1 error-message">This field is required.</p>');
+                    return false;
+                }
+                return true;
+            }
+
+            $(document).on('change', '.validate-file', function() {
+                validateFileElement(this);
+            });
+
+            $(document).on('blur keyup change', '.validate-doc-name', function() {
+                validateDocNameElement(this);
+            });
+
+            function validateCurrentStep() {
+                let isValid = true;
+                let firstInvalid = null;
+
+                // Validate standard jQuery Validate fields in current step
+                $(`#step-${currentStep}`).find('input, select, textarea').not('.validate-file, .validate-doc-name').each(function () {
+                    if (!validator.element(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+
+                // Validate file and doc-name fields in current step
+                $(`#step-${currentStep}`).find('.validate-file').each(function() {
+                    if (!validateFileElement(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+                $(`#step-${currentStep}`).find('.validate-doc-name').each(function() {
+                    if (!validateDocNameElement(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+
+                if (!isValid && firstInvalid) {
+                    firstInvalid.focus();
+                }
+                return isValid;
+            }
+
             $('.next-step').on('click', function () {
-                let inputs = $(`#step-${currentStep} [required]`);
-                let valid = true;
-                inputs.each(function () { if (!$(this).val()) { valid = false; $(this).addClass('border-red-500'); } else { $(this).removeClass('border-red-500'); } });
-                if (valid) { currentStep++; updateStepUI(); window.scrollTo(0, 0); }
+                if (validateCurrentStep()) {
+                    currentStep++;
+                    updateStepUI();
+                    window.scrollTo(0, 0);
+                }
             });
 
             $('.prev-step').on('click', function () { currentStep--; updateStepUI(); window.scrollTo(0, 0); });
 
+            $('.step-tab').on('click', function () {
+                let targetStep = $(this).data('step');
+                if (targetStep < currentStep) {
+                    currentStep = targetStep;
+                    updateStepUI();
+                }
+            });
+
             $('#addDocRow').on('click', function () {
                 $('#documentRows').append(`
                         <div class="flex flex-wrap -mx-3 mb-4 doc-row items-end">
-                            <div class="w-full max-w-full px-3 md:w-5/12"><input type="text" name="document_names[]" placeholder="Document Name" class="focus:shadow-soft-primary-outline text-sm block w-full rounded-lg border border-solid border-gray-300 bg-white px-3 py-2 font-normal text-gray-700" /></div>
-                            <div class="w-full max-w-full px-3 md:w-5/12"><input type="file" name="documents[]" class="focus:shadow-soft-primary-outline text-sm block w-full rounded-lg border border-solid border-gray-300 bg-white px-3 py-1 font-normal text-gray-700" /></div>
+                            <div class="w-full max-w-full px-3 md:w-5/12"><input type="text" name="document_names[]" placeholder="Document Name" class="validate-doc-name focus:shadow-soft-primary-outline text-sm block w-full rounded-lg border border-solid border-gray-300 bg-white px-3 py-2 font-normal text-gray-700" /></div>
+                            <div class="w-full max-w-full px-3 md:w-5/12"><input type="file" name="documents[]" class="validate-file focus:shadow-soft-primary-outline text-sm block w-full rounded-lg border border-solid border-gray-300 bg-white px-3 py-1 font-normal text-gray-700" /></div>
                             <div class="w-full max-w-full px-3 md:w-2/12 text-center"><button type="button" class="remove-row text-red-500 py-2"><i class="fas fa-trash"></i></button></div>
                         </div>
                     `);
             });
 
-            $(document).on('click', '.remove-row', function () { if ($('.doc-row').length > 1) $(this).closest('.doc-row').remove(); });
+            $(document).on('click', '.remove-row', function () {
+                if ($('.doc-row').length > 1) {
+                    $(this).closest('.doc-row').remove();
+                } else {
+                    $(this).closest('.doc-row').find('input').val('');
+                    $(this).closest('.doc-row').find('.error-message').remove();
+                    $(this).closest('.doc-row').find('input').removeClass('border-red-500');
+                }
+            });
 
             $('#adminCustomerForm').on('submit', function (e) {
                 e.preventDefault();
+                let isValid = true;
+                let firstInvalid = null;
+
+                if (!$(this).valid()) {
+                    isValid = false;
+                }
+
+                $('.validate-file').each(function() {
+                    if (!validateFileElement(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+                $('.validate-doc-name').each(function() {
+                    if (!validateDocNameElement(this)) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = $(this);
+                    }
+                });
+
+                if (!isValid) {
+                    if (firstInvalid) firstInvalid.focus();
+                    return false;
+                }
+
                 let formData = new FormData(this);
                 let btn = $('#submitBtn');
                 btn.prop('disabled', true).html('Saving...');

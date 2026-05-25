@@ -79,12 +79,25 @@
                                                     class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg opacity-80 cursor-not-allowed leading-pro text-xs ease-soft-in shadow-none bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400">
                                                     Support Approved
                                                 </button>
+                                                @if($plan->claim->claimedTransaction && $plan->claim->claimedTransaction->transaction_screenshot)
+                                                    <div class="mt-2 text-center">
+                                                        <a href="{{ asset('storage/' . $plan->claim->claimedTransaction->transaction_screenshot) }}" target="_blank"
+                                                            class="text-xs font-bold text-purple-600 hover:text-purple-800 underline">
+                                                            View Payment Proof
+                                                        </a>
+                                                    </div>
+                                                @endif
                                             @elseif($plan->claim->status === 'rejected')
                                                 <button disabled
                                                     class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg opacity-50 cursor-not-allowed leading-pro text-xs ease-soft-in shadow-none bg-150 bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400">
                                                     Rejected
                                                 </button>
                                             @endif
+
+                                            <button type="button" onclick="openCallbackModal('enquiry', '{{ $plan->id }}', '{{ $plan->claim->id ?? '' }}')"
+                                                class="inline-block ml-2 px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-soft-md cursor-pointer leading-pro text-xs ease-soft-in bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85">
+                                                Request Callback
+                                            </button>
                                         @else
                                             <span class="text-xs font-semibold text-slate-400">Review in Support Requests</span>
                                         @endif

@@ -39,4 +39,9 @@ class Claim extends Model
     {
         return $this->belongsTo(PurchasedPlan::class, 'plan_unique_id', 'plan_unique_id');
     }
+
+    public function claimedTransaction()
+    {
+        return $this->hasOne(ClaimedTransaction::class, 'claim_request_id');
+    }
 }

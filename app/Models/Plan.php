@@ -20,6 +20,14 @@ class Plan extends Model
         'claim_duration_days',
         'compensation_amount',
         'status',
+        'prematurity_available',
+        'one_time_payment_applicable',
+        'one_time_payment_amount',
+    ];
+
+    protected $casts = [
+        'prematurity_available' => 'boolean',
+        'one_time_payment_applicable' => 'boolean',
     ];
 
     public function planServices()

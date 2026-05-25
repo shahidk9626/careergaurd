@@ -165,6 +165,14 @@ class CustomerController extends Controller
         $user = auth()->user();
         $customerDetail = $user->customerDetail;
 
+        // Check if there is already a pending request
+        $pendingRequest = \App\Models\CustomerUpdateRequest::where('customer_id', $user->id)
+            ->where('status', 'pending')
+            ->exists();
+        if ($pendingRequest) {
+            return back()->with('error', 'Your previous profile update request is still pending.');
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
@@ -179,33 +187,72 @@ class CustomerController extends Controller
         try {
             DB::beginTransaction();
 
-            $userData = [
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'whatsapp_number' => $request->whatsapp_number,
-            ];
+            $changedFields = [];
 
-            // Handle Profile Image Upload
-            if ($request->hasFile('profile_image')) {
-                // Delete old image if exists
-                if ($user->profile_image) {
-                    Storage::disk('public')->delete($user->profile_image);
+            // User Table fields
+            $userFields = ['name', 'phone', 'whatsapp_number'];
+            foreach ($userFields as $field) {
+                if ($user->$field != $request->$field) {
+                    $changedFields[$field] = [
+                        'old' => $user->$field,
+                        'new' => $request->$field,
+                    ];
                 }
-                $path = $request->file('profile_image')->store('profile_images', 'public');
-                $userData['profile_image'] = $path;
             }
 
-            $user->update($userData);
+            // Customer Detail fields
+            $detailFields = ['address', 'city', 'state', 'pincode'];
+            foreach ($detailFields as $field) {
+                if ($customerDetail->$field != $request->$field) {
+                    $changedFields[$field] = [
+                        'old' => $customerDetail->$field,
+                        'new' => $request->$field,
+                    ];
+                }
+            }
 
-            $customerDetail->update([
-                'address' => $request->address,
-                'city' => $request->city,
-                'state' => $request->state,
-                'pincode' => $request->pincode,
+            // Profile Image change detection
+            if ($request->hasFile('profile_image')) {
+                // Save to temp path
+                $path = $request->file('profile_image')->store('temp_profile_images', 'public');
+                $changedFields['profile_image'] = [
+                    'old' => $user->profile_image,
+                    'new' => $path,
+                ];
+            }
+
+            if (empty($changedFields)) {
+                return redirect()->route('customer.profile')->with('info', 'No changes were made to your profile.');
+            }
+
+            // Create the request
+            $updateRequest = \App\Models\CustomerUpdateRequest::create([
+                'customer_id' => $user->id,
+                'requested_by' => $user->id,
+                'status' => 'pending',
             ]);
 
+            foreach ($changedFields as $field => $values) {
+                \App\Models\CustomerUpdateRequestDetail::create([
+                    'request_id' => $updateRequest->id,
+                    'field_name' => $field,
+                    'old_value' => $values['old'],
+                    'new_value' => $values['new'],
+                ]);
+            }
+
+            // Send notification email to the customer
+            try {
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(
+                    new \App\Mail\CustomerProfileUpdateRequestSubmittedMail($user)
+                );
+            } catch (\Exception $mailEx) {
+                // Log mail exception but do not fail transaction
+                \Illuminate\Support\Facades\Log::error("Failed to send profile update request email: " . $mailEx->getMessage());
+            }
+
             DB::commit();
-            return redirect()->route('customer.profile')->with('success', 'Profile updated successfully');
+            return redirect()->route('customer.profile')->with('success', 'Profile update request has been submitted successfully and is pending admin approval.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Something went wrong: ' . $e->getMessage());

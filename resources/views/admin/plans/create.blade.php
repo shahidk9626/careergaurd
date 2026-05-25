@@ -74,6 +74,32 @@
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                                     placeholder="Quick highlight of the membership">
                             </div>
+
+                            <!-- Row 5 (New Fields) -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">Prematurity Available</label>
+                                <select name="prematurity_available"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">One-Time Payment Applicable</label>
+                                <select name="one_time_payment_applicable" id="one_time_payment_applicable"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+
+                            <!-- Row 6 (Dynamic Amount Field) -->
+                            <div id="one_time_payment_amount_container" style="display: none;">
+                                <label class="block text-sm font-medium text-slate-600 mb-1">One-Time Payment Amount (₹)</label>
+                                <input type="number" step="0.01" min="0" name="one_time_payment_amount" id="one_time_payment_amount"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                    placeholder="0.00">
+                            </div>
                         </div>
 
                         <!-- Service Bundling Section -->
@@ -141,6 +167,16 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
+            // Toggle dynamic amount field visibility
+            $('#one_time_payment_applicable').on('change', function () {
+                if ($(this).val() == '1') {
+                    $('#one_time_payment_amount_container').show();
+                    $('#one_time_payment_amount').attr('required', true);
+                } else {
+                    $('#one_time_payment_amount_container').hide();
+                    $('#one_time_payment_amount').removeAttr('required').val('');
+                }
+            });
             // Load categories into each service block
             $.get("{{ route('admin.services.categories.index') }}", function (data) {
                 $('.category-list').each(function () {

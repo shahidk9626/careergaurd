@@ -338,6 +338,54 @@
             </li>
             <?php endif; ?>
 
+            <?php if(auth()->user()->role_id !== 0): ?>
+                <?php if(hasPermission('request-callback.view')): ?>
+                    <?php $isCallbackActive = request()->routeIs('admin.request-callback.index') || request()->is('*request-callback*'); ?>
+                    <li class="w-full mt-0.5">
+                        <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isCallbackActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
+                            href="<?php echo e(route('admin.request-callback.index')); ?>">
+                            <div
+                                class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isCallbackActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
+                                <i class="fas fa-phone-alt <?php echo e($isCallbackActive ? 'text-white' : 'text-slate-700'); ?>"></i>
+                            </div>
+                            <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Request Callback</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if(auth()->user()->role_id !== 0): ?>
+                <?php if(hasPermission('profile-update-requests.view')): ?>
+                    <?php $isProfileRequestsActive = request()->routeIs('admin.profile-update-requests.index') || request()->is('*profile-update-requests*'); ?>
+                    <li class="w-full mt-0.5">
+                        <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isProfileRequestsActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
+                            href="<?php echo e(route('admin.profile-update-requests.index')); ?>">
+                            <div
+                                class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isProfileRequestsActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
+                                <i class="fas fa-user-edit <?php echo e($isProfileRequestsActive ? 'text-white' : 'text-slate-700'); ?>"></i>
+                            </div>
+                            <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Profile Update Requests</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if(auth()->user()->role_id !== 0): ?>
+                <?php if(hasPermission('staff-commission.view')): ?>
+                    <?php $isCommissionActive = request()->routeIs('admin.staff-commission.index') || request()->is('*staff-commission*'); ?>
+                    <li class="w-full mt-0.5">
+                        <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isCommissionActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
+                            href="<?php echo e(route('admin.staff-commission.index')); ?>">
+                            <div
+                                class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isCommissionActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
+                                <i class="fas fa-percentage <?php echo e($isCommissionActive ? 'text-white' : 'text-slate-700'); ?>"></i>
+                            </div>
+                            <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Staff Commission</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+            <?php endif; ?>
+
             <?php if(auth()->user()->role_id === 0): ?>
                 <?php $isProfileActive = request()->routeIs('customer.profile') || request()->routeIs('customer.registration') || request()->routeIs('customer.profile.check'); ?>
                 <li class="w-full mt-0.5">
