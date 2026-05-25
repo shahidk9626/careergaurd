@@ -357,7 +357,7 @@
             @if(auth()->user()->role_id !== 0)
                 @if(hasPermission('profile-update-requests.view'))
                     @php $isProfileRequestsActive = request()->routeIs('admin.profile-update-requests.index') || request()->is('*profile-update-requests*'); @endphp
-                    <li class="w-full mt-0.5">
+                    <!-- <li class="w-full mt-0.5">
                         <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isProfileRequestsActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
                             href="{{ route('admin.profile-update-requests.index') }}">
                             <div
@@ -366,7 +366,7 @@
                             </div>
                             <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Profile Update Requests</span>
                         </a>
-                    </li>
+                    </li> -->
                 @endif
             @endif
 
