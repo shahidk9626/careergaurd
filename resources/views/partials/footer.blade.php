@@ -7,33 +7,32 @@
                     <script>
                         document.write(new Date().getFullYear())
                     </script>,
-                    made with <i class="fa fa-heart"></i> by
-                    <a href="https://www.creative-tim.com" class="font-semibold text-slate-700" target="_blank">Creative
-                        Tim</a>
-                    for a better web.
+                    CareerGuard,<i class="fa fa-heart"></i> developed by
+                    <a href="https://dixitglobaltech.com" class="font-semibold text-slate-700" target="_blank">Dixit Global Tech IT Solutions Private Limited</a>
+                
                 </div>
             </div>
             <div class="w-full max-w-full px-3 mt-0 shrink-0 lg:w-1/2 lg:flex-none">
                 <ul class="flex flex-wrap justify-center pl-0 mb-0 list-none lg:justify-end">
                     <li class="nav-item">
-                        <a href="https://www.creative-tim.com"
+                        <a href="https://dixitglobaltech.com"
                             class="block px-4 pt-0 pb-1 font-normal transition-all ease-soft-in-out text-sm text-slate-500"
-                            target="_blank">Creative Tim</a>
+                            target="_blank"></a>
                     </li>
                     <li class="nav-item">
-                        <a href="https://www.creative-tim.com/presentation"
+                        <a href="https://test.careerguard.in/about.html"
                             class="block px-4 pt-0 pb-1 font-normal transition-all ease-soft-in-out text-sm text-slate-500"
                             target="_blank">About Us</a>
                     </li>
                     <li class="nav-item">
-                        <a href="https://www.creative-tim.com/blog"
+                        <a href="https://test.careerguard.in/contact-us.html"
                             class="block px-4 pt-0 pb-1 font-normal transition-all ease-soft-in-out text-sm text-slate-500"
-                            target="_blank">Blog</a>
+                            target="_blank">Contact us</a>
                     </li>
                     <li class="nav-item">
-                        <a href="https://www.creative-tim.com/license"
+                        <a href="https://test.careerguard.in/privacy-policy.html"
                             class="block px-4 pt-0 pb-1 pr-0 font-normal transition-all ease-soft-in-out text-sm text-slate-500"
-                            target="_blank">License</a>
+                            target="_blank">Privacy Policy</a>
                     </li>
                 </ul>
             </div>

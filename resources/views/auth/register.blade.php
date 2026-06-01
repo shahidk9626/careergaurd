@@ -5,9 +5,9 @@
     <nav
         class="absolute top-0 z-30 flex flex-wrap items-center justify-between w-full px-4 py-2 mt-6 mb-4 shadow-none lg:flex-nowrap lg:justify-start">
         <div class="container flex items-center justify-between py-0 flex-wrap-inherit">
-            <a class="py-2.375 text-sm mr-4 ml-4 whitespace-nowrap font-bold text-white lg:ml-0" href="/">
-                Soft UI Dashboard
-            </a>
+            <a class="py-2.375 mr-4 ml-4 whitespace-nowrap lg:ml-0 flex items-center" href="/">
+    <img src="https://test.careerguard.in/images/careerguard-logo-black.png" alt="CareerGuard Logo" class="h-12 w-auto" />
+</a>
             <button navbar-trigger
                 class="px-3 py-1 ml-2 leading-none transition-all bg-transparent border border-transparent border-solid rounded-lg shadow-none cursor-pointer text-lg ease-soft-in-out lg:hidden"
                 type="button" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
