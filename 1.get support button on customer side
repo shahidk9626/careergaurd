@@ -1,9 +1,22 @@
-1.get support button on customer side
-2.callback and support button
+1.get support button on customer side -> done
+2.callback and support button -> done
 3.mention after how much time user can apply for claim
 4.document upload
 5.user profile giving error
-6.after payment given admin can update with ss or transaction detail
-7.forgot password
-8.validation on forms
-9.seeder area city data
+6.after payment given admin can update with ss or transaction detail -> done
+7.forgot password ->done
+8.validation on forms ->done
+9.seeder area city data 
+10.Missed payment email 
+11.purchase a plan by staff on behalf of customer -> done
+12.Yearly payment with discount / monthly payment -> done
+13.profile update request by customer. -> done
+
+
+
+new tasks
+1. download excel button on callback request list ->done
+2. multi - delete button on listing -> done
+3. purchase plan ui enhancment ->
+4.job links and templates will show to customer
+5.oAuth implementation

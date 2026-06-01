@@ -123,20 +123,30 @@
                     </div>
 
                     <div class="p-6 pt-0 mt-auto bg-transparent border-t-0 rounded-b-2xl">
+                        @if($plan->one_time_payment_applicable)
+                            <div class="mb-3 text-left">
+                                <label class="block text-xxs font-bold text-slate-500 mb-1">Payment Option</label>
+                                <select id="payment_type_{{ $plan->id }}" class="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-600 bg-white">
+                                    <option value="regular">Standard (₹{{ number_format($plan->premium_amount, 0) }})</option>
+                                    <option value="one_time">One-Time (₹{{ number_format($plan->one_time_payment_amount, 0) }})</option>
+                                </select>
+                            </div>
+                        @endif
+
                         @if(auth()->user()->role_id == 0)
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 mt-4">
                                 <a href="{{ route('customer.plan.show', $plan->slug) }}"
-                                    class="w-1/2 px-4 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-slate-600 to-slate-300 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85">
+                                    class="w-1/2 px-4 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-slate-600 to-slate-300 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85 font-semibold rounded-[10px]">
                                     View Detail
                                 </a>
                                 <button type="button" onclick="confirmPurchase('{{ $plan->id }}', '{{ $plan->name }}')"
-                                    class="w-1/2 px-4 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85 mx-2">
+                                    class="w-1/2 px-4 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85 font-semibold rounded-[10px] mx-2">
                                     Purchase Now
                                 </button>
                             </div>
                         @else
                             <button
-                                class="w-full px-8 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85 mx-2">
+                                class="w-full px-8 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85 font-semibold rounded-[10px] mx-2">
                                 Get Started
                             </button>
                         @endif
@@ -262,13 +272,19 @@
                         }
                     });
 
+                    const paymentTypeDropdown = document.getElementById('payment_type_' + planId);
+                    const paymentType = paymentTypeDropdown ? paymentTypeDropdown.value : 'regular';
+
                     fetch("{{ route('customer.plan.purchase') }}", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
-                        body: JSON.stringify({ plan_id: planId })
+                        body: JSON.stringify({ 
+                            plan_id: planId,
+                            payment_type: paymentType
+                        })
                     })
                         .then(response => response.json())
                         .then(data => {
