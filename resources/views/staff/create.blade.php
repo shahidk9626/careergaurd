@@ -107,237 +107,208 @@
                     </div>
 
                     <form id="staffForm" action="{{ route('staff.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+    @csrf
 
-                        <!-- Step 1: Role -->
-                        <div class="step-content block" id="step-1">
-                            <div class="mb-8">
-                                <div class="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <h6 class="mb-4 text-sm font-bold uppercase text-slate-700">Set User Role</h6>
-                                    <div class="flex flex-wrap -mx-3">
-                                        <div class="w-full max-w-full px-3 md:w-1/2">
-                                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Select Role <span
-                                                    class="text-red-500">*</span></label>
-                                            <select name="role_id" required
-                                                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
-                                                <option value="">Choose a role</option>
-                                                @foreach($roles as $role)
-                                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            @if(count($roles) == 0)
-                                                <p class="text-red-500 text-xxs font-bold mt-1">No roles found in table!</p>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex justify-end mt-10">
-                                <button type="button"
-                                    class="next-step mt-2 px-8 py-3 font-bold text-white uppercase bg-gradient-to-tl from-gray-900 to-slate-800 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs">Next
-                                    <i class="fas fa-arrow-right ml-1"></i></button>
-                            </div>
-                        </div>
+    <div class="step-content block" id="step-1">
+        <div class="mb-8">
+            <div class="p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                <h6 class="mb-4 text-sm font-bold uppercase text-slate-700">Set User Role</h6>
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full max-w-full px-3 md:w-1/2">
+                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Select Role <span class="text-red-500">*</span></label>
+                        <select name="role_id" required
+                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
+                            <option value="">Choose a role</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+                        @if(count($roles) == 0)
+                            <p class="text-red-500 text-xxs font-bold mt-1">No roles found in table!</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-end mt-10">
+            <button type="button" class="next-step mt-2 px-8 py-3 font-bold text-white uppercase bg-gradient-to-tl from-gray-900 to-slate-800 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs">Next <i class="fas fa-arrow-right ml-1"></i></button>
+        </div>
+    </div>
 
-                        <!-- Add Other Steps (Personal, Contact, etc.) with identical logic to previous turns -->
-                        <!-- Personal Information -->
-                        <div class="step-content hidden" id="step-2">
-                            <div class="mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                                <h6 class="mb-4 text-sm font-bold uppercase text-slate-700">Personal Information</h6>
-                                <div class="flex flex-wrap -mx-3">
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">First Name <span
-                                                class="text-red-500">*</span></label>
-                                        <input type="text" name="first_name" required placeholder="Enter first name"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Last Name</label>
-                                        <input type="text" name="last_name" placeholder="Enter last name"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Father Name <span
-                                                class="text-red-500">*</span></label>
-                                        <input type="text" name="father_name" required placeholder="Enter father's name"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Mother Name</label>
-                                        <input type="text" name="mother_name" placeholder="Enter mother's name"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Nominee Name</label>
-                                        <input type="text" name="nominee_name" placeholder="Enter nominee's name"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Date of Birth</label>
-                                        <input type="date" name="dob"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Gender</label>
-                                        <select name="gender"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
-                                            <option value="">Select Gender</option>
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                            <option value="Other">Other</option>
-                                        </select>
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Marital Status</label>
-                                        <select name="marital_status"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
-                                            <option value="">Select Status</option>
-                                            <option value="Single">Single</option>
-                                            <option value="Married">Married</option>
-                                            <option value="Divorced">Divorced</option>
-                                            <option value="Widowed">Widowed</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex justify-between mt-10">
-                                <button type="button"
-                                    class="prev-step mt-2 px-8 py-3 font-bold text-slate-700 uppercase bg-gray-100 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs"><i
-                                        class="fas fa-arrow-left mr-1"></i> Prev</button>
-                                <button type="button"
-                                    class="next-step mt-2 px-8 py-3 font-bold text-white uppercase bg-gradient-to-tl from-gray-900 to-slate-800 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs">Next
-                                    <i class="fas fa-arrow-right ml-1"></i></button>
-                            </div>
-                        </div>
+    <div class="step-content hidden" id="step-2">
+        <div class="mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+            <h6 class="mb-4 text-sm font-bold uppercase text-slate-700">Personal Information</h6>
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">First Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="first_name" required placeholder="Enter first name" minlength="3"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Last Name</label>
+                    <input type="text" name="last_name" placeholder="Enter last name"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Father Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="father_name" required placeholder="Enter father's name" minlength="3"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Mother Name</label>
+                    <input type="text" name="mother_name" placeholder="Enter mother's name"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Nominee Name</label>
+                    <input type="text" name="nominee_name" placeholder="Enter nominee's name"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Date of Birth</label>
+                    <input type="date" name="dob"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Gender</label>
+                    <select name="gender"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Marital Status</label>
+                    <select name="marital_status"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
+                        <option value="">Select Status</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Widowed">Widowed</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-between mt-10">
+            <button type="button" class="prev-step mt-2 px-8 py-3 font-bold text-slate-700 uppercase bg-gray-100 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs"><i class="fas fa-arrow-left mr-1"></i> Prev</button>
+            <button type="button" class="next-step mt-2 px-8 py-3 font-bold text-white uppercase bg-gradient-to-tl from-gray-900 to-slate-800 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs">Next <i class="fas fa-arrow-right ml-1"></i></button>
+        </div>
+    </div>
 
-                        <!-- Contact Information -->
-                        <div class="step-content hidden" id="step-3">
-                            <div class="mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                                <h6 class="mb-4 text-sm font-bold uppercase text-slate-700">Contact Information</h6>
-                                <div class="flex flex-wrap -mx-3">
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Email Address</label>
-                                        <input type="email" name="email" placeholder="Enter email"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Phone Number <span
-                                                class="text-red-500">*</span></label>
-                                        <input type="text" name="phone" required placeholder="Enter phone"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Alternate Phone</label>
-                                        <input type="text" name="alternate_phone" placeholder="Enter alternate phone"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Pincode <span
-                                                class="text-red-500">*</span></label>
-                                        <input type="text" name="pincode" required placeholder="Pincode"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Address <span
-                                                class="text-red-500">*</span></label>
-                                        <textarea name="address" required rows="2" placeholder="Enter full address"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"></textarea>
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">City <span
-                                                class="text-red-500">*</span></label>
-                                        <input type="text" name="city" required placeholder="City"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">State <span
-                                                class="text-red-500">*</span></label>
-                                        <input type="text" name="state" required placeholder="State"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Country <span
-                                                class="text-red-500">*</span></label>
-                                        <input type="text" name="country" required placeholder="Country"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex justify-between mt-10">
-                                <button type="button"
-                                    class="prev-step mt-2 px-8 py-3 font-bold text-slate-700 uppercase bg-gray-100 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs"><i
-                                        class="fas fa-arrow-left mr-1"></i> Prev</button>
-                                <button type="button"
-                                    class="next-step mt-2 px-8 py-3 font-bold text-white uppercase bg-gradient-to-tl from-gray-900 to-slate-800 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs">Next
-                                    <i class="fas fa-arrow-right ml-1"></i></button>
-                            </div>
-                        </div>
+    <div class="step-content hidden" id="step-3">
+        <div class="mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+            <h6 class="mb-4 text-sm font-bold uppercase text-slate-700">Contact Information</h6>
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Email Address</label>
+                    <input type="email" name="email" placeholder="Enter email"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Phone Number <span class="text-red-500">*</span></label>
+                    <input type="text" name="phone" required placeholder="Enter phone" maxlength="10"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Alternate Phone</label>
+                    <input type="text" name="alternate_phone" placeholder="Enter alternate phone" maxlength="10"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Pincode <span class="text-red-500">*</span></label>
+                    <input type="text" name="pincode" required placeholder="Pincode" maxlength="6"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Address <span class="text-red-500">*</span></label>
+                    <textarea name="address" required rows="2" placeholder="Enter full address"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"></textarea>
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/3">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">City <span class="text-red-500">*</span></label>
+                    <input type="text" name="city" required placeholder="City"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/3">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">State <span class="text-red-500">*</span></label>
+                    <input type="text" name="state" required placeholder="State"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/3">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Country <span class="text-red-500">*</span></label>
+                    <input type="text" name="country" required placeholder="Country"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-between mt-10">
+            <button type="button" class="prev-step mt-2 px-8 py-3 font-bold text-slate-700 uppercase bg-gray-100 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs"><i class="fas fa-arrow-left mr-1"></i> Prev</button>
+            <button type="button" class="next-step mt-2 px-8 py-3 font-bold text-white uppercase bg-gradient-to-tl from-gray-900 to-slate-800 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs">Next <i class="fas fa-arrow-right ml-1"></i></button>
+        </div>
+    </div>
 
-                        <!-- Employment & Bank Details -->
-                        <div class="step-content hidden" id="step-4">
-                            <div class="mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                                <h6 class="mb-4 text-sm font-bold uppercase text-slate-700">Employment Details</h6>
-                                <div class="flex flex-wrap -mx-3 mb-6">
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Department</label>
-                                        <input type="text" name="department" placeholder="Enter department"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Designation</label>
-                                        <input type="text" name="designation" placeholder="Enter designation"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Joining Date <span
-                                                class="text-red-500">*</span></label>
-                                        <input type="date" name="joining_date" required
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Salary</label>
-                                        <input type="number" step="0.01" name="salary" placeholder="Salary"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                </div>
-                                <h6 class="mb-4 text-sm font-bold uppercase text-slate-700 border-t pt-4">Bank & IDs</h6>
-                                <div class="flex flex-wrap -mx-3">
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Bank Name</label>
-                                        <input type="text" name="bank_name" placeholder="Bank Name"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Account Number</label>
-                                        <input type="text" name="account_number" placeholder="Account Number"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">IFSC Code</label>
-                                        <input type="text" name="ifsc_code" placeholder="IFSC Code"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">PAN Number</label>
-                                        <input type="text" name="pan_number" placeholder="PAN Number"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div class="w-full max-w-full px-3 mb-4 md:w-1/3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Aadhar Number</label>
-                                        <input type="text" name="aadhar_number" placeholder="Aadhar Number"
-                                            class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex justify-between mt-10">
-                                <button type="button"
-                                    class="prev-step mt-2 px-8 py-3 font-bold text-slate-700 uppercase bg-gray-100 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs"><i
-                                        class="fas fa-arrow-left mr-1"></i> Prev</button>
-                                <button type="button"
-                                    class="next-step mt-2 px-8 py-3 font-bold text-white uppercase bg-gradient-to-tl from-gray-900 to-slate-800 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs">Next
-                                    <i class="fas fa-arrow-right ml-1"></i></button>
-                            </div>
-                        </div>
+    <div class="step-content hidden" id="step-4">
+        <div class="mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+            <h6 class="mb-4 text-sm font-bold uppercase text-slate-700">Employment Details</h6>
+            <div class="flex flex-wrap -mx-3 mb-6">
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Department</label>
+                    <input type="text" name="department" placeholder="Enter department"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Designation</label>
+                    <input type="text" name="designation" placeholder="Enter designation"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Joining Date <span class="text-red-500">*</span></label>
+                    <input type="date" name="joining_date" required
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Salary</label>
+                    <input type="number" step="0.01" name="salary" placeholder="Salary"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+            </div>
+            <h6 class="mb-4 text-sm font-bold uppercase text-slate-700 border-t pt-4">Bank & IDs</h6>
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Bank Name</label>
+                    <input type="text" name="bank_name" placeholder="Bank Name"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/2">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Account Number</label>
+                    <input type="text" name="account_number" placeholder="Account Number" maxlength="18"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/3">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">IFSC Code</label>
+                    <input type="text" name="ifsc_code" placeholder="IFSC Code" maxlength="11"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/3">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">PAN Number</label>
+                    <input type="text" name="pan_number" placeholder="PAN Number" maxlength="10"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+                <div class="w-full max-w-full px-3 mb-4 md:w-1/3">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Aadhar Number</label>
+                    <input type="text" name="aadhar_number" placeholder="Aadhar Number" maxlength="12"
+                        class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-between mt-10">
+            <button type="button" class="prev-step mt-2 px-8 py-3 font-bold text-slate-700 uppercase bg-gray-100 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs"><i class="fas fa-arrow-left mr-1"></i> Prev</button>
+            <button type="button" class="next-step mt-2 px-8 py-3 font-bold text-white uppercase bg-gradient-to-tl from-gray-900 to-slate-800 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs">Next <i class="fas fa-arrow-right ml-1"></i></button>
+        </div>
+    </div>
 
                         <!-- Documents -->
                         <div class="step-content hidden" id="step-5">
@@ -380,26 +351,20 @@
                             </div>
                         </div>
 
-                        <!-- Preview -->
-                        <div class="step-content hidden" id="step-6">
-                            <div class="mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                                <h6 class="mb-6 text-sm font-bold uppercase text-slate-700">Review Information</h6>
-                                <div id="previewContainer"
-                                    class="bg-white rounded-xl p-6 shadow-soft-sm border border-gray-100">
-                                    <!-- Dynamic content -->
-                                </div>
-                            </div>
-                            <div class="flex justify-between mt-10">
-                                <button type="button"
-                                    class="prev-step mt-2 px-8 py-3 font-bold text-slate-700 uppercase bg-gray-100 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs"><i
-                                        class="fas fa-arrow-left mr-1"></i> Back</button>
-                                <button type="submit" id="submitBtn"
-                                    class="prev-step mt-2 px-8 py-3 font-bold text-slate-700 text-white uppercase bg-gradient-to-tl from-green-600 to-lime-400 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs">
-                                    <i class="fas fa-check mr-1"></i> Submit
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+    <div class="step-content hidden" id="step-6">
+        <div class="mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+            <h6 class="mb-6 text-sm font-bold uppercase text-slate-700">Review Information</h6>
+            <div id="previewContainer" class="bg-white rounded-xl p-6 shadow-soft-sm border border-gray-100">
+                </div>
+        </div>
+        <div class="flex justify-between mt-10">
+            <button type="button" class="prev-step mt-2 px-8 py-3 font-bold text-slate-700 uppercase bg-gray-100 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs"><i class="fas fa-arrow-left mr-1"></i> Back</button>
+            <button type="submit" id="submitBtn" class="prev-step mt-2 px-8 py-3 font-bold text-slate-700 text-white uppercase bg-gradient-to-tl from-green-600 to-lime-400 rounded-lg shadow-soft-md hover:scale-102 transition-all text-xs">
+                <i class="fas fa-check mr-1"></i> Submit
+            </button>
+        </div>
+    </div>
+</form>
                 </div>
             </div>
         </div>
@@ -407,6 +372,167 @@
 @endsection
 
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    
+    // --- 1. REAL-TIME INPUT RESTRICTIONS ---
+    
+    // Only Alphabets and Spaces for Name/Location Fields
+    $('input[name="first_name"], input[name="last_name"], input[name="father_name"], input[name="mother_name"], input[name="nominee_name"], input[name="city"], input[name="state"], input[name="country"], input[name="bank_name"]').on('input', function() {
+        this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+    });
+
+    // Only Numbers for Phone, PIN, Bank Account, Aadhar
+    $('input[name="phone"], input[name="alternate_phone"], input[name="pincode"], input[name="account_number"], input[name="aadhar_number"]').on('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    // Uppercase Alphanumeric for PAN and IFSC
+    $('input[name="pan_number"], input[name="ifsc_code"]').on('input', function() {
+        this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    });
+
+    // --- 2. ERROR DISPLAY HELPERS ---
+    
+    function showError(fieldName, message) {
+        let $input = $('[name="' + fieldName + '"]'); // Works for select and input
+        removeError(fieldName);
+        $input.after('<p class="text-red-500 text-xs mt-1 validation-error" data-field="' + fieldName + '">' + message + '</p>');
+        $input.addClass('border-red-500').removeClass('border-gray-300');
+    }
+
+    function removeError(fieldName) {
+        let $input = $('[name="' + fieldName + '"]');
+        $input.siblings('.validation-error[data-field="' + fieldName + '"]').remove();
+        $input.removeClass('border-red-500').addClass('border-gray-300');
+    }
+
+    // --- 3. STEP VALIDATION FUNCTIONS ---
+    
+    function validateStep1() {
+        let isValid = true;
+        let role = $('select[name="role_id"]').val();
+        
+        if (!role) { showError('role_id', 'Please select a role.'); isValid = false; } 
+        else { removeError('role_id'); }
+
+        return isValid;
+    }
+
+    function validateStep2() {
+        let isValid = true;
+
+        let fName = $('input[name="first_name"]').val().trim();
+        if (fName.length < 3) { showError('first_name', 'First name must contain at least 3 letters.'); isValid = false; } 
+        else { removeError('first_name'); }
+
+        let fatherName = $('input[name="father_name"]').val().trim();
+        if (fatherName.length < 3) { showError('father_name', 'Father name must contain at least 3 letters.'); isValid = false; } 
+        else { removeError('father_name'); }
+
+        return isValid;
+    }
+
+    function validateStep3() {
+        let isValid = true;
+
+        let email = $('input[name="email"]').val().trim();
+        if(email !== '') {
+            let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) { showError('email', 'Please enter a valid email address.'); isValid = false; } 
+            else { removeError('email'); }
+        } else { removeError('email'); } // Email isn't marked required in HTML
+
+        let phone = $('input[name="phone"]').val().trim();
+        if (phone.length !== 10) { showError('phone', 'Phone number must be exactly 10 digits.'); isValid = false; } 
+        else { removeError('phone'); }
+
+        let altPhone = $('input[name="alternate_phone"]').val().trim();
+        if (altPhone !== '' && altPhone.length !== 10) { showError('alternate_phone', 'Alternate phone must be exactly 10 digits.'); isValid = false; } 
+        else { removeError('alternate_phone'); }
+
+        let pincode = $('input[name="pincode"]').val().trim();
+        if (pincode.length !== 6) { showError('pincode', 'Pincode must be exactly 6 digits.'); isValid = false; } 
+        else { removeError('pincode'); }
+        
+        let city = $('input[name="city"]').val().trim();
+        if (city === '') { showError('city', 'City is required.'); isValid = false; } else { removeError('city'); }
+        
+        let state = $('input[name="state"]').val().trim();
+        if (state === '') { showError('state', 'State is required.'); isValid = false; } else { removeError('state'); }
+        
+        let country = $('input[name="country"]').val().trim();
+        if (country === '') { showError('country', 'Country is required.'); isValid = false; } else { removeError('country'); }
+
+        return isValid;
+    }
+
+    function validateStep4() {
+        let isValid = true;
+
+        let joining = $('input[name="joining_date"]').val().trim();
+        if (joining === '') { showError('joining_date', 'Joining Date is required.'); isValid = false; } 
+        else { removeError('joining_date'); }
+
+        let account = $('input[name="account_number"]').val().trim();
+        if (account !== '' && (account.length < 9 || account.length > 18)) { 
+            showError('account_number', 'Account Number must be between 9 and 18 digits.'); isValid = false; 
+        } else { removeError('account_number'); }
+        
+        let ifsc = $('input[name="ifsc_code"]').val().trim();
+        let ifscRegex = /^[A-Z]{4}0[A-Z0-9]{6}$/;
+        if (ifsc !== '' && !ifscRegex.test(ifsc)) { 
+            showError('ifsc_code', 'Invalid IFSC format (e.g., ABCD0123456).'); isValid = false; 
+        } else { removeError('ifsc_code'); }
+
+        let pan = $('input[name="pan_number"]').val().trim();
+        let panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+        if (pan !== '' && !panRegex.test(pan)) { 
+            showError('pan_number', 'Invalid PAN format (e.g., ABCDE1234F).'); isValid = false; 
+        } else { removeError('pan_number'); }
+
+        let aadhar = $('input[name="aadhar_number"]').val().trim();
+        if (aadhar !== '' && aadhar.length !== 12) { 
+            showError('aadhar_number', 'Aadhar Number must be exactly 12 digits.'); isValid = false; 
+        } else { removeError('aadhar_number'); }
+
+        return isValid;
+    }
+
+    // --- 4. BIND VALIDATIONS TO "NEXT" BUTTONS ---
+    
+    $('#step-1 .next-step').on('click', function(e) {
+        if (!validateStep1()) { e.preventDefault(); e.stopImmediatePropagation(); }
+    });
+
+    $('#step-2 .next-step').on('click', function(e) {
+        if (!validateStep2()) { e.preventDefault(); e.stopImmediatePropagation(); }
+    });
+
+    $('#step-3 .next-step').on('click', function(e) {
+        if (!validateStep3()) { e.preventDefault(); e.stopImmediatePropagation(); }
+    });
+
+    $('#step-4 .next-step').on('click', function(e) {
+        if (!validateStep4()) { e.preventDefault(); e.stopImmediatePropagation(); }
+    });
+
+    // Form Submission Catch-all
+    $('#staffForm').on('submit', function(e) {
+        if (!validateStep1() || !validateStep2() || !validateStep3() || !validateStep4()) {
+            e.preventDefault();
+            alert('Please check all steps and fix the errors before submitting.');
+        }
+    });
+
+    // --- 5. CLEAR ERRORS ON BLUR ---
+    $('select[name="role_id"]').on('change', validateStep1);
+    $('input[name="first_name"], input[name="father_name"]').on('blur', validateStep2);
+    $('input[name="email"], input[name="phone"], input[name="alternate_phone"], input[name="pincode"], input[name="city"], input[name="state"], input[name="country"]').on('blur', validateStep3);
+    $('input[name="joining_date"], input[name="account_number"], input[name="ifsc_code"], input[name="pan_number"], input[name="aadhar_number"]').on('blur', validateStep4);
+});
+</script>
     <script>
         $(document).ready(function () {
             let currentStep = 1;

@@ -4,9 +4,7 @@
     <div class="container sticky top-0 z-sticky">
         <div class="flex flex-wrap -mx-3">
             <div class="w-full max-w-full px-3 flex-0">
-                <!-- Navbar -->
-                <nav
-                    class="absolute top-0 left-0 right-0 z-30 flex flex-wrap items-center px-4 py-2 mx-6 my-4 shadow-soft-2xl rounded-blur bg-white/80 backdrop-blur-2xl backdrop-saturate-200 lg:flex-nowrap lg:justify-start">
+                <nav class="absolute top-0 left-0 right-0 z-30 flex flex-wrap items-center px-4 py-2 mx-6 my-4 shadow-soft-2xl rounded-blur bg-white/80 backdrop-blur-2xl backdrop-saturate-200 lg:flex-nowrap lg:justify-start">
                     <div class="flex items-center justify-between w-full p-0 pl-6 mx-auto flex-wrap-inherit">
                         <a class="py-2.375 text-sm mr-4 ml-4 whitespace-nowrap font-bold text-slate-700 lg:ml-0" href="/">
                             Soft UI Dashboard
@@ -66,19 +64,20 @@
             <div class="relative flex items-center p-0 overflow-hidden bg-center bg-cover min-h-75-screen">
                 <div class="container z-10">
                     <div class="flex flex-wrap mt-0 -mx-3">
-                        <div
-                            class="flex flex-col w-full max-w-full px-3 mx-auto md:flex-0 shrink-0 md:w-6/12 lg:w-5/12 xl:w-4/12">
-                            <div
-                                class="relative flex flex-col min-w-0 mt-32 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border">
+                        
+                        <div class="flex flex-col w-full max-w-full px-3 mx-auto md:flex-0 shrink-0 md:w-6/12 lg:w-5/12 xl:w-4/12">
+                            <div class="relative flex flex-col min-w-0 mt-32 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border">
+                                
                                 <div class="p-6 pb-0 mb-0 bg-transparent border-b-0 rounded-t-2xl">
-                                    <h3
-                                        class="relative z-10 font-bold text-transparent bg-gradient-to-tl from-blue-600 to-cyan-400 bg-clip-text">
-                                        Forgot Password
+                                    <h3 class="relative z-10 font-bold text-transparent bg-gradient-to-tl from-blue-600 to-cyan-400 bg-clip-text">
+                                        Reset Password
                                     </h3>
-                                    <p class="mb-0">Enter your email to receive a password reset link</p>
+                                    <p class="mb-0 text-sm text-slate-600">
+                                        Enter your registered email to receive a password reset link.
+                                    </p>
                                 </div>
+
                                 <div class="flex-auto p-6">
-                                    <!-- Session Status -->
                                     @if (session('status'))
                                         <div class="mb-4 font-medium text-sm text-green-600">
                                             {{ session('status') }}
@@ -173,12 +172,7 @@
             <div class="flex flex-wrap -mx-3">
                 <div class="w-8/12 max-w-full px-3 mx-auto mt-1 text-center flex-0">
                     <p class="mb-0 text-slate-400">
-                        Copyright ©
-                        <script>
-                            document.write(new Date().getFullYear());
-                        </script>
-                        Soft by Creative Tim.
-                        <span class="w-full"> Distributed by ❤️ ThemeWagon </span>
+                        Copyright © <script>document.write(new Date().getFullYear());</script> POWERED BY <a href="https://www.dixitglobaltech.com" class="font-semibold text-slate-400" target="_blank">Dixit Global Tech</a>.
                     </p>
                 </div>
             </div>
