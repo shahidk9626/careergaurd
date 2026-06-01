@@ -56,6 +56,7 @@
                                             <th class="px-6 py-3 text-center border-b tracking-tight-soft opacity-70">Approve</th>
                                             <th class="px-6 py-3 text-center border-b tracking-tight-soft opacity-70">Reject</th>
                                             <th class="px-6 py-3 text-center border-b tracking-tight-soft opacity-70">Detail</th>
+                                            <th class="px-6 py-3 text-center border-b tracking-tight-soft opacity-70">Export</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -67,7 +68,7 @@
                                                         <input type="checkbox" class="row-select-all w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500">
                                                     @endif
                                                 </td>
-                                                @foreach (['view', 'create', 'edit', 'delete', 'status', 'verify', 'approve', 'reject', 'view_detail'] as $action)
+                                                @foreach (['view', 'create', 'edit', 'delete', 'status', 'verify', 'approve', 'reject', 'view_detail', 'export'] as $action)
                                                     @php
                                                         $permission = $module->permissions->where('slug', $module->slug . '.' . $action)->first();
                                                     @endphp
