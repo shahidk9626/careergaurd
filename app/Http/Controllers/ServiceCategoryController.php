@@ -67,4 +67,16 @@ class ServiceCategoryController extends Controller
         ServiceCategory::findOrFail($id)->delete();
         return response()->json(['success' => 'Category deleted successfully']);
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:service_categories,id',
+        ]);
+
+        $count = ServiceCategory::whereIn('id', $request->ids)->delete();
+
+        return response()->json(['success' => "{$count} records deleted successfully."]);
+    }
 }

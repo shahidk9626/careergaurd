@@ -72,4 +72,16 @@ class JobLinkController extends Controller
         $link->save();
         return response()->json(['success' => 'Status updated successfully!']);
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:job_links,id',
+        ]);
+
+        $count = JobLink::whereIn('id', $request->ids)->delete();
+
+        return response()->json(['success' => "{$count} records deleted successfully."]);
+    }
 }

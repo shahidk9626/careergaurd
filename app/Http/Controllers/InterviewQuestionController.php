@@ -72,4 +72,16 @@ class InterviewQuestionController extends Controller
         $question->save();
         return response()->json(['success' => 'Status updated successfully!']);
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:interview_questions,id',
+        ]);
+
+        $count = InterviewQuestion::whereIn('id', $request->ids)->delete();
+
+        return response()->json(['success' => "{$count} records deleted successfully."]);
+    }
 }

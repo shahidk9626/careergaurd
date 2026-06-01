@@ -150,6 +150,18 @@ class PlanController extends Controller
         return response()->json(['success' => 'Status updated successfully!']);
     }
 
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:plans,id',
+        ]);
+
+        $count = Plan::whereIn('id', $request->ids)->delete();
+
+        return response()->json(['success' => "{$count} records deleted successfully."]);
+    }
+
     /**
      * Public / Preview View
      */

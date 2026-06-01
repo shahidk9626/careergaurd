@@ -105,6 +105,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
             Route::post('/update/{id}', [ServiceCategoryController::class, 'update'])->middleware('permission:service-categories.edit')->name('admin.services.categories.update');
             Route::post('/status/{id}', [ServiceCategoryController::class, 'status'])->middleware('permission:service-categories.status')->name('admin.services.categories.status');
             Route::delete('/delete/{id}', [ServiceCategoryController::class, 'destroy'])->middleware('permission:service-categories.delete')->name('admin.services.categories.delete');
+            Route::post('/bulk-delete', [ServiceCategoryController::class, 'bulkDestroy'])->middleware('permission:service-categories.delete')->name('admin.services.categories.bulk-delete');
         });
 
         // Resume Templates
@@ -115,6 +116,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
             Route::post('/update/{id}', [App\Http\Controllers\ResumeTemplateController::class, 'update'])->middleware('permission:resumes.edit')->name('admin.services.resumes.update');
             Route::delete('/delete/{id}', [App\Http\Controllers\ResumeTemplateController::class, 'destroy'])->middleware('permission:resumes.delete')->name('admin.services.resumes.destroy');
             Route::post('/status/{id}', [App\Http\Controllers\ResumeTemplateController::class, 'toggleStatus'])->middleware('permission:resumes.status')->name('admin.services.resumes.status');
+            Route::post('/bulk-delete', [App\Http\Controllers\ResumeTemplateController::class, 'bulkDestroy'])->middleware('permission:resumes.delete')->name('admin.services.resumes.bulk-delete');
         });
 
         // Job Links
@@ -125,6 +127,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
             Route::post('/update/{id}', [App\Http\Controllers\JobLinkController::class, 'update'])->middleware('permission:job-links.edit')->name('admin.services.job-links.update');
             Route::delete('/delete/{id}', [App\Http\Controllers\JobLinkController::class, 'destroy'])->middleware('permission:job-links.delete')->name('admin.services.job-links.destroy');
             Route::post('/status/{id}', [App\Http\Controllers\JobLinkController::class, 'toggleStatus'])->middleware('permission:job-links.status')->name('admin.services.job-links.status');
+            Route::post('/bulk-delete', [App\Http\Controllers\JobLinkController::class, 'bulkDestroy'])->middleware('permission:job-links.delete')->name('admin.services.job-links.bulk-delete');
         });
 
         // Interview Questions
@@ -135,6 +138,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
             Route::post('/update/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'update'])->middleware('permission:questions.edit')->name('admin.services.questions.update');
             Route::delete('/delete/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'destroy'])->middleware('permission:questions.delete')->name('admin.services.questions.destroy');
             Route::post('/status/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'toggleStatus'])->middleware('permission:questions.status')->name('admin.services.questions.status');
+            Route::post('/bulk-delete', [App\Http\Controllers\InterviewQuestionController::class, 'bulkDestroy'])->middleware('permission:questions.delete')->name('admin.services.questions.bulk-delete');
         });
 
         // Plans
@@ -147,6 +151,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
             Route::delete('/delete/{id}', [App\Http\Controllers\PlanController::class, 'destroy'])->middleware('permission:plans.delete')->name('admin.plans.destroy');
             Route::post('/status/{id}', [App\Http\Controllers\PlanController::class, 'toggleStatus'])->middleware('permission:plans.status')->name('admin.plans.status');
             Route::get('/plan-preview', [App\Http\Controllers\PlanController::class, 'preview'])->middleware('permission:plans.preview')->name('admin.plans.preview');
+            Route::post('/bulk-delete', [App\Http\Controllers\PlanController::class, 'bulkDestroy'])->middleware('permission:plans.delete')->name('admin.plans.bulk-delete');
         });
 
         // Purchased Plans & Claim Management

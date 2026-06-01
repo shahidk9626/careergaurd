@@ -94,6 +94,12 @@ class ResumeTemplateController extends Controller
     public function destroy($id)
     {
         $template = ResumeTemplate::findOrFail($id);
+        if ($template->thumbnail) {
+            Storage::disk('public')->delete($template->thumbnail);
+        }
+        if ($template->file_path) {
+            Storage::disk('public')->delete($template->file_path);
+        }
         $template->delete();
         return response()->json(['success' => 'Resume Template deleted successfully!']);
     }
@@ -104,5 +110,26 @@ class ResumeTemplateController extends Controller
         $template->status = $template->status === 'active' ? 'inactive' : 'active';
         $template->save();
         return response()->json(['success' => 'Status updated successfully!']);
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:resume_templates,id',
+        ]);
+
+        $templates = ResumeTemplate::whereIn('id', $request->ids)->get();
+        foreach ($templates as $template) {
+            if ($template->thumbnail) {
+                Storage::disk('public')->delete($template->thumbnail);
+            }
+            if ($template->file_path) {
+                Storage::disk('public')->delete($template->file_path);
+            }
+            $template->delete();
+        }
+
+        return response()->json(['success' => count($templates) . ' records deleted successfully.']);
     }
 }
