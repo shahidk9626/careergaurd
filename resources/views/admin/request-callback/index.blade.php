@@ -4,15 +4,36 @@
     <div class="flex flex-wrap -mx-3">
         <div class="flex-none w-full max-w-full px-3">
             <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
-                <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-                    <h6 class="mb-0 font-bold">Callback Requests</h6>
-                    <p class="text-sm">View and manage customer callback requests.</p>
+                <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl flex flex-wrap justify-between items-center">
+                    <div>
+                        <h6 class="mb-0 font-bold">Callback Requests</h6>
+                        <p class="text-sm">View and manage customer callback requests.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        @if(hasPermission('request-callback.delete'))
+                            <button id="btnDeleteSelected" style="display: none;" onclick="deleteSelectedCallbacks()"
+                                class="inline-block px-4 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-red-600 to-rose-500 hover:scale-102">
+                                Delete Selected
+                            </button>
+                        @endif
+                        @if(hasPermission('request-callback.export'))
+                            <button onclick="exportExcel()"
+                                class="inline-block px-4 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102">
+                                Export Excel
+                            </button>
+                        @endif
+                    </div>
                 </div>
                 <div class="flex-auto px-0 pt-0 pb-2">
                     <div class="p-6 overflow-x-auto">
                         <table id="callbackRequestsTable" class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
+                                    @if(hasPermission('request-callback.delete'))
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
+                                        <input type="checkbox" id="selectAllCallbacks" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500">
+                                    </th>
+                                    @endif
                                     <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
                                         #</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
@@ -38,6 +59,11 @@
                             <tbody>
                                 @foreach($requests as $index => $req)
                                 <tr>
+                                    @if(hasPermission('request-callback.delete'))
+                                    <td class="px-6 py-4 text-center align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none">
+                                        <input type="checkbox" value="{{ $req->id }}" class="callback-checkbox w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500">
+                                    </td>
+                                    @endif
                                     <td class="px-6 py-4 align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none">
                                         <span class="text-sm font-semibold leading-normal text-slate-700">{{ $index + 1 }}</span>
                                     </td>
@@ -96,8 +122,14 @@
                                         </button>
                                         @if(hasPermission('request-callback.status'))
                                             <button onclick="openStatusModal({{ $req->id }}, '{{ $req->status }}')"
-                                                class="inline-block px-3 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102">
+                                                class="inline-block px-3 py-2 mr-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102">
                                                 Update Status
+                                            </button>
+                                        @endif
+                                        @if(hasPermission('request-callback.delete'))
+                                            <button onclick="deleteCallback({{ $req->id }})"
+                                                class="inline-block px-3 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-red-600 to-rose-500 hover:scale-102">
+                                                Delete
                                             </button>
                                         @endif
                                     </td>
@@ -149,10 +181,48 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
-            $('#callbackRequestsTable').DataTable({
-                order: [[8, 'desc']],
-                responsive: true
+            @php
+                $createdDateColIndex = hasPermission('request-callback.delete') ? 9 : 8;
+            @endphp
+            let table = $('#callbackRequestsTable').DataTable({
+                order: [[{{ $createdDateColIndex }}, 'desc']],
+                responsive: true,
+                columnDefs: [
+                    @if(hasPermission('request-callback.delete'))
+                    { orderable: false, targets: 0 }
+                    @endif
+                ],
+                drawCallback: function() {
+                    $('#selectAllCallbacks').prop('checked', false);
+                    toggleDeleteSelectedButton();
+                }
             });
+
+            @if(hasPermission('request-callback.delete'))
+                // Select All Checkbox logic
+                $('#selectAllCallbacks').on('change', function() {
+                    let isChecked = $(this).is(':checked');
+                    $('.callback-checkbox').prop('checked', isChecked);
+                    toggleDeleteSelectedButton();
+                });
+
+                // Individual checkbox change logic
+                $(document).on('change', '.callback-checkbox', function() {
+                    let total = $('.callback-checkbox').length;
+                    let checked = $('.callback-checkbox:checked').length;
+                    $('#selectAllCallbacks').prop('checked', total === checked);
+                    toggleDeleteSelectedButton();
+                });
+
+                function toggleDeleteSelectedButton() {
+                    let checkedCount = $('.callback-checkbox:checked').length;
+                    if (checkedCount > 0) {
+                        $('#btnDeleteSelected').show();
+                    } else {
+                        $('#btnDeleteSelected').hide();
+                    }
+                }
+            @endif
 
             @if(hasPermission('request-callback.status'))
                 $('#updateStatusForm').on('submit', function(e) {
@@ -261,5 +331,144 @@
             document.getElementById('status_select').value = currentStatus;
             openStatusModalLogic();
         }
+
+        @if(hasPermission('request-callback.delete'))
+        function deleteCallback(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Are you sure you want to delete this callback request?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'bg-gradient-to-tl from-red-600 to-rose-500 text-white px-4 py-2 rounded-lg font-bold mr-2',
+                    cancelButton: 'bg-gradient-to-tl from-gray-900 to-slate-800 text-white px-4 py-2 rounded-lg font-bold'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('admin.request-callback.destroy', ['id' => ':id']) }}".replace(':id', id),
+                        type: 'DELETE',
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: response.success || 'Callback request deleted successfully.',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: xhr.responseJSON.error || 'Failed to delete callback request.'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        function deleteSelectedCallbacks() {
+            let selectedIds = [];
+            $('.callback-checkbox:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
+
+            if (selectedIds.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Selection',
+                    text: 'Please select at least one callback request to delete.'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Are you sure you want to delete selected callback requests?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete selected!',
+                customClass: {
+                    confirmButton: 'bg-gradient-to-tl from-red-600 to-rose-500 text-white px-4 py-2 rounded-lg font-bold mr-2',
+                    cancelButton: 'bg-gradient-to-tl from-gray-900 to-slate-800 text-white px-4 py-2 rounded-lg font-bold'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('admin.request-callback.bulk-destroy') }}",
+                        type: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            ids: selectedIds
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: response.success || 'Selected callback requests deleted successfully.',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: xhr.responseJSON.error || 'Failed to delete selected callback requests.'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+        @endif
+
+        @if(hasPermission('request-callback.export'))
+        function exportExcel() {
+            let table = $('#callbackRequestsTable').DataTable();
+            let searchVal = table.search();
+            
+            let url = "{{ route('admin.request-callback.export') }}";
+            let params = [];
+            if (searchVal) {
+                params.push('search=' + encodeURIComponent(searchVal));
+            }
+            
+            // Respect status filter and date filters if they exist in the DOM
+            let statusFilter = document.getElementById('statusFilter');
+            if (statusFilter && statusFilter.value) {
+                params.push('status=' + encodeURIComponent(statusFilter.value));
+            }
+            let startDateFilter = document.getElementById('startDateFilter');
+            if (startDateFilter && startDateFilter.value) {
+                params.push('start_date=' + encodeURIComponent(startDateFilter.value));
+            }
+            let endDateFilter = document.getElementById('endDateFilter');
+            if (endDateFilter && endDateFilter.value) {
+                params.push('end_date=' + encodeURIComponent(endDateFilter.value));
+            }
+            
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+            window.location.href = url;
+        }
+        @endif
     </script>
 @endpush

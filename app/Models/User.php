@@ -96,4 +96,47 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(CustomerUpdateRequest::class, 'customer_id');
     }
+
+    /**
+     * Get active unexpired purchased plans for the user.
+     */
+    public function getActivePurchasedPlans()
+    {
+        return $this->purchasedPlans()
+            ->where('status', 'active')
+            ->where('end_date', '>=', now())
+            ->get();
+    }
+
+    /**
+     * Determine if customer has access to a specific benefit type based on active memberships.
+     */
+    public function hasBenefitAccess($serviceType)
+    {
+        $activePlanIds = $this->getActivePurchasedPlans()->pluck('plan_id');
+
+        if ($activePlanIds->isEmpty()) {
+            return false;
+        }
+
+        return \App\Models\PlanService::whereIn('plan_id', $activePlanIds)
+            ->where('service_type', $serviceType)
+            ->exists();
+    }
+
+    /**
+     * Get allowed category IDs for a specific service type from active purchased plans.
+     */
+    public function getActivePurchasedPlanCategories($serviceType)
+    {
+        $activePlanIds = $this->getActivePurchasedPlans()->pluck('plan_id');
+
+        if ($activePlanIds->isEmpty()) {
+            return collect();
+        }
+
+        return \App\Models\PlanService::whereIn('plan_id', $activePlanIds)
+            ->where('service_type', $serviceType)
+            ->pluck('service_category_id');
+    }
 }

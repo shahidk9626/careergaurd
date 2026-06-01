@@ -289,6 +289,59 @@
                 </li>
             @endif
 
+            @if(auth()->user()->role_id === 0)
+                @php
+                    $hasResume = auth()->user()->hasBenefitAccess('resume');
+                    $hasJobLink = auth()->user()->hasBenefitAccess('job-link');
+                    $hasQuestion = auth()->user()->hasBenefitAccess('question');
+                @endphp
+                
+                @if($hasResume || $hasJobLink || $hasQuestion)
+                    <li class="w-full mt-4">
+                        <h6 class="pl-6 ml-2 text-xs font-bold leading-tight uppercase opacity-60 text-slate-500">My Benefits</h6>
+                    </li>
+                    
+                    @if($hasResume)
+                        @php $isResumeActive = request()->routeIs('customer.resume-templates') || request()->is('*resume-templates*'); @endphp
+                        <li class="w-full mt-0.5">
+                            <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isResumeActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
+                                href="{{ route('customer.resume-templates') }}">
+                                <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ $isResumeActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
+                                    <i class="fas fa-file-invoice {{ $isResumeActive ? 'text-white' : 'text-slate-700' }}"></i>
+                                </div>
+                                <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Resume Templates</span>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if($hasJobLink)
+                        @php $isJobLinkActive = request()->routeIs('customer.job-links') || request()->is('*job-links*'); @endphp
+                        <li class="w-full mt-0.5">
+                            <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isJobLinkActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
+                                href="{{ route('customer.job-links') }}">
+                                <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ $isJobLinkActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
+                                    <i class="fas fa-briefcase {{ $isJobLinkActive ? 'text-white' : 'text-slate-700' }}"></i>
+                                </div>
+                                <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Job Opportunities</span>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if($hasQuestion)
+                        @php $isQuestionActive = request()->routeIs('customer.interview-questions') || request()->routeIs('customer.interview-questions.category') || request()->is('*interview-questions*'); @endphp
+                        <li class="w-full mt-0.5">
+                            <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isQuestionActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
+                                href="{{ route('customer.interview-questions') }}">
+                                <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ $isQuestionActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
+                                    <i class="fas fa-graduation-cap {{ $isQuestionActive ? 'text-white' : 'text-slate-700' }}"></i>
+                                </div>
+                                <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Interview Q&As</span>
+                            </a>
+                        </li>
+                    @endif
+                @endif
+            @endif
+
             <!-- Claim Parent Menu -->
             @php 
                 $hasClaimsPerm = hasPermission('claims.view') || hasPermission('claims.approve') || 

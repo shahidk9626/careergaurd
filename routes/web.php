@@ -167,6 +167,9 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         Route::middleware('permission:request-callback.view')->group(function () {
             Route::get('/request-callback', [App\Http\Controllers\CallbackRequestController::class, 'adminIndex'])->name('admin.request-callback.index');
             Route::post('/request-callback/update-status', [App\Http\Controllers\CallbackRequestController::class, 'updateStatus'])->middleware('permission:request-callback.status')->name('admin.request-callback.update-status');
+            Route::delete('/request-callback/delete/{id}', [App\Http\Controllers\CallbackRequestController::class, 'destroy'])->middleware('permission:request-callback.delete')->name('admin.request-callback.destroy');
+            Route::post('/request-callback/bulk-delete', [App\Http\Controllers\CallbackRequestController::class, 'bulkDestroy'])->middleware('permission:request-callback.delete')->name('admin.request-callback.bulk-destroy');
+            Route::get('/request-callback/export', [App\Http\Controllers\CallbackRequestController::class, 'export'])->middleware('permission:request-callback.export')->name('admin.request-callback.export');
         });
 
         // Profile Update Requests
@@ -191,6 +194,13 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         Route::get('/plan/{slug}', [App\Http\Controllers\PlanController::class, 'show'])->name('customer.plan.show');
         Route::post('/plan/purchase', [App\Http\Controllers\PlanController::class, 'purchase'])->name('customer.plan.purchase');
         Route::get('/payment/callback', [App\Http\Controllers\PlanController::class, 'callback'])->name('customer.payment.callback');
+        
+        // Dynamic Customer Benefits Portals
+        Route::get('/job-links', [App\Http\Controllers\CustomerBenefitController::class, 'jobLinks'])->name('customer.job-links');
+        Route::get('/resume-templates', [App\Http\Controllers\CustomerBenefitController::class, 'resumeTemplates'])->name('customer.resume-templates');
+        Route::get('/resume-templates/{id}/download', [App\Http\Controllers\CustomerBenefitController::class, 'downloadResumeTemplate'])->name('customer.resume-templates.download');
+        Route::get('/interview-questions', [App\Http\Controllers\CustomerBenefitController::class, 'interviewQuestions'])->name('customer.interview-questions');
+        Route::get('/interview-questions/category/{id}', [App\Http\Controllers\CustomerBenefitController::class, 'interviewQuestionsCategory'])->name('customer.interview-questions.category');
         
         // Profile check logic
         Route::get('/profile-redirect', function () {
