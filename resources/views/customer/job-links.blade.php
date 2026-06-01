@@ -92,7 +92,7 @@
 
                     <!-- Apply Button -->
                     <button type="submit" 
-                        class="w-full h-[44px] flex items-center justify-center font-semibold text-center text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-[10px] hover:scale-102 transition-all border-0 text-[14px] shadow-soft-md mt-6 cursor-pointer">
+                        class="w-1/2 mt-4 px-4 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85 font-semibold rounded-[10px] mx-2">
                         Apply Filters
                     </button>
                 </form>
@@ -116,15 +116,20 @@
                                     <span class="text-[14px] text-slate-600 font-semibold mb-2">{{ $job->company_name ?? 'Confidential Recruiter' }}</span>
                                     
                                     <!-- Job Attributes Grid Row -->
-                                    <div class="flex flex-wrap gap-x-4 gap-y-1 mb-3 text-xs text-slate-400">
-                                        <span class="inline-flex items-center gap-1">
-                                            <i class="fas fa-map-marker-alt text-slate-400"></i> {{ $job->location }}
+                                    <div class="flex flex-wrap gap-2 mb-3">
+                                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-xs text-slate-600">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            {{ $job->location }}
                                         </span>
-                                        <span class="inline-flex items-center gap-1">
-                                            <i class="fas fa-briefcase text-slate-400"></i> {{ $job->experience }}
+
+                                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-xs text-slate-600">
+                                            <i class="fas fa-briefcase"></i>
+                                            {{ $job->experience }}
                                         </span>
-                                        <span class="inline-flex items-center gap-1">
-                                            <i class="fas fa-wallet text-slate-400"></i> {{ $job->salary }}
+
+                                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-xs text-slate-600">
+                                            <i class="fas fa-wallet"></i>
+                                            {{ $job->salary }}
                                         </span>
                                     </div>
                                 </div>
@@ -134,10 +139,11 @@
                             <div class="flex md:flex-col justify-between items-end shrink-0 gap-2">
                                 <span class="text-xxs font-bold text-slate-400 uppercase tracking-wider">{{ $job->posted_date }}</span>
                                 <a href="{{ $job->job_url }}" target="_blank" rel="noopener noreferrer"
-                                   class="h-[44px] px-[22px] font-semibold text-center text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-[10px] hover:scale-102 transition-all border-0 text-[14px] flex items-center justify-center shadow-soft-sm whitespace-nowrap cursor-pointer">
+                                   class="w-1/2 px-4 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85 font-semibold rounded-[10px] mx-2">
                                     Apply Now &nbsp;<i class="fas fa-external-link-alt text-xxs"></i>
                                 </a>
                             </div>
+                            
                         </div>
 
                         <!-- Job Description Summary -->
