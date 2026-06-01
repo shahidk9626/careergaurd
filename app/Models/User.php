@@ -78,7 +78,6 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'verification_sent_at' => 'datetime',
             'password' => 'hashed',
-            'verification_status',
         ];
     }
 
