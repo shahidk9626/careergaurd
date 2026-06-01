@@ -238,66 +238,130 @@
         </div>
     </div>
 
-    <div class="flex-none w-full max-w-full px-3 mt-6">
-        <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
-            <div class="p-4 pb-0 mb-0 bg-white rounded-t-2xl">
-                <h6 class="mb-1">Projects</h6>
-                <p class="leading-normal text-sm">Architects design houses</p>
+    @php
+        $activePlans = auth()->user()->getActivePurchasedPlans();
+        $expiryDate = $activePlans->max('end_date');
+        $formattedExpiry = $expiryDate ? $expiryDate->format('d M, Y') : 'N/A';
+        
+        // Count available templates
+        $allowedResumeCategories = auth()->user()->getActivePurchasedPlanCategories('resume');
+        $resumeCount = \App\Models\ResumeTemplate::where('status', 'active')
+            ->whereHas('categories', function($q) use ($allowedResumeCategories) {
+                $q->whereIn('service_categories.id', $allowedResumeCategories);
+            })->count();
+            
+        // Count available job links
+        $allowedJobCategories = auth()->user()->getActivePurchasedPlanCategories('job-link');
+        $jobCount = \App\Models\JobLink::where('status', 'active')
+            ->whereHas('categories', function($q) use ($allowedJobCategories) {
+                $q->whereIn('service_categories.id', $allowedJobCategories);
+            })->count();
+            
+        // Count available interview questions
+        $allowedQuestionCategories = auth()->user()->getActivePurchasedPlanCategories('question');
+        $questionCount = \App\Models\InterviewQuestion::where('status', 'active')
+            ->whereHas('categories', function($q) use ($allowedQuestionCategories) {
+                $q->whereIn('service_categories.id', $allowedQuestionCategories);
+            })->count();
+    @endphp
+
+    <div class="flex-none w-full max-w-full px-3 mt-6 mb-8">
+        <div class="relative flex flex-col min-w-0 break-words bg-white border border-slate-100 shadow-soft-xl rounded-[16px] bg-clip-border p-6">
+            <div class="pb-3 mb-6 border-b border-slate-100">
+                <h5 class="text-[22px] font-bold text-slate-805 mb-1">Membership Overview & Benefits</h5>
+                <p class="text-[14px] text-slate-400 mb-0">Track your active memberships and access your verified benefits.</p>
             </div>
-            <div class="flex-auto p-4">
-                <div class="flex flex-wrap -mx-3">
-                    <div class="w-full max-w-full px-3 mb-6 md:w-6/12 md:flex-none xl:mb-0 xl:w-3/12">
-                        <div class="relative flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border">
-                            <div class="relative">
-                                <a class="block shadow-xl rounded-2xl">
-                                    <img src="{{ asset('assets/img/home-decor-1.jpg') }}" alt="img-blur-shadow" class="max-w-full shadow-soft-2xl rounded-2xl" />
-                                </a>
-                            </div>
-                            <div class="flex-auto px-1 pt-6">
-                                <p class="relative z-10 mb-2 leading-normal text-transparent bg-gradient-to-tl from-gray-900 to-slate-800 text-sm bg-clip-text">Project #2</p>
-                                <a href="javascript:;"><h5>Modern</h5></a>
-                                <p class="mb-6 leading-normal text-sm">As Uber works through a huge amount of internal management turmoil.</p>
-                                <div class="flex items-center justify-between">
-                                    <button type="button" class="inline-block px-8 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in text-xs hover:scale-102 active:shadow-soft-xs tracking-tight-soft border-fuchsia-500 text-fuchsia-500 hover:border-fuchsia-500 hover:bg-transparent hover:text-fuchsia-500 hover:opacity-75 hover:shadow-none active:bg-fuchsia-500 active:text-white active:hover:bg-transparent active:hover:text-fuchsia-500">View Project</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="w-full max-w-full px-3 mb-6 md:w-6/12 md:flex-none xl:mb-0 xl:w-3/12">
-                        <div class="relative flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border">
-                            <div class="relative">
-                                <a class="block shadow-xl rounded-2xl">
-                                    <img src="{{ asset('assets/img/home-decor-2.jpg') }}" alt="img-blur-shadow" class="max-w-full shadow-soft-2xl rounded-xl" />
-                                </a>
-                            </div>
-                            <div class="flex-auto px-1 pt-6">
-                                <p class="relative z-10 mb-2 leading-normal text-transparent bg-gradient-to-tl from-gray-900 to-slate-800 text-sm bg-clip-text">Project #1</p>
-                                <a href="javascript:;"><h5>Scandinavian</h5></a>
-                                <p class="mb-6 leading-normal text-sm">Music is something that every person has his or her own specific opinion about.</p>
-                                <div class="flex items-center justify-between">
-                                    <button type="button" class="inline-block px-8 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in text-xs hover:scale-102 active:shadow-soft-xs tracking-tight-soft border-fuchsia-500 text-fuchsia-500 hover:border-fuchsia-500 hover:bg-transparent hover:text-fuchsia-500 hover:opacity-75 hover:shadow-none active:bg-fuchsia-500 active:text-white active:hover:bg-transparent active:hover:text-fuchsia-500">View Project</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="w-full max-w-full px-3 mb-6 md:w-6/12 md:flex-none xl:mb-0 xl:w-3/12">
-                        <div class="relative flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border">
-                            <div class="relative">
-                                <a class="block shadow-xl rounded-2xl">
-                                    <img src="{{ asset('assets/img/home-decor-3.jpg') }}" alt="img-blur-shadow" class="max-w-full shadow-soft-2xl rounded-2xl" />
-                                </a>
-                            </div>
-                            <div class="flex-auto px-1 pt-6">
-                                <p class="relative z-10 mb-2 leading-normal text-transparent bg-gradient-to-tl from-gray-900 to-slate-800 text-sm bg-clip-text">Project #3</p>
-                                <a href="javascript:;"><h5>Minimalist</h5></a>
-                                <p class="mb-6 leading-normal text-sm">Different people have different taste, and various types of music.</p>
-                                <div class="flex items-center justify-between">
-                                    <button type="button" class="inline-block px-8 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in text-xs hover:scale-102 active:shadow-soft-xs tracking-tight-soft border-fuchsia-500 text-fuchsia-500 hover:border-fuchsia-500 hover:bg-transparent hover:text-fuchsia-500 hover:opacity-75 hover:shadow-none active:bg-fuchsia-500 active:text-white active:hover:bg-transparent active:hover:text-fuchsia-500">View Project</button>
-                                </div>
-                            </div>
-                        </div>
+            
+            {{-- Stats Header Info Row --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="p-5 bg-slate-50/50 rounded-xl border border-slate-100 flex flex-col justify-center">
+                    <span class="text-[10px] font-bold text-slate-405 uppercase tracking-wider mb-1.5">Active Memberships</span>
+                    <div class="flex flex-wrap gap-2">
+                        @forelse($activePlans as $plan)
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xxs font-semibold border border-purple-100">
+                                <i class="fas fa-receipt text-[10px]"></i> {{ $plan->plan_name }}
+                            </span>
+                        @empty
+                            <span class="text-[14px] text-slate-550 italic font-semibold">No active memberships.</span>
+                        @endforelse
                     </div>
                 </div>
+                <div class="p-5 bg-slate-50/50 rounded-xl border border-slate-100 flex flex-col justify-center">
+                    <span class="text-[10px] font-bold text-slate-405 uppercase tracking-wider mb-1.5">Expiry Date</span>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-calendar-alt text-purple-650 text-xs"></i>
+                        <span class="text-[14px] font-semibold text-slate-750">{{ $formattedExpiry }}</span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Dynamic Benefits Cards Row (3-column layout) --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {{-- Resume Templates Widget --}}
+                @if(auth()->user()->hasBenefitAccess('resume'))
+                    <div class="bg-white border border-slate-100 hover:border-purple-300 shadow-soft-sm hover:shadow-soft-lg rounded-[16px] p-6 flex flex-col justify-between transition-all duration-300">
+                        <div class="mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-750 flex items-center justify-center shrink-0 mb-3 text-sm">
+                                <i class="fas fa-file-invoice"></i>
+                            </div>
+                            <h6 class="text-[18px] font-bold text-slate-805 mb-1.5">Resume Templates</h6>
+                            <p class="text-[14px] text-slate-405 mb-0">Get ATS-friendly DOCX templates to build a professional CV.</p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
+                            <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-100">
+                                {{ $resumeCount }} Available
+                            </span>
+                            <a href="{{ route('customer.resume-templates') }}" 
+                               class="h-[44px] px-[22px] font-semibold text-center text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-[10px] hover:scale-102 transition-all border-0 text-[14px] flex items-center justify-center">
+                                Access
+                            </a>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Job Opportunities Widget --}}
+                @if(auth()->user()->hasBenefitAccess('job-link'))
+                    <div class="bg-white border border-slate-100 hover:border-purple-300 shadow-soft-sm hover:shadow-soft-lg rounded-[16px] p-6 flex flex-col justify-between transition-all duration-300">
+                        <div class="mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-750 flex items-center justify-center shrink-0 mb-3 text-sm">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <h6 class="text-[18px] font-bold text-slate-805 mb-1.5">Job Opportunities</h6>
+                            <p class="text-[14px] text-slate-405 mb-0">Apply directly to high-paying verified job listings mapped to your profile.</p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
+                            <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-100">
+                                {{ $jobCount }} Available
+                            </span>
+                            <a href="{{ route('customer.job-links') }}" 
+                               class="h-[44px] px-[22px] font-semibold text-center text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-[10px] hover:scale-102 transition-all border-0 text-[14px] flex items-center justify-center">
+                                Access
+                            </a>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Interview Q&As Widget --}}
+                @if(auth()->user()->hasBenefitAccess('question'))
+                    <div class="bg-white border border-slate-100 hover:border-purple-300 shadow-soft-sm hover:shadow-soft-lg rounded-[16px] p-6 flex flex-col justify-between transition-all duration-300">
+                        <div class="mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-755 flex items-center justify-center shrink-0 mb-3 text-sm">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h6 class="text-[18px] font-bold text-slate-805 mb-1.5">Interview Q&As</h6>
+                            <p class="text-[14px] text-slate-405 mb-0">Practice technical interview questions and expert answers in your categories.</p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
+                            <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-100">
+                                {{ $questionCount }} Available
+                            </span>
+                            <a href="{{ route('customer.interview-questions') }}" 
+                               class="h-[44px] px-[22px] font-semibold text-center text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-[10px] hover:scale-102 transition-all border-0 text-[14px] flex items-center justify-center">
+                                Access
+                            </a>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

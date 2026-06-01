@@ -290,6 +290,59 @@
                 </li>
             <?php endif; ?>
 
+            <?php if(auth()->user()->role_id === 0): ?>
+                <?php
+                    $hasResume = auth()->user()->hasBenefitAccess('resume');
+                    $hasJobLink = auth()->user()->hasBenefitAccess('job-link');
+                    $hasQuestion = auth()->user()->hasBenefitAccess('question');
+                ?>
+                
+                <?php if($hasResume || $hasJobLink || $hasQuestion): ?>
+                    <li class="w-full mt-4">
+                        <h6 class="pl-6 ml-2 text-xs font-bold leading-tight uppercase opacity-60 text-slate-500">My Benefits</h6>
+                    </li>
+                    
+                    <?php if($hasResume): ?>
+                        <?php $isResumeActive = request()->routeIs('customer.resume-templates') || request()->is('*resume-templates*'); ?>
+                        <li class="w-full mt-0.5">
+                            <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isResumeActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
+                                href="<?php echo e(route('customer.resume-templates')); ?>">
+                                <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isResumeActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
+                                    <i class="fas fa-file-invoice <?php echo e($isResumeActive ? 'text-white' : 'text-slate-700'); ?>"></i>
+                                </div>
+                                <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Resume Templates</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
+                    <?php if($hasJobLink): ?>
+                        <?php $isJobLinkActive = request()->routeIs('customer.job-links') || request()->is('*job-links*'); ?>
+                        <li class="w-full mt-0.5">
+                            <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isJobLinkActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
+                                href="<?php echo e(route('customer.job-links')); ?>">
+                                <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isJobLinkActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
+                                    <i class="fas fa-briefcase <?php echo e($isJobLinkActive ? 'text-white' : 'text-slate-700'); ?>"></i>
+                                </div>
+                                <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Job Opportunities</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
+                    <?php if($hasQuestion): ?>
+                        <?php $isQuestionActive = request()->routeIs('customer.interview-questions') || request()->routeIs('customer.interview-questions.category') || request()->is('*interview-questions*'); ?>
+                        <li class="w-full mt-0.5">
+                            <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg <?php echo e($isQuestionActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50'); ?>"
+                                href="<?php echo e(route('customer.interview-questions')); ?>">
+                                <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 <?php echo e($isQuestionActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl'); ?>">
+                                    <i class="fas fa-graduation-cap <?php echo e($isQuestionActive ? 'text-white' : 'text-slate-700'); ?>"></i>
+                                </div>
+                                <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Interview Q&As</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                <?php endif; ?>
+            <?php endif; ?>
+
             <!-- Claim Parent Menu -->
             <?php 
                 $hasClaimsPerm = hasPermission('claims.view') || hasPermission('claims.approve') || 
