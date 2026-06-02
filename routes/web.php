@@ -98,7 +98,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         });
 
         // Categories
-        Route::prefix('categories')->middleware('permission:service-categories.view')->group(function () {
+        Route::prefix('services/categories')->middleware('permission:service-categories.view')->group(function () {
             Route::get('/', [ServiceCategoryController::class, 'index'])->name('admin.services.categories.index');
             Route::post('/store', [ServiceCategoryController::class, 'store'])->middleware('permission:service-categories.create')->name('admin.services.categories.store');
             Route::get('/edit/{id}', [ServiceCategoryController::class, 'edit'])->middleware('permission:service-categories.edit')->name('admin.services.categories.edit');
