@@ -1,85 +1,445 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-wrap -mx-3 mb-8">
-        <div class="w-full max-w-full px-3">
-            <h2 class="text-[32px] font-bold text-slate-800 leading-tight mb-2">Interview Q&A Prep Hub</h2>
-            <p class="text-[14px] text-slate-500 mb-0">Master your technical interviews with curated questions, explanations, and model answers.</p>
-        </div>
+
+<style>
+    /* ============================================
+       INTERVIEW Q&A PREP HUB — LANDING PAGE
+       Self-contained styles, guaranteed to render
+    ============================================= */
+    .ih-page { font-family: inherit; }
+
+    /* ===== HEADER ===== */
+    .ih-header { margin-bottom: 28px; }
+    .ih-eyebrow {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        color: #7e22ce;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+    .ih-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #1e293b;
+        margin: 0 0 6px 0;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+    }
+    .ih-subtitle {
+        font-size: 14px;
+        color: #64748b;
+        margin: 0;
+        max-width: 640px;
+    }
+
+    /* ===== ALERT ===== */
+    .ih-alert {
+        margin-bottom: 24px;
+        padding: 14px 18px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        color: #b91c1c;
+        font-size: 13px;
+    }
+
+    /* ===== SECTION BLOCK (shared) ===== */
+    .ih-section {
+        margin-bottom: 32px;
+    }
+    .ih-section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    .ih-section-title-wrap { display: flex; flex-direction: column; gap: 2px; }
+    .ih-section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+        letter-spacing: -0.01em;
+    }
+    .ih-section-sub {
+        font-size: 12px;
+        color: #94a3b8;
+        margin: 0;
+    }
+    .ih-section-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 28px;
+        padding: 0 12px;
+        background: #faf5ff;
+        color: #7e22ce;
+        border: 1px solid #e9d5ff;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* ===== TECHNOLOGY BADGES SECTION ===== */
+    .ih-tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+    }
+
+    .ih-tech-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        background: #fff;
+        border: 1px solid #f1f5f9;
+        border-radius: 12px;
+        transition: all 0.25s ease;
+        cursor: default;
+    }
+    .ih-tech-card:hover {
+        border-color: #e9d5ff;
+        background: linear-gradient(135deg, #fff 0%, #faf5ff 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px -4px rgba(126, 34, 206, 0.1);
+    }
+    .ih-tech-icon {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 100%);
+        color: #7e22ce;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        border: 1px solid #f3e8ff;
+        transition: transform 0.25s;
+    }
+    .ih-tech-card:hover .ih-tech-icon {
+        transform: scale(1.08) rotate(-3deg);
+    }
+    .ih-tech-info { display: flex; flex-direction: column; min-width: 0; }
+    .ih-tech-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .ih-tech-count {
+        font-size: 11px;
+        font-weight: 600;
+        color: #94a3b8;
+        margin-top: 2px;
+    }
+    .ih-tech-count strong { color: #7e22ce; font-weight: 700; }
+
+    .ih-tech-empty {
+        grid-column: 1 / -1;
+        padding: 24px;
+        text-align: center;
+        font-size: 12px;
+        font-style: italic;
+        color: #94a3b8;
+    }
+
+    /* ===== TRACKS GRID ===== */
+    .ih-tracks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
+    }
+
+    .ih-track-card {
+        background: #fff;
+        border: 1px solid #f1f5f9;
+        border-radius: 16px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .ih-track-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #7e22ce 0%, #db2777 100%);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
+    }
+    .ih-track-card:hover {
+        border-color: #d8b4fe;
+        transform: translateY(-4px);
+        box-shadow: 0 20px 28px -6px rgba(126, 34, 206, 0.12);
+    }
+    .ih-track-card:hover::before { transform: scaleX(1); }
+
+    .ih-track-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+    .ih-track-icon {
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 100%);
+        color: #7e22ce;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        border: 1px solid #f3e8ff;
+        transition: all 0.3s;
+    }
+    .ih-track-card:hover .ih-track-icon {
+        background: linear-gradient(135deg, #7e22ce 0%, #db2777 100%);
+        color: #fff;
+        border-color: transparent;
+    }
+    .ih-track-head-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .ih-track-label {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: #7e22ce;
+        text-transform: uppercase;
+    }
+    .ih-track-name {
+        font-size: 17px;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.3;
+        margin: 0;
+        transition: color 0.2s;
+    }
+    .ih-track-card:hover .ih-track-name { color: #7e22ce; }
+
+    .ih-track-desc {
+        font-size: 13px;
+        color: #64748b;
+        line-height: 1.6;
+        margin: 0 0 20px 0;
+        flex-grow: 1;
+    }
+
+    .ih-track-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding-top: 16px;
+        border-top: 1px solid #f1f5f9;
+    }
+    .ih-track-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+    }
+    .ih-track-meta-label {
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #94a3b8;
+    }
+    .ih-track-meta-value {
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
+    }
+    .ih-track-meta-value strong { color: #7e22ce; }
+
+    .ih-track-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 40px;
+        padding: 0 18px;
+        background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        border-radius: 10px;
+        text-decoration: none;
+        box-shadow: 0 4px 7px -1px rgba(126, 34, 206, 0.25);
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+    .ih-track-cta:hover {
+        opacity: 0.92;
+        color: #fff;
+        transform: translateY(-1px);
+    }
+    .ih-track-cta i { font-size: 10px; }
+
+    /* ===== EMPTY STATE ===== */
+    .ih-empty {
+        grid-column: 1 / -1;
+        background: #fff;
+        border: 1px dashed #e2e8f0;
+        border-radius: 16px;
+        padding: 56px 32px;
+        text-align: center;
+    }
+    .ih-empty-icon {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 16px;
+        background: #faf5ff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #d8b4fe;
+        font-size: 28px;
+    }
+    .ih-empty h6 {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 8px 0;
+    }
+    .ih-empty p {
+        font-size: 13px;
+        color: #64748b;
+        max-width: 380px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 640px) {
+        .ih-title { font-size: 24px; }
+        .ih-tech-grid { grid-template-columns: 1fr 1fr; }
+        .ih-tracks-grid { grid-template-columns: 1fr; }
+        .ih-track-footer { flex-direction: column; align-items: stretch; gap: 14px; }
+        .ih-track-cta { width: 100%; }
+    }
+</style>
+
+<div class="ih-page">
+
+    {{-- ===== HEADER ===== --}}
+    <div class="ih-header">
+        <span class="ih-eyebrow">Interview Preparation</span>
+        <h2 class="ih-title">Interview Q&amp;A Prep Hub</h2>
+        <p class="ih-subtitle">Master your technical interviews with curated questions, detailed explanations, and model answers built by industry experts.</p>
     </div>
 
     @if(session('error'))
-        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-[10px] text-red-700 text-sm">
-            {{ session('error') }}
+        <div class="ih-alert">
+            <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>{{ session('error') }}
         </div>
     @endif
 
-    <!-- Technology Quick Badges (4-column on desktop) -->
-    <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-[16px] bg-clip-border p-6 mb-8 border border-slate-100">
-        <h5 class="text-[18px] font-bold text-slate-800 mb-4">Technologies Available</h5>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    {{-- ===== TECHNOLOGIES SECTION ===== --}}
+    <section class="ih-section">
+        <div class="ih-section-head">
+            <div class="ih-section-title-wrap">
+                <h5 class="ih-section-title">Technologies Available</h5>
+                <p class="ih-section-sub">Topic coverage across your active prep tracks</p>
+            </div>
+            @if(count($techCounts) > 0)
+                <span class="ih-section-count">
+                    <i class="fas fa-layer-group" style="font-size: 10px;"></i>
+                    {{ count($techCounts) }} {{ Str::plural('Technology', count($techCounts)) }}
+                </span>
+            @endif
+        </div>
+
+        <div class="ih-tech-grid">
             @forelse($techCounts as $tech => $count)
-                <div class="flex items-center gap-3 p-4 bg-slate-50 hover:bg-purple-50/50 rounded-xl border border-slate-100 hover:border-purple-200 transition-all duration-200 group">
-                    <div class="w-8 h-8 rounded-lg bg-white shadow-soft-sm flex items-center justify-center text-purple-600 font-bold group-hover:scale-110 transition-transform">
-                        <i class="fas fa-code text-xs"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-xs font-bold text-slate-700 leading-tight">{{ $tech }}</span>
-                        <span class="text-[10px] text-slate-400 font-semibold mt-0.5">{{ $count }} {{ Str::plural('Question', $count) }}</span>
+                <div class="ih-tech-card">
+                    <div class="ih-tech-icon"><i class="fas fa-code"></i></div>
+                    <div class="ih-tech-info">
+                        <span class="ih-tech-name">{{ $tech }}</span>
+                        <span class="ih-tech-count"><strong>{{ $count }}</strong> {{ Str::plural('Question', $count) }}</span>
                     </div>
                 </div>
             @empty
-                <div class="col-span-full py-4 text-center text-xs text-slate-400 italic">No technologies defined.</div>
+                <div class="ih-tech-empty">No technologies defined yet.</div>
             @endforelse
         </div>
-    </div>
+    </section>
 
-    <!-- Category Topics Grid (3-column on desktop) -->
-    <div class="mb-4">
-        <h4 class="text-[22px] font-bold text-slate-800 mb-4">Preparation Tracks</h4>
-    </div>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        @forelse($categories as $category)
-            <div class="bg-white border border-slate-100 hover:border-purple-300 shadow-soft-sm hover:shadow-soft-lg rounded-[16px] p-6 flex flex-col justify-between transition-all duration-300 group">
-                <div>
-                    <!-- Track Header -->
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0 text-sm font-semibold shadow-inner">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-xxs font-bold text-purple-700 uppercase tracking-widest">Active Track</span>
-                            <h6 class="text-[18px] font-bold text-slate-805 leading-snug group-hover:text-purple-700 transition-all mb-0">{{ $category->name }}</h6>
-                        </div>
-                    </div>
-                    
-                    <p class="text-[14px] text-slate-450 leading-relaxed mb-6">
-                        Practice interview Q&As for {{ $category->name }}. Review complete explanations, structural tips, and best practices.
-                    </p>
-                </div>
-
-                <!-- Footer & CTA Actions -->
-                <div class="pt-4 border-t border-slate-50 flex justify-between items-center">
-                    <div class="flex flex-col">
-                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Questions</span>
-                        <span class="text-xs font-bold text-slate-700">{{ $category->interview_questions_count }} Curated</span>
-                    </div>
-
-                    <a href="{{ route('customer.interview-questions.category', $category->id) }}"
-                       class="h-[44px] px-[22px] font-semibold text-center text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-[10px] hover:scale-102 transition-all border-0 text-[14px] flex items-center justify-center shadow-soft-sm cursor-pointer whitespace-nowrap">
-                        Practice Track
-                    </a>
-                </div>
+    {{-- ===== PREPARATION TRACKS SECTION ===== --}}
+    <section class="ih-section">
+        <div class="ih-section-head">
+            <div class="ih-section-title-wrap">
+                <h5 class="ih-section-title">Preparation Tracks</h5>
+                <p class="ih-section-sub">Choose a track to start practicing</p>
             </div>
-        @empty
-            <div class="col-span-full bg-white border border-slate-100 shadow-soft-xl rounded-[16px] p-12 text-center flex flex-col items-center justify-center">
-                <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 mb-4">
-                    <i class="fas fa-question-circle text-2xl"></i>
+            @if(count($categories) > 0)
+                <span class="ih-section-count">
+                    <i class="fas fa-bookmark" style="font-size: 10px;"></i>
+                    {{ count($categories) }} {{ Str::plural('Track', count($categories)) }}
+                </span>
+            @endif
+        </div>
+
+        <div class="ih-tracks-grid">
+            @forelse($categories as $category)
+                <div class="ih-track-card">
+                    <div>
+                        <div class="ih-track-head">
+                            <div class="ih-track-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="ih-track-head-text">
+                                <span class="ih-track-label">Active Track</span>
+                                <h6 class="ih-track-name">{{ $category->name }}</h6>
+                            </div>
+                        </div>
+
+                        <p class="ih-track-desc">
+                            Practice interview Q&amp;As for {{ $category->name }}. Review complete explanations, structural tips, and best practices.
+                        </p>
+                    </div>
+
+                    <div class="ih-track-footer">
+                        <div class="ih-track-meta">
+                            <span class="ih-track-meta-label">Questions</span>
+                            <span class="ih-track-meta-value"><strong>{{ $category->interview_questions_count }}</strong> curated</span>
+                        </div>
+                        <a href="{{ route('customer.interview-questions.category', $category->id) }}" class="ih-track-cta">
+                            Practice Track <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
                 </div>
-                <h6 class="text-[18px] font-bold text-slate-805 mb-1">No tracks available</h6>
-                <p class="text-[14px] text-slate-450 mb-0">You don't have access to any interview prep tracks under your active memberships.</p>
-            </div>
-        @endforelse
-    </div>
+            @empty
+                <div class="ih-empty">
+                    <div class="ih-empty-icon"><i class="fas fa-question-circle"></i></div>
+                    <h6>No tracks available</h6>
+                    <p>You don't have access to any interview prep tracks under your active memberships. Contact support to upgrade your plan and unlock prep tracks.</p>
+                </div>
+            @endforelse
+        </div>
+    </section>
+
+</div>
+
 @endsection

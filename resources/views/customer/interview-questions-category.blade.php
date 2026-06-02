@@ -1,37 +1,443 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-wrap -mx-3 mb-8">
-        <div class="w-full max-w-full px-3">
-            <div class="flex items-center gap-3 mb-2">
-                <a href="{{ route('customer.interview-questions') }}" class="text-xs font-bold text-purple-700 hover:text-purple-900 uppercase tracking-widest flex items-center gap-1.5 transition-colors">
-                    <i class="fas fa-arrow-left"></i> Back to Prep Hub
-                </a>
-            </div>
-            <h2 class="text-[32px] font-bold text-slate-800 leading-tight mb-2">{{ $category->name }} Q&As</h2>
-            <p class="text-[14px] text-slate-500 mb-0">Browse curated interview questions, professional tips, and step-by-step explanations.</p>
-        </div>
+
+<style>
+    /* ============================================
+       INTERVIEW Q&A PAGE STYLES
+       Self-contained — guaranteed to render
+    ============================================= */
+    .iq-page { font-family: inherit; }
+
+    /* ===== HEADER ===== */
+    .iq-header { margin-bottom: 28px; }
+    .iq-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #7e22ce;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 10px;
+        transition: color 0.2s;
+    }
+    .iq-back:hover { color: #581c87; }
+    .iq-back i { font-size: 10px; }
+
+    .iq-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #1e293b;
+        margin: 0 0 6px 0;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+    }
+    .iq-subtitle {
+        font-size: 14px;
+        color: #64748b;
+        margin: 0;
+    }
+
+    /* ===== FILTER TOOLBAR ===== */
+    .iq-toolbar {
+        background: #fff;
+        border: 1px solid #f1f5f9;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 20px 27px 0 rgba(0,0,0,0.05);
+        margin-bottom: 24px;
+    }
+    .iq-toolbar-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+    }
+    .iq-search {
+        flex: 1 1 280px;
+        position: relative;
+    }
+    .iq-search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 13px;
+        pointer-events: none;
+    }
+    .iq-input, .iq-select {
+        width: 100%;
+        height: 42px;
+        padding: 0 14px;
+        font-size: 14px;
+        color: #334155;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        outline: none;
+        transition: all 0.2s;
+        box-sizing: border-box;
+    }
+    .iq-input { padding-left: 38px; }
+    .iq-input:focus, .iq-select:focus {
+        border-color: #c084fc;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.15);
+    }
+    .iq-select-wrap {
+        flex: 0 1 180px;
+        min-width: 160px;
+    }
+    .iq-clear {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 42px;
+        padding: 0 16px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #64748b;
+        background: transparent;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+    .iq-clear:hover {
+        color: #be185d;
+        border-color: #fbcfe8;
+        background: #fdf2f8;
+    }
+
+    /* ===== ACTIVE FILTERS ===== */
+    .iq-active-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #f1f5f9;
+    }
+    .iq-active-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #64748b;
+    }
+    .iq-active-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 26px;
+        padding: 0 10px;
+        background: #faf5ff;
+        color: #7e22ce;
+        border: 1px solid #e9d5ff;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    /* ===== RESULTS COUNT ===== */
+    .iq-results-count {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 16px;
+    }
+    .iq-results-count strong { color: #334155; font-weight: 700; }
+
+    /* ===== QUESTION LIST ===== */
+    .iq-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    /* ===== ACCORDION CARD ===== */
+    .iq-card {
+        background: #fff;
+        border: 1px solid #f1f5f9;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.25s ease;
+    }
+    .iq-card:hover {
+        border-color: #e9d5ff;
+        box-shadow: 0 8px 20px -4px rgba(126, 34, 206, 0.08);
+    }
+    .iq-card[open] {
+        border-color: #d8b4fe;
+        box-shadow: 0 12px 28px -6px rgba(126, 34, 206, 0.12);
+    }
+
+    .iq-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 20px 24px;
+        cursor: pointer;
+        user-select: none;
+        list-style: none;
+    }
+    .iq-summary::-webkit-details-marker { display: none; }
+    .iq-summary::marker { display: none; }
+
+    .iq-summary-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* Difficulty badges */
+    .iq-badge {
+        display: inline-flex;
+        align-items: center;
+        height: 24px;
+        padding: 0 10px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border: 1px solid;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    .iq-badge-easy { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+    .iq-badge-medium { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+    .iq-badge-hard { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+
+    /* Tech badge */
+    .iq-tech-badge {
+        display: inline-flex;
+        align-items: center;
+        height: 24px;
+        padding: 0 10px;
+        background: #f8fafc;
+        color: #475569;
+        border: 1px solid #f1f5f9;
+        border-radius: 8px;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .iq-question-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+        line-height: 1.4;
+        flex: 1;
+        min-width: 200px;
+    }
+    .iq-card:hover .iq-question-title,
+    .iq-card[open] .iq-question-title {
+        color: #7e22ce;
+    }
+
+    /* Chevron */
+    .iq-chevron {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #f8fafc;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 11px;
+        transition: all 0.3s ease;
+    }
+    .iq-card[open] .iq-chevron {
+        background: linear-gradient(135deg, #7e22ce 0%, #db2777 100%);
+        color: #fff;
+        transform: rotate(180deg);
+    }
+
+    /* ===== ACCORDION BODY ===== */
+    .iq-body {
+        padding: 0 24px 24px 24px;
+        border-top: 1px solid #f1f5f9;
+    }
+    .iq-section {
+        margin-top: 20px;
+    }
+    .iq-section:first-child { margin-top: 24px; }
+
+    .iq-section-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 8px;
+    }
+    .iq-label-q { color: #7e22ce; }
+    .iq-label-a { color: #475569; }
+    .iq-label-tip { color: #7e22ce; }
+
+    .iq-question-box {
+        background: #f8fafc;
+        border: 1px solid #f1f5f9;
+        border-radius: 12px;
+        padding: 16px 18px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+        line-height: 1.6;
+    }
+    .iq-answer-text {
+        font-size: 14px;
+        color: #475569;
+        line-height: 1.7;
+    }
+    .iq-tip-box {
+        background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 100%);
+        border: 1px solid #f3e8ff;
+        border-radius: 12px;
+        padding: 18px;
+    }
+    .iq-tip-box p {
+        font-size: 14px;
+        color: #475569;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .iq-empty {
+        background: #fff;
+        border: 1px dashed #e2e8f0;
+        border-radius: 16px;
+        padding: 56px 32px;
+        text-align: center;
+    }
+    .iq-empty-icon {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 16px;
+        background: #faf5ff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #d8b4fe;
+        font-size: 28px;
+    }
+    .iq-empty h6 {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 8px 0;
+    }
+    .iq-empty p {
+        font-size: 13px;
+        color: #64748b;
+        max-width: 360px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* ===== PAGINATION ===== */
+    .iq-pagination-wrap {
+        padding: 14px;
+        background: #fff;
+        border: 1px solid #f1f5f9;
+        border-radius: 16px;
+        display: flex;
+        justify-content: center;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.04);
+    }
+    .iq-pagination-wrap .pagination {
+        margin: 0;
+        gap: 4px;
+        display: flex;
+        align-items: center;
+    }
+    .iq-pagination-wrap .page-link {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px !important;
+        font-size: 12px;
+        font-weight: 600;
+        color: #475569;
+        border: none;
+        background: transparent;
+    }
+    .iq-pagination-wrap .page-link:hover {
+        background: #f8fafc;
+        color: #7e22ce;
+    }
+    .iq-pagination-wrap .page-item.active .page-link {
+        background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%);
+        color: #fff;
+        box-shadow: 0 4px 7px -1px rgba(126, 34, 206, 0.25);
+    }
+    .iq-pagination-wrap .page-item.disabled .page-link {
+        color: #cbd5e1;
+        background: transparent;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 640px) {
+        .iq-summary { padding: 16px 18px; }
+        .iq-body { padding: 0 18px 20px 18px; }
+        .iq-question-title { font-size: 14px; min-width: 100%; }
+        .iq-toolbar-row { gap: 10px; }
+    }
+</style>
+
+<div class="iq-page">
+
+    {{-- ===== HEADER ===== --}}
+    <div class="iq-header">
+        <a href="{{ route('customer.interview-questions') }}" class="iq-back">
+            <i class="fas fa-arrow-left"></i> Back to Prep Hub
+        </a>
+        <h2 class="iq-title">{{ $category->name }} Q&amp;As</h2>
+        <p class="iq-subtitle">Browse curated interview questions, professional tips, and step-by-step explanations.</p>
     </div>
 
-    <!-- Filters Toolbar -->
-    <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-[16px] bg-clip-border p-6 mb-8 border border-slate-100">
-        <form action="{{ route('customer.interview-questions.category', $category->id) }}" method="GET" id="categoryFilterForm" class="flex flex-wrap items-center justify-between gap-4">
-            <div class="flex flex-wrap items-center gap-4 grow">
-                <!-- Search Question -->
-                <div class="relative min-w-[240px] grow md:grow-0">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
-                        <i class="fas fa-search text-xs"></i>
-                    </span>
-                    <input type="text" name="search" id="search" 
-                        value="{{ request('search') }}"
-                        class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all placeholder-slate-400"
-                        placeholder="Search questions...">
+    {{-- ===== FILTER TOOLBAR ===== --}}
+    <div class="iq-toolbar">
+        <form action="{{ route('customer.interview-questions.category', $category->id) }}" method="GET" id="categoryFilterForm">
+            <div class="iq-toolbar-row">
+
+                {{-- Search --}}
+                <div class="iq-search">
+                    <span class="iq-search-icon"><i class="fas fa-search"></i></span>
+                    <input type="text" name="search" id="search"
+                           value="{{ request('search') }}"
+                           placeholder="Search questions..."
+                           class="iq-input">
                 </div>
 
-                <!-- Technology Filter -->
-                <div class="min-w-[160px]">
-                    <select name="technology" id="technology" onchange="this.form.submit()"
-                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-slate-600 bg-white">
+                {{-- Technology --}}
+                <div class="iq-select-wrap">
+                    <select name="technology" id="technology" onchange="this.form.submit()" class="iq-select">
                         <option value="">All Technologies</option>
                         @foreach($technologies as $tech)
                             <option value="{{ $tech }}" {{ request('technology') === $tech ? 'selected' : '' }}>{{ $tech }}</option>
@@ -39,137 +445,162 @@
                     </select>
                 </div>
 
-                <!-- Difficulty Filter -->
-                <div class="min-w-[140px]">
-                    <select name="difficulty" id="difficulty" onchange="this.form.submit()"
-                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-slate-600 bg-white">
+                {{-- Difficulty --}}
+                <div class="iq-select-wrap" style="flex: 0 1 160px;">
+                    <select name="difficulty" id="difficulty" onchange="this.form.submit()" class="iq-select">
                         <option value="">All Difficulties</option>
                         <option value="Easy" {{ request('difficulty') === 'Easy' ? 'selected' : '' }}>Easy</option>
                         <option value="Medium" {{ request('difficulty') === 'Medium' ? 'selected' : '' }}>Medium</option>
                         <option value="Hard" {{ request('difficulty') === 'Hard' ? 'selected' : '' }}>Hard</option>
                     </select>
                 </div>
+
+                {{-- Clear button --}}
+                @if(request()->anyFilled(['search', 'technology', 'difficulty']))
+                    <a href="{{ route('customer.interview-questions.category', $category->id) }}" class="iq-clear">
+                        <i class="fas fa-times" style="font-size: 10px;"></i> Clear
+                    </a>
+                @endif
             </div>
 
-            <!-- Clear button -->
+            {{-- Active filters chips --}}
             @if(request()->anyFilled(['search', 'technology', 'difficulty']))
-                <a href="{{ route('customer.interview-questions.category', $category->id) }}"
-                   class="text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest flex items-center gap-1 transition-colors">
-                    <i class="fas fa-times-circle"></i> Clear Filters
-                </a>
+                <div class="iq-active-bar">
+                    <span class="iq-active-label">Active:</span>
+                    @if(request('search'))
+                        <span class="iq-active-chip">
+                            <i class="fas fa-search" style="font-size: 9px;"></i> "{{ request('search') }}"
+                        </span>
+                    @endif
+                    @if(request('technology'))
+                        <span class="iq-active-chip">
+                            <i class="fas fa-code" style="font-size: 9px;"></i> {{ request('technology') }}
+                        </span>
+                    @endif
+                    @if(request('difficulty'))
+                        <span class="iq-active-chip">
+                            <i class="fas fa-signal" style="font-size: 9px;"></i> {{ request('difficulty') }}
+                        </span>
+                    @endif
+                </div>
             @endif
         </form>
     </div>
 
-    <!-- Accordion Questions List -->
-    <div class="flex flex-col gap-4 mb-8">
+    {{-- ===== RESULTS COUNT ===== --}}
+    @if($questions->total() > 0)
+        <p class="iq-results-count">
+            Showing <strong>{{ $questions->firstItem() }}–{{ $questions->lastItem() }}</strong> of
+            <strong>{{ $questions->total() }}</strong> questions
+        </p>
+    @endif
+
+    {{-- ===== QUESTIONS LIST ===== --}}
+    <div class="iq-list">
         @forelse($questions as $question)
             @php
                 $diff = $question->difficulty;
-                $diffBadgeClass = 'bg-green-50 text-green-700 border-green-100';
-                if ($diff === 'Medium') {
-                    $diffBadgeClass = 'bg-amber-50 text-amber-700 border-amber-100';
-                } elseif ($diff === 'Hard') {
-                    $diffBadgeClass = 'bg-rose-50 text-rose-700 border-rose-100';
-                }
+                $diffClass = 'iq-badge-easy';
+                if ($diff === 'Medium') $diffClass = 'iq-badge-medium';
+                elseif ($diff === 'Hard') $diffClass = 'iq-badge-hard';
             @endphp
-            
-            <details class="group bg-white border border-slate-100 rounded-[16px] shadow-soft-sm hover:shadow-soft-md transition-all duration-300 [&_summary::-webkit-details-marker]:hidden">
-                <summary class="flex items-center justify-between p-6 cursor-pointer select-none">
-                    <div class="flex items-center gap-4 flex-wrap sm:flex-nowrap">
-                        <!-- Difficulty Badge -->
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xxs font-bold uppercase tracking-wider border {{ $diffBadgeClass }} shrink-0">
-                            {{ $diff }}
-                        </span>
-                        
-                        <!-- Technology Badge -->
-                        <span class="px-2 py-0.5 text-xxs font-bold bg-slate-50 text-slate-600 rounded-lg border border-slate-100 shrink-0">
-                            {{ $question->technology }}
-                        </span>
 
-                        <!-- Question Title -->
-                        <h6 class="text-[16px] font-bold text-slate-800 leading-tight mb-0 pr-6 group-hover:text-purple-700 transition-colors">
-                            {{ $question->title }}
-                        </h6>
+            <details class="iq-card">
+                <summary class="iq-summary">
+                    <div class="iq-summary-left">
+                        <span class="iq-badge {{ $diffClass }}">{{ $diff }}</span>
+                        @if($question->technology)
+                            <span class="iq-tech-badge">{{ $question->technology }}</span>
+                        @endif
+                        <h6 class="iq-question-title">{{ $question->title }}</h6>
                     </div>
-
-                    <!-- Accordion Indicator arrow -->
-                    <div class="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center shrink-0 group-open:rotate-180 transition-transform duration-350">
-                        <i class="fas fa-chevron-down text-xs"></i>
+                    <div class="iq-chevron">
+                        <i class="fas fa-chevron-down"></i>
                     </div>
                 </summary>
 
-                <!-- Accordion Inner content -->
-                <div class="px-6 pb-6 border-t border-slate-50/80">
-                    <div class="pt-6 space-y-6">
-                        <!-- Question Text -->
-                        <div class="space-y-2">
-                            <span class="text-xs font-bold text-purple-700 uppercase tracking-widest">Question</span>
-                            <div class="text-[15px] font-semibold text-slate-800 leading-relaxed bg-slate-50/50 p-4 rounded-xl border border-slate-100/50">
-                                {!! nl2br(e($question->question_text)) !!}
+                <div class="iq-body">
+                    {{-- Question --}}
+                    <div class="iq-section">
+                        <div class="iq-section-label iq-label-q">
+                            <i class="fas fa-question-circle"></i> Question
+                        </div>
+                        <div class="iq-question-box">
+                            {!! nl2br(e($question->question_text)) !!}
+                        </div>
+                    </div>
+
+                    {{-- Answer --}}
+                    @if($question->answer_text)
+                        <div class="iq-section">
+                            <div class="iq-section-label iq-label-a">
+                                <i class="fas fa-check-circle"></i> Short Answer
+                            </div>
+                            <div class="iq-answer-text">
+                                {!! nl2br(e($question->answer_text)) !!}
                             </div>
                         </div>
+                    @endif
 
-                        <!-- Answer Summary -->
-                        @if($question->answer_text)
-                            <div class="space-y-2">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block">Short Answer</span>
-                                <div class="text-[14px] text-slate-650 leading-relaxed">
-                                    {!! nl2br(e($question->answer_text)) !!}
-                                </div>
+                    {{-- Explanation / Tip --}}
+                    @if($question->explanation)
+                        <div class="iq-section">
+                            <div class="iq-section-label iq-label-tip">
+                                <i class="fas fa-lightbulb"></i> Expert Explanation &amp; Interview Tips
                             </div>
-                        @endif
-
-                        <!-- Explanation and Tips -->
-                        @if($question->explanation)
-                            <div class="space-y-2 bg-purple-50/30 p-5 rounded-xl border border-purple-100/50">
-                                <span class="text-xs font-bold text-purple-700 uppercase tracking-widest flex items-center gap-1.5">
-                                    <i class="fas fa-lightbulb"></i> Expert Explanation & Interview Tips
-                                </span>
-                                <p class="text-[14px] text-slate-600 leading-relaxed mb-0">
-                                    {{ $question->explanation }}
-                                </p>
+                            <div class="iq-tip-box">
+                                <p>{{ $question->explanation }}</p>
                             </div>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                 </div>
             </details>
         @empty
-            <!-- Empty state illustration card -->
-            <div class="bg-white border border-slate-100 shadow-soft-xl rounded-[16px] p-12 text-center flex flex-col items-center justify-center">
-                <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 mb-4">
-                    <i class="fas fa-graduation-cap text-2xl"></i>
-                </div>
-                <h6 class="text-[18px] font-bold text-slate-805 mb-1">No questions found</h6>
-                <p class="text-[14px] text-slate-450 mb-0">No questions match your current search queries or filters. Try adjusting them.</p>
+            <div class="iq-empty">
+                <div class="iq-empty-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h6>No questions found</h6>
+                <p>
+                    @if(request()->anyFilled(['search', 'technology', 'difficulty']))
+                        No questions match your current filters. Try clearing them or adjusting your search.
+                    @else
+                        There are no interview questions in this category yet. Check back soon for new content.
+                    @endif
+                </p>
             </div>
         @endforelse
     </div>
 
-    <!-- Pagination block -->
+    {{-- ===== PAGINATION ===== --}}
     @if($questions->hasPages())
-        <div class="p-4 bg-white border border-slate-100 shadow-soft-sm rounded-[16px] flex justify-center">
+        <div class="iq-pagination-wrap">
             {{ $questions->appends(request()->query())->links() }}
         </div>
     @endif
+
+</div>
+
 @endsection
 
 @push('scripts')
     <script>
         $(document).ready(function() {
-            // Client side validation on search filters
             $("#categoryFilterForm").validate({
-                rules: {
-                    search: {
-                        maxlength: 100
-                    }
-                },
-                errorClass: "text-red-500 text-xs mt-1 block",
+                rules: { search: { maxlength: 100 } },
+                errorClass: "iq-error",
                 errorElement: "span",
-                submitHandler: function(form) {
-                    form.submit();
-                }
+                submitHandler: function(form) { form.submit(); }
             });
+
+            // Optional: auto-close other accordions when one opens (uncomment if desired)
+            // document.querySelectorAll('.iq-card').forEach(card => {
+            //     card.addEventListener('toggle', function() {
+            //         if (this.open) {
+            //             document.querySelectorAll('.iq-card[open]').forEach(other => {
+            //                 if (other !== this) other.open = false;
+            //             });
+            //         }
+            //     });
+            // });
         });
     </script>
 @endpush
