@@ -197,7 +197,7 @@
         }
 
         function loadCategories(selectedIds = []) {
-            $.get("{{ route('admin.services.categories.index') }}", function (data) {
+            $.get("{{ route('admin.services.categories.index') }}?parent=interview", function (data) {
                 let html = '';
                 data.forEach(cat => {
                     let checked = selectedIds.includes(cat.id) ? 'checked' : '';

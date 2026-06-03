@@ -11,21 +11,35 @@ class ServiceCategoryController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return response()->json(ServiceCategory::latest()->get());
+            $query = ServiceCategory::with('parent');
+            
+            if ($request->filled('parent')) {
+                $parentSlug = $request->parent;
+                $query->whereHas('parent', function ($q) use ($parentSlug) {
+                    $q->where('slug', $parentSlug);
+                });
+            } else {
+                $query->whereNotIn('slug', ['resume', 'interview', 'job-link']);
+            }
+            
+            return response()->json($query->latest()->get());
         }
-        return view('admin.services.categories.index');
+        $parentCategories = ServiceCategory::whereIn('slug', ['resume', 'interview', 'job-link'])->get();
+        return view('admin.services.categories.index', compact('parentCategories'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:service_categories,name',
+            'parent_id' => 'nullable|exists:service_categories,id',
         ]);
 
         ServiceCategory::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'status' => $request->status ?? 'active',
+            'parent_id' => $request->parent_id,
         ]);
 
         return response()->json(['success' => 'Category created successfully']);
@@ -42,12 +56,14 @@ class ServiceCategoryController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255|unique:service_categories,name,' . $id,
+            'parent_id' => 'nullable|exists:service_categories,id',
         ]);
 
         $category->update([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'status' => $request->status,
+            'parent_id' => $request->parent_id,
         ]);
 
         return response()->json(['success' => 'Category updated successfully']);

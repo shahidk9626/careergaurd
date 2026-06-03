@@ -9,7 +9,17 @@ class ServiceCategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'status'];
+    protected $fillable = ['name', 'slug', 'status', 'parent_id'];
+
+    public function parent()
+    {
+        return $this->belongsTo(ServiceCategory::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(ServiceCategory::class, 'parent_id');
+    }
 
     public function resumeTemplates()
     {

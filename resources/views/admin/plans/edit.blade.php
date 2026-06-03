@@ -186,6 +186,10 @@
             $.get("{{ route('admin.services.categories.index') }}", function (data) {
                 $('.category-list').each(function () {
                     const type = $(this).data('type');
+                    let parentSlug = type;
+                    if (type === 'question') {
+                        parentSlug = 'interview';
+                    }
                     let html = '';
 
                     // Filter existing category IDs for this type
@@ -194,13 +198,15 @@
                         .map(s => s.service_category_id);
 
                     data.forEach(cat => {
-                        const checked = selectedIds.includes(cat.id) ? 'checked' : '';
-                        html += `
-                            <div class="flex items-center p-2 hover:bg-white rounded-lg transition-all group">
-                                <input type="checkbox" name="plan_services[${type}][]" value="${cat.id}" ${checked} class="rounded text-purple-600 mr-2">
-                                <span class="text-xs text-slate-600 group-hover:text-slate-800 font-medium">${cat.name}</span>
-                            </div>
-                        `;
+                        if (cat.parent && cat.parent.slug === parentSlug) {
+                            const checked = selectedIds.includes(cat.id) ? 'checked' : '';
+                            html += `
+                                <div class="flex items-center p-2 hover:bg-white rounded-lg transition-all group">
+                                    <input type="checkbox" name="plan_services[${type}][]" value="${cat.id}" ${checked} class="rounded text-purple-600 mr-2">
+                                    <span class="text-xs text-slate-600 group-hover:text-slate-800 font-medium">${cat.name}</span>
+                                </div>
+                            `;
+                        }
                     });
                     $(this).html(html || '<p class="text-xxs text-slate-400 italic">No categories defined</p>');
                 });

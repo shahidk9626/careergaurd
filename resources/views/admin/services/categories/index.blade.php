@@ -34,8 +34,9 @@
                                     <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400" style="width: 40px;">
                                         <input type="checkbox" id="selectAll" class="rounded text-purple-600 cursor-pointer">
                                     </th>
-                                    <th class="w-4/12 px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Name</th>
-                                    <th class="w-4/12 px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Slug</th>
+                                    <th class="w-3/12 px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Name</th>
+                                    <th class="w-3/12 px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Parent Category</th>
+                                    <th class="w-2/12 px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Slug</th>
                                     <th class="w-2/12 px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Status</th>
                                     <th class="w-2/12 px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Action</th>
                                 </tr>
@@ -66,7 +67,16 @@
                         <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Category Name</label>
                         <input type="text" name="name" id="name" required style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Software Engineer">
                     </div>
-                    <div style="margin-bottom: 0.5rem;">
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Parent Category</label>
+                        <select name="parent_id" id="parentId" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none; background: white;">
+                            <option value="">None (Make it a Parent Category)</option>
+                            @foreach($parentCategories as $parent)
+                                <option value="{{ $parent->id }}">{{ $parent->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 1.25rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Status</label>
                         <select name="status" id="status" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none; background: white;">
                             <option value="active">Active</option>
@@ -115,6 +125,13 @@
                         className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
                         render: function (data) {
                             return '<h6 class="mb-0 text-sm leading-normal whitespace-normal break-words">' + data + '</h6>';
+                        }
+                    },
+                    {
+                        data: 'parent',
+                        className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
+                        render: function (data) {
+                            return '<span class="text-xs font-semibold leading-tight text-slate-500 whitespace-normal break-words">' + (data ? data.name : '<span class="text-slate-400 font-normal italic">None (Parent)</span>') + '</span>';
                         }
                     },
                     {
@@ -210,6 +227,7 @@
                 // Populate modal directly from table memory
                 $('#categoryId').val(rowData.id);
                 $('#name').val(rowData.name);
+                $('#parentId').val(rowData.parent_id || '');
                 $('#status').val(rowData.status);
                 $('#modalTitle').text('Edit Service Category');
                 
@@ -247,6 +265,7 @@
         function openCreateModal() {
             $('#categoryForm')[0].reset();
             $('#categoryId').val('');
+            $('#parentId').val('');
             $('#modalTitle').text('Add Service Category');
             openModalLogic(); 
         }
