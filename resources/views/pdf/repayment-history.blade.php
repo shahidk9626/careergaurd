@@ -196,6 +196,9 @@
         <tr>
             <td class="logo-container">
                 @if(file_exists(public_path('assets/img/careerguard-logo-black.webp')))
+                    <img src="{{ public_path('assets/img/careerguard-logo-black.webp') }}" class="logo-img" alt="CareerGuard Logo">
+                @else
+                    <img src="https://test.careerguard.in/images/careerguard-logo-black.png" class="logo-img" alt="CareerGuard Logo">
                 @endif
                 <span class="brand-name">CareerGuard</span>
             </td>
