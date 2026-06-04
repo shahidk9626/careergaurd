@@ -19,5 +19,27 @@ new tasks
 2. multi - delete button on listing -> done
 3. purchase plan ui enhancment ->
 4.job links and templates will show to customer
-5.oAuth implementation
+5.oAuth 
+
+
+
+email will throw after purchase plan
+complete profile popuup
+pdf download
+
+
+task to be done->
+1.pdf export giving error
+2.customer can buy plan before profile complete
+3.resend link button
+4.popup when profile is not complete
+5.on callback on admin side add column summary ->done
+6.role content update 
+7.plan creation time give offer price column -> done
+8.
+✅ ₹299/month
+✅   ₹3588 2999/12 months 
+✅ Just ₹10 per day*
+9.standarnd to monthly one time to yearly -> done
+
 
