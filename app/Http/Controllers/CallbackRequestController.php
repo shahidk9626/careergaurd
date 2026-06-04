@@ -61,10 +61,12 @@ class CallbackRequestController extends Controller
         $request->validate([
             'request_id' => 'required|exists:callback_requests,id',
             'status' => 'required|string|in:pending,contacted,resolved,closed',
+            'description' => 'nullable|string',
         ]);
 
         $callbackRequest = CallbackRequest::findOrFail($request->request_id);
         $callbackRequest->status = $request->status;
+        $callbackRequest->description = $request->description;
         $callbackRequest->save();
 
         return response()->json([

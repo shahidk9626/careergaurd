@@ -92,14 +92,14 @@
                                 <label class="flex items-center p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-all w-1/2">
                                     <input type="radio" name="selected_payment_type" value="regular" checked class="mr-2 text-purple-600 focus:ring-purple-500">
                                     <div class="flex flex-col">
-                                        <span class="text-xs font-bold text-slate-700">Standard Payment</span>
+                                        <span class="text-xs font-bold text-slate-700">Monthly Payment</span>
                                         <span class="text-xxs text-slate-500">₹{{ number_format($plan->premium_amount, 2) }}</span>
                                     </div>
                                 </label>
                                 <label class="flex items-center p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-all w-1/2">
                                     <input type="radio" name="selected_payment_type" value="one_time" class="mr-2 text-purple-600 focus:ring-purple-500">
                                     <div class="flex flex-col">
-                                        <span class="text-xs font-bold text-slate-700">One-Time Payment</span>
+                                        <span class="text-xs font-bold text-slate-700">Yearly Payment</span>
                                         <span class="text-xxs text-slate-500">
                                             @if($plan->discount_price)
                                                 <del class="text-slate-400">₹{{ number_format($plan->one_time_payment_amount, 2) }}</del> 

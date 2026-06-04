@@ -47,6 +47,8 @@
                                     <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
                                         Concern</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
+                                        Description</th>
+                                    <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
                                         Related Membership</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
                                         Status</th>
@@ -88,6 +90,9 @@
                                     <td class="px-2 py-4 align-middle bg-transparent border-b border-gray-200 shadow-none">
                                         <span class="text-sm leading-normal text-slate-600 block max-w-xs truncate">{{ $req->concern }}</span>
                                     </td>
+                                    <td class="px-2 py-4 align-middle bg-transparent border-b border-gray-200 shadow-none">
+                                        <span class="text-sm leading-normal text-slate-600 block max-w-xs truncate">{{ $req->description ?: 'N/A' }}</span>
+                                    </td>
                                     <td class="px-2 py-4 align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none">
                                         @if($req->purchasedPlan)
                                             <div class="flex flex-col">
@@ -121,7 +126,7 @@
                                             View
                                         </button>
                                         @if(hasPermission('request-callback.status'))
-                                            <button onclick="openStatusModal({{ $req->id }}, '{{ $req->status }}')"
+                                            <button onclick="openStatusModal({{ $req->id }}, '{{ $req->status }}', {{ json_encode($req->description) }})"
                                                 class="inline-block px-3 py-2 mr-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102">
                                                 Update Status
                                             </button>
@@ -166,6 +171,10 @@
                                 <option value="closed">Closed</option>
                             </select>
                         </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Admin Description / Summary</label>
+                            <textarea name="description" id="status_description" rows="4" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none; resize: vertical;" placeholder="Enter details or notes..."></textarea>
+                        </div>
                     </div>
 
                     <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background-color: #f8fafc; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; justify-content: flex-end; gap: 0.75rem;">
@@ -182,7 +191,7 @@
     <script>
         $(document).ready(function () {
             @php
-                $createdDateColIndex = hasPermission('request-callback.delete') ? 9 : 8;
+                $createdDateColIndex = hasPermission('request-callback.delete') ? 10 : 9;
             @endphp
             let table = $('#callbackRequestsTable').DataTable({
                 order: [[{{ $createdDateColIndex }}, 'desc']],
@@ -301,6 +310,11 @@
                         <hr class="my-3">
                         <p><strong>Customer Concern:</strong></p>
                         <p class="text-sm p-3 bg-gray-50 rounded-xl border border-gray-100 whitespace-pre-wrap">${req.concern}</p>
+                        ${req.description ? `
+                            <hr class="my-3">
+                            <p><strong>Admin Description / Notes:</strong></p>
+                            <p class="text-sm p-3 bg-purple-50 rounded-xl border border-purple-100 whitespace-pre-wrap text-purple-900">${req.description}</p>
+                        ` : ''}
                     </div>
                 `,
                 confirmButtonText: 'Close',
@@ -326,9 +340,10 @@
             }
         }
 
-        function openStatusModal(requestId, currentStatus) {
+        function openStatusModal(requestId, currentStatus, currentDescription) {
             document.getElementById('status_request_id').value = requestId;
             document.getElementById('status_select').value = currentStatus;
+            document.getElementById('status_description').value = currentDescription || '';
             openStatusModalLogic();
         }
 

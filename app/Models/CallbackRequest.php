@@ -16,6 +16,7 @@ class CallbackRequest extends Model
         'flag',
         'concern',
         'status',
+        'description',
     ];
 
     public function user()

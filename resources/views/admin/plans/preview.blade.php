@@ -173,8 +173,8 @@
                             <div class="mb-3 text-left">
                                 <label class="block text-xxs font-bold text-slate-500 mb-1">Payment Option</label>
                                 <select id="payment_type_{{ $plan->id }}" class="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-600 bg-white">
-                                    <option value="regular">Standard (₹{{ number_format($plan->premium_amount, 0) }})</option>
-                                    <option value="one_time">One-Time (₹{{ number_format($plan->discount_price ?? $plan->one_time_payment_amount, 0) }})</option>
+                                    <option value="regular">Monthly (₹{{ number_format($plan->premium_amount, 0) }})</option>
+                                    <option value="one_time">Yearly (₹{{ number_format($plan->discount_price ?? $plan->one_time_payment_amount, 0) }})</option>
                                 </select>
                             </div>
                         @endif
