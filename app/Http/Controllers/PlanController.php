@@ -47,6 +47,7 @@ class PlanController extends Controller
             'prematurity_available' => 'required|boolean',
             'one_time_payment_applicable' => 'required|boolean',
             'one_time_payment_amount' => 'required_if:one_time_payment_applicable,1|nullable|numeric|min:0',
+            'discount_price' => 'required_if:one_time_payment_applicable,1|nullable|numeric|min:0',
         ]);
 
         try {
@@ -100,6 +101,7 @@ class PlanController extends Controller
             'prematurity_available' => 'required|boolean',
             'one_time_payment_applicable' => 'required|boolean',
             'one_time_payment_amount' => 'required_if:one_time_payment_applicable,1|nullable|numeric|min:0',
+            'discount_price' => 'required_if:one_time_payment_applicable,1|nullable|numeric|min:0',
         ]);
 
         try {
@@ -224,7 +226,7 @@ class PlanController extends Controller
         // Resolve purchase amount
         $amount = $plan->premium_amount;
         if ($request->payment_type === 'one_time' && $plan->one_time_payment_applicable) {
-            $amount = $plan->one_time_payment_amount;
+            $amount = $plan->discount_price ?? $plan->one_time_payment_amount;
         }
 
         // Generate unique order ID: MEM_YYYYMMDD_XXXXXX (format: MEM_Ymd_Str::upper(Str::random(6)))

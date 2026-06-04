@@ -73,7 +73,13 @@
                                 <strong class="text-slate-700">One-Time Payment:</strong> &nbsp; Available
                             </li>
                             <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
-                                <strong class="text-slate-700">One-Time Amount:</strong> &nbsp; ₹{{ number_format($plan->one_time_payment_amount, 2) }}
+                                <strong class="text-slate-700">One-Time Amount:</strong> &nbsp; 
+                                @if($plan->discount_price)
+                                    <del class="text-slate-400">₹{{ number_format($plan->one_time_payment_amount, 2) }}</del> 
+                                    <span class="text-purple-700 font-bold">₹{{ number_format($plan->discount_price, 2) }}</span>
+                                @else
+                                    ₹{{ number_format($plan->one_time_payment_amount, 2) }}
+                                @endif
                             </li>
                         @endif
                     </ul>
@@ -94,7 +100,14 @@
                                     <input type="radio" name="selected_payment_type" value="one_time" class="mr-2 text-purple-600 focus:ring-purple-500">
                                     <div class="flex flex-col">
                                         <span class="text-xs font-bold text-slate-700">One-Time Payment</span>
-                                        <span class="text-xxs text-slate-500">₹{{ number_format($plan->one_time_payment_amount, 2) }}</span>
+                                        <span class="text-xxs text-slate-500">
+                                            @if($plan->discount_price)
+                                                <del class="text-slate-400">₹{{ number_format($plan->one_time_payment_amount, 2) }}</del> 
+                                                <b class="text-purple-700">₹{{ number_format($plan->discount_price, 2) }}</b>
+                                            @else
+                                                ₹{{ number_format($plan->one_time_payment_amount, 2) }}
+                                            @endif
+                                        </span>
                                     </div>
                                 </label>
                             </div>

@@ -73,7 +73,7 @@ class StaffReferralController extends Controller
         // Resolve purchase amount
         $amount = $plan->premium_amount;
         if ($request->payment_type === 'one_time' && $plan->one_time_payment_applicable) {
-            $amount = $plan->one_time_payment_amount;
+            $amount = $plan->discount_price ?? $plan->one_time_payment_amount;
         }
 
         // Generate unique order ID starting with REF_ to distinguish referral

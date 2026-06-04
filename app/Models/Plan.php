@@ -23,6 +23,7 @@ class Plan extends Model
         'prematurity_available',
         'one_time_payment_applicable',
         'one_time_payment_amount',
+        'discount_price',
     ];
 
     protected $casts = [

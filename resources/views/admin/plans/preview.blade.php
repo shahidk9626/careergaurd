@@ -116,8 +116,54 @@
                                         class="flex items-center justify-center w-5 h-5 mr-3 rounded-lg bg-cyan-100 text-center flex-none">
                                         <i class="fas fa-wallet text-cyan-600 text-xs"></i>
                                     </div>
-                                    <span class="text-sm text-slate-600">Discount if One-Time Payment: <b>₹{{ number_format($plan->one_time_payment_amount, 0) }}</b></span>
+                                    <span class="text-sm text-slate-600">Discounted One-Time Payment: <b>₹{{ number_format($plan->discount_price ?? $plan->one_time_payment_amount, 0) }}</b></span>
                                 </li>
+                                @if($plan->discount_price)
+                                    @php
+                                        $monthlyPrice = 0;
+                                        if ($plan->tenure_type === 'months' && $plan->tenure_value > 0) {
+                                            $monthlyPrice = $plan->premium_amount / $plan->tenure_value;
+                                        } elseif ($plan->tenure_type === 'years' && $plan->tenure_value > 0) {
+                                            $monthlyPrice = $plan->premium_amount / ($plan->tenure_value * 12);
+                                        }
+
+                                        $strikeThroughPrice = $plan->one_time_payment_amount ?: $plan->premium_amount;
+
+                                        $dailyPrice = 0;
+                                        if ($plan->tenure_type === 'months' && $plan->tenure_value > 0) {
+                                            $dailyPrice = $plan->premium_amount / ($plan->tenure_value * 30);
+                                        } elseif ($plan->tenure_type === 'years' && $plan->tenure_value > 0) {
+                                            $dailyPrice = $plan->premium_amount / ($plan->tenure_value * 365);
+                                        } elseif ($plan->tenure_type === 'days' && $plan->tenure_value > 0) {
+                                            $dailyPrice = $plan->premium_amount / $plan->tenure_value;
+                                        }
+                                    @endphp
+                                    @if($monthlyPrice > 0)
+                                         <li class="relative flex items-center py-2 pl-8 border-0 text-inherit">
+                                             <div class="flex items-center justify-center w-5 h-5 mr-3 rounded-lg bg-green-100 text-center flex-none">
+                                                 <i class="fas fa-calendar-alt text-green-600 text-xs"></i>
+                                             </div>
+                                             <span class="text-sm text-slate-600">₹{{ number_format($monthlyPrice, 0) }}/month</span>
+                                         </li>
+                                     @endif
+                                     <li class="relative flex items-center py-2 pl-8 border-0 text-inherit">
+                                         <div class="flex items-center justify-center w-5 h-5 mr-3 rounded-lg bg-red-100 text-center flex-none">
+                                             <i class="fas fa-tags text-red-600 text-xs"></i>
+                                         </div>
+                                         <span class="text-sm text-slate-600">
+                                             <del class="text-slate-400">₹{{ number_format($strikeThroughPrice, 0) }}</del> 
+                                             <span class="font-bold text-purple-700">₹{{ number_format($plan->discount_price, 0) }}</span>/{{ $plan->tenure_value }} {{ $plan->tenure_type }}
+                                         </span>
+                                     </li>
+                                     @if($dailyPrice > 0)
+                                         <li class="relative flex items-center py-2 pl-8 border-0 text-inherit">
+                                             <div class="flex items-center justify-center w-5 h-5 mr-3 rounded-lg bg-purple-100 text-center flex-none">
+                                                 <i class="fas fa-calendar-day text-purple-600 text-xs"></i>
+                                             </div>
+                                             <span class="text-sm text-slate-600">Just ₹{{ round($dailyPrice) }} per day*</span>
+                                         </li>
+                                     @endif
+                                @endif
                             @endif
                         </ul>
                     </div>
@@ -128,7 +174,7 @@
                                 <label class="block text-xxs font-bold text-slate-500 mb-1">Payment Option</label>
                                 <select id="payment_type_{{ $plan->id }}" class="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-600 bg-white">
                                     <option value="regular">Standard (₹{{ number_format($plan->premium_amount, 0) }})</option>
-                                    <option value="one_time">One-Time (₹{{ number_format($plan->one_time_payment_amount, 0) }})</option>
+                                    <option value="one_time">One-Time (₹{{ number_format($plan->discount_price ?? $plan->one_time_payment_amount, 0) }})</option>
                                 </select>
                             </div>
                         @endif

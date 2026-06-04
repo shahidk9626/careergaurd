@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('service_categories', function (Blueprint $table) {
-            $table->foreignId('parent_id')->nullable()->after('id')->constrained('service_categories')->onDelete('cascade');
-        });
+        if (!Schema::hasColumn('service_categories', 'parent_id')) {
+            Schema::table('service_categories', function (Blueprint $table) {
+                $table->foreignId('parent_id')->nullable()->after('id')->constrained('service_categories')->onDelete('cascade');
+            });
+        }
 
         // Seed 3 parent categories
         $parents = [

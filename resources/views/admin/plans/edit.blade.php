@@ -97,11 +97,19 @@
                             </div>
 
                             <!-- Row 6 (Dynamic Amount Field) -->
-                            <div id="one_time_payment_amount_container" style="{{ $plan->one_time_payment_applicable ? '' : 'display: none;' }}">
-                                <label class="block text-sm font-medium text-slate-600 mb-1">One-Time Payment Amount (₹)</label>
-                                <input type="number" step="0.01" min="0" name="one_time_payment_amount" id="one_time_payment_amount" value="{{ $plan->one_time_payment_amount }}"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                    placeholder="0.00" {{ $plan->one_time_payment_applicable ? 'required' : '' }}>
+                            <div id="one_time_payment_amount_container" style="{{ $plan->one_time_payment_applicable ? '' : 'display: none;' }}" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">One-Time Payment Amount (₹)</label>
+                                    <input type="number" step="0.01" min="0" name="one_time_payment_amount" id="one_time_payment_amount" value="{{ $plan->one_time_payment_amount }}"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                        placeholder="0.00" {{ $plan->one_time_payment_applicable ? 'required' : '' }}>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Discount Price (₹)</label>
+                                    <input type="number" step="0.01" min="0" name="discount_price" id="discount_price" value="{{ $plan->discount_price }}"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                        placeholder="0.00" {{ $plan->one_time_payment_applicable ? 'required' : '' }}>
+                                </div>
                             </div>
                         </div>
 
@@ -177,9 +185,11 @@
                 if ($(this).val() == '1') {
                     $('#one_time_payment_amount_container').show();
                     $('#one_time_payment_amount').attr('required', true);
+                    $('#discount_price').attr('required', true);
                 } else {
                     $('#one_time_payment_amount_container').hide();
                     $('#one_time_payment_amount').removeAttr('required').val('');
+                    $('#discount_price').removeAttr('required').val('');
                 }
             });
             // Load categories into each service block

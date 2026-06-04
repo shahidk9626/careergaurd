@@ -127,7 +127,7 @@
                 </div>
                 <div class="details-row">
                     <span class="details-label">Amount Due:</span>
-                    <span class="details-value">₹{{ number_format($plan->premium_amount, 2) }}</span>
+                    <span class="details-value">₹{{ number_format(\App\Models\PaymentOrder::where('order_id', $referral->cashfree_order_id)->value('amount') ?? $plan->premium_amount, 2) }}</span>
                 </div>
                 <div class="details-row">
                     <span class="details-label">Staff Representative:</span>
