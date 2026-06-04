@@ -195,8 +195,7 @@
     <table class="header-table">
         <tr>
             <td class="logo-container">
-                @if(file_exists(public_path('assets/img/logo-ct.png')))
-                    <img src="{{ public_path('assets/img/logo-ct.png') }}" class="logo-img" alt="Logo">
+                @if(file_exists(public_path('assets/img/careerguard-logo-black.webp')))
                 @endif
                 <span class="brand-name">CareerGuard</span>
             </td>

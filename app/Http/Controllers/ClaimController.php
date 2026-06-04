@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class ClaimController extends Controller
 {
@@ -294,7 +294,9 @@ class ClaimController extends Controller
 
         $transactions = Transaction::where('plan_unique_id', $plan_unique_id)->latest()->get();
 
-        $pdf = Pdf::loadView('pdf.repayment-history', compact('purchasedPlan', 'transactions'));
+        $pdf = app('dompdf.wrapper');
+        $pdf->getDomPDF()->set_option('isRemoteEnabled', true);
+        $pdf->loadView('pdf.repayment-history', compact('purchasedPlan', 'transactions'));
         $pdf->setPaper('a4', 'portrait');
 
         $filename = 'CareerGuard_Repayment_History_' . $purchasedPlan->plan_unique_id . '.pdf';
