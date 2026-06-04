@@ -39,13 +39,28 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'whatsapp_number' => ['required', 'string', 'max:20'],
-            'referral_code' => ['nullable', 'string', 'exists:staff_details,emp_code'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $email = $request->email ? strtolower(trim($request->email)) : null;
+        $existingUser = $email ? User::where('email', $email)->first() : null;
+
+        $isUnverified = $existingUser && !$existingUser->hasVerifiedEmail();
+
+        if ($isUnverified) {
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+                'whatsapp_number' => ['required', 'string', 'max:20'],
+                'referral_code' => ['nullable', 'string', 'exists:staff_details,emp_code'],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+        } else {
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+                'whatsapp_number' => ['required', 'string', 'max:20'],
+                'referral_code' => ['nullable', 'string', 'exists:staff_details,emp_code'],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+        }
 
         // Find customer role
         $customerRole = Role::where('name', 'customer')->first();
@@ -74,17 +89,31 @@ class RegisteredUserController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'whatsapp_number' => $request->whatsapp_number,
-                'password' => Hash::make($request->password),
-                'role_id' => 0,
-                'referred_by_staff_id' => $referredById,
-                'status' => 'pending',
-                'profile_completed' => 0,
-                'verification_sent_at' => now(),
-            ]);
+            if ($isUnverified) {
+                $existingUser->update([
+                    'name' => $request->name,
+                    'whatsapp_number' => $request->whatsapp_number,
+                    'password' => Hash::make($request->password),
+                    'role_id' => 0,
+                    'referred_by_staff_id' => $referredById,
+                    'status' => 'pending',
+                    'profile_completed' => 0,
+                    'verification_sent_at' => now(),
+                ]);
+                $user = $existingUser;
+            } else {
+                $user = User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'whatsapp_number' => $request->whatsapp_number,
+                    'password' => Hash::make($request->password),
+                    'role_id' => 0,
+                    'referred_by_staff_id' => $referredById,
+                    'status' => 'pending',
+                    'profile_completed' => 0,
+                    'verification_sent_at' => now(),
+                ]);
+            }
 
             // Generate secure signed verification link manually
             $verificationUrl = URL::temporarySignedRoute(
@@ -100,6 +129,10 @@ class RegisteredUserController extends Controller
             Mail::to($user->email)->send(new CustomerVerificationMail($user, $verificationUrl));
 
             DB::commit();
+
+            if ($isUnverified) {
+                return redirect(route('register'))->with('status', 'This email was already registered but not verified. A new verification link has been sent to your registered email. Please click the link to complete registration.');
+            }
 
             return redirect(route('register'))->with('status', 'Registration successful. A verification email has been sent to your registered email. Please click the link in your email to complete registration.');
 
