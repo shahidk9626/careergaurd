@@ -278,6 +278,130 @@
                 });
             });
         </script>
+
+        <!-- Global Customer Profile Completion Reminder Modal -->
+        <div id="profileReminderModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999998; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+            <div style="background-color: #ffffff; width: 100%; max-width: 500px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; padding: 2rem; margin: 1rem; text-align: center; position: relative;">
+                <!-- Profile Icon inside a circle with purple/pink gradient border -->
+                <div style="width: 80px; height: 80px; background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; box-shadow: 0 10px 20px -5px rgba(219, 39, 119, 0.4);">
+                    <i class="fas fa-user-circle" style="font-size: 3rem; color: #ffffff;"></i>
+                </div>
+                
+                <h4 id="reminderModalTitle" style="margin: 0 0 0.75rem 0; font-weight: 700; color: #334155; font-size: 1.25rem;">Complete Your Profile</h4>
+                
+                <p id="reminderModalMessage" style="margin: 0 0 2rem 0; color: #64748b; font-size: 0.95rem; line-height: 1.6; font-weight: 400;">
+                    Complete your profile to unlock a better customer experience and faster claim processing.
+                </p>
+
+                <div style="display: flex; gap: 1rem; justify-content: center; width: 100%;">
+                    <!-- Left Button: Complete / View Profile -->
+                    <a id="reminderModalPrimaryBtn" href="<?php echo e(route('customer.registration')); ?>" style="flex: 1; padding: 0.75rem 1.5rem; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: white; background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%); border: none; border-radius: 0.5rem; text-align: center; text-decoration: none; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); display: inline-block;">Complete Profile</a>
+                    
+                    <!-- Right Button: Later / Close -->
+                    <button id="reminderModalSecondaryBtn" onclick="closeReminderModal()" style="flex: 1; padding: 0.75rem 1.5rem; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #475569; background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;">Later</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function() {
+                const userProfileCompleted = <?php echo e(auth()->user()->profile_completed); ?>;
+                const userVerificationStatus = "<?php echo e(auth()->user()->verification_status); ?>";
+                
+                // Do not show modal on profile editing or registration wizard where they are completing it
+                const isRegistrationPage = <?php echo e(request()->routeIs('customer.registration') ? 'true' : 'false'); ?>;
+                const isProfilePage = <?php echo e(request()->routeIs('customer.profile') ? 'true' : 'false'); ?>;
+                const isEditProfilePage = <?php echo e(request()->routeIs('customer.profile.edit') ? 'true' : 'false'); ?>;
+
+                let reminderInterval = null;
+
+                function showReminderModal() {
+                    // Check if either of the other modals is active or if we're on registration/profile page
+                    const callbackModal = document.getElementById('callbackRequestModal');
+                    if (callbackModal && callbackModal.style.display === 'flex') {
+                        return; // Don't show if request callback modal is open
+                    }
+
+                    // Check if profile is complete + approved
+                    if (userProfileCompleted === 1 && userVerificationStatus === 'verified') {
+                        stopReminderTimer();
+                        return;
+                    }
+
+                    const modal = document.getElementById('profileReminderModal');
+                    if (!modal) return;
+
+                    // Only show one modal at a time
+                    if (modal.style.display === 'flex') {
+                        return;
+                    }
+
+                    if (userProfileCompleted === 1 && userVerificationStatus !== 'verified') {
+                        // Profile Pending Approval
+                        if (isProfilePage) {
+                            return; // Don't prompt on the profile page itself
+                        }
+                        document.getElementById('reminderModalTitle').innerText = 'Verification Pending';
+                        document.getElementById('reminderModalMessage').innerText = 'Your profile has been submitted successfully and is currently under review. Please wait for verification.';
+                        
+                        const primaryBtn = document.getElementById('reminderModalPrimaryBtn');
+                        primaryBtn.innerText = 'View Profile';
+                        primaryBtn.href = "<?php echo e(route('customer.profile')); ?>";
+                        primaryBtn.style.display = 'block';
+
+                        const secondaryBtn = document.getElementById('reminderModalSecondaryBtn');
+                        secondaryBtn.innerText = 'Close';
+                    } else {
+                        // Profile Incomplete
+                        if (isRegistrationPage || isEditProfilePage) {
+                            return; // Don't prompt when they are on the form page
+                        }
+                        document.getElementById('reminderModalTitle').innerText = 'Complete Your Profile';
+                        document.getElementById('reminderModalMessage').innerText = 'Complete your profile to unlock a better customer experience and faster claim processing.';
+                        
+                        const primaryBtn = document.getElementById('reminderModalPrimaryBtn');
+                        primaryBtn.innerText = 'Complete Profile';
+                        primaryBtn.href = "<?php echo e(route('customer.registration')); ?>";
+                        primaryBtn.style.display = 'block';
+
+                        const secondaryBtn = document.getElementById('reminderModalSecondaryBtn');
+                        secondaryBtn.innerText = 'Later';
+                    }
+
+                    document.body.appendChild(modal); // Escape layout container traps
+                    modal.style.display = 'flex';
+                }
+
+                window.closeReminderModal = function() {
+                    const modal = document.getElementById('profileReminderModal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                };
+
+                function startReminderTimer() {
+                    // Show immediately on login/dashboard load, if appropriate (with 2s delay for clean loading)
+                    setTimeout(showReminderModal, 2000);
+
+                    // Re-trigger every 15 seconds
+                    reminderInterval = setInterval(showReminderModal, 15000);
+                }
+
+                function stopReminderTimer() {
+                    if (reminderInterval) {
+                        clearInterval(reminderInterval);
+                        reminderInterval = null;
+                    }
+                }
+
+                // If approved, stop completely
+                if (userProfileCompleted === 1 && userVerificationStatus === 'verified') {
+                    return;
+                }
+
+                startReminderTimer();
+            });
+        </script>
     <?php endif; ?>
 
     <?php echo $__env->yieldPushContent('scripts'); ?>

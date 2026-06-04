@@ -211,15 +211,7 @@ class PlanController extends Controller
         }
 
         // Validate customer conditions
-        if ($user->profile_completed != 1) {
-            return response()->json(['error' => 'Please complete your profile registration first.'], 400);
-        }
-
-        if ($user->verification_status !== 'verified') {
-            return response()->json(['error' => 'Your profile verification is pending admin approval.'], 400);
-        }
-
-        if ($user->status !== 'active') {
+        if ($user->status === 'inactive') {
             return response()->json(['error' => 'Your account status is currently inactive.'], 400);
         }
 
@@ -384,6 +376,16 @@ class PlanController extends Controller
             if ($orderStatus === 'PAID' && $successfulPayment) {
                 // Securely activate order
                 $this->activatePaymentOrder($paymentOrder, $successfulPayment, $orderData);
+                
+                // Flash profile status if incomplete or pending approval
+                $user = auth()->user();
+                if ($user) {
+                    $isProfileComplete = $user->profile_completed === 1 && $user->verification_status === 'verified';
+                    if (!$isProfileComplete) {
+                        session()->flash('profile_incomplete', true);
+                    }
+                }
+                
                 return redirect()->route('customer.plan-preview')->with('success', 'Membership purchased successfully');
             } else {
                 // Update payment order status to failed
@@ -522,8 +524,10 @@ class PlanController extends Controller
             return;
         }
 
+        $activated = false;
+
         try {
-            DB::transaction(function () use ($paymentOrder, $paymentDetails, $gatewayResponse) {
+            DB::transaction(function () use ($paymentOrder, $paymentDetails, $gatewayResponse, &$activated) {
                 // Re-fetch with row lock to prevent race conditions
                 $paymentOrder = PaymentOrder::where('id', $paymentOrder->id)->lockForUpdate()->first();
                 if ($paymentOrder->status === 'success') {
@@ -602,7 +606,24 @@ class PlanController extends Controller
                         'referred_by' => $referredBy,
                     ]
                 );
+
+                $activated = true;
             });
+
+            if ($activated) {
+                // Send MembershipSuccessMail to the customer
+                $purchasedPlan = PurchasedPlan::where('plan_unique_id', $paymentOrder->plan_unique_id)->first();
+                if ($purchasedPlan) {
+                    $user = $purchasedPlan->user;
+                    if ($user) {
+                        try {
+                            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\MembershipSuccessMail($purchasedPlan));
+                        } catch (\Exception $mailEx) {
+                            Log::error('Failed to send MembershipSuccessMail: ' . $mailEx->getMessage());
+                        }
+                    }
+                }
+            }
         } catch (\Exception $e) {
             Log::error('Cashfree Activation Transaction Failed', [
                 'error' => $e->getMessage(),

@@ -21,9 +21,9 @@ class VerifyEmailController extends Controller
             event(new Verified($request->user()));
         }
 
-        // Redirect customers with incomplete profiles to the registration wizard
-        if ($request->user()->role && $request->user()->role->name === 'customer' && !$request->user()->profile_completed) {
-            return redirect()->route('customer.registration');
+        // Redirect customers to the plan-preview page
+        if ($request->user()->role_id === 0 || ($request->user()->role && $request->user()->role->name === 'customer')) {
+            return redirect()->route('customer.plan-preview');
         }
 
         return redirect()->intended(route('dashboard', absolute: false) . '?verified=1');
@@ -41,7 +41,7 @@ class VerifyEmailController extends Controller
         }
 
         if ($user->hasVerifiedEmail()) {
-            return redirect()->route('customer.registration')->with('status', 'Your email is already verified.');
+            return redirect()->route('customer.plan-preview')->with('status', 'Your email is already verified.');
         }
 
         if ($user->markEmailAsVerified()) {
@@ -53,6 +53,6 @@ class VerifyEmailController extends Controller
             Auth::login($user);
         }
 
-        return redirect()->route('customer.registration')->with('status', 'Email verified successfully! Please complete your profile.');
+        return redirect()->route('customer.plan-preview')->with('status', 'Email verified successfully! You can now browse and purchase memberships.');
     }
 }

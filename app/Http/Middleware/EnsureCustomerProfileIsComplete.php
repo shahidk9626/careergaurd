@@ -25,6 +25,8 @@ class EnsureCustomerProfileIsComplete
                 !$request->routeIs('customer.store-profile') &&
                 !$request->routeIs('customer.plan-preview') &&
                 !$request->routeIs('customer.plan.show') &&
+                !$request->routeIs('customer.plan.purchase') &&
+                !$request->routeIs('customer.payment.callback') &&
                 !$request->routeIs('logout') &&
                 !$request->routeIs('verification.*')
             ) {
@@ -38,6 +40,8 @@ class EnsureCustomerProfileIsComplete
                 !$request->routeIs('customer.dashboard') &&
                 !$request->routeIs('customer.plan-preview') &&
                 !$request->routeIs('customer.plan.show') &&
+                !$request->routeIs('customer.plan.purchase') &&
+                !$request->routeIs('customer.payment.callback') &&
                 !$request->routeIs('logout') &&
                 !$request->routeIs('verification.*')
             ) {

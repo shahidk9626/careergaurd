@@ -274,12 +274,31 @@
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     @if(session('success'))
-                        Swal.fire({
-                            title: 'Success!',
-                            text: "{{ session('success') }}",
-                            icon: 'success',
-                            confirmButtonColor: '#cb0c9f',
-                        });
+                        @if(session('profile_incomplete'))
+                            Swal.fire({
+                                title: 'Membership purchased successfully.',
+                                text: 'Please complete your profile to activate all customer services and ensure faster processing of future requests.',
+                                icon: 'success',
+                                showCancelButton: true,
+                                confirmButtonColor: '#cb0c9f',
+                                cancelButtonColor: '#8392ab',
+                                confirmButtonText: 'Complete Your Profile',
+                                cancelButtonText: 'View Membership'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = "{{ route('customer.registration') }}";
+                                } else {
+                                    window.location.href = "{{ route('customer.purchased-plans') }}";
+                                }
+                            });
+                        @else
+                            Swal.fire({
+                                title: 'Success!',
+                                text: "{{ session('success') }}",
+                                icon: 'success',
+                                confirmButtonColor: '#cb0c9f',
+                            });
+                        @endif
                     @endif
                     @if(session('error'))
                         Swal.fire({

@@ -58,15 +58,7 @@ class StaffReferralController extends Controller
         $staff = auth()->user();
 
         // Validate customer account conditions (must match existing checkout validation logic)
-        if ($customer->profile_completed != 1) {
-            return response()->json(['error' => 'Please ask the customer to complete their profile registration first.'], 400);
-        }
-
-        if ($customer->verification_status !== 'verified') {
-            return response()->json(['error' => 'Customer profile verification is pending admin approval.'], 400);
-        }
-
-        if ($customer->status !== 'active') {
+        if ($customer->status === 'inactive') {
             return response()->json(['error' => 'Customer account status is currently inactive.'], 400);
         }
 
