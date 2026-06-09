@@ -190,4 +190,38 @@ class CustomerBenefitsPortalTest extends TestCase
         // Cannot download template in the restricted category
         $this->get(route('customer.resume-templates.download', $restrictedTemplate->id))->assertStatus(403);
     }
+
+    /**
+     * Test JobLink model and validation with new fields and optional URL.
+     */
+    public function test_job_link_optional_url_and_new_fields()
+    {
+        $job = JobLink::create([
+            'title' => 'Backend Developer',
+            'job_title' => 'Senior Laravel Developer',
+            'company_name' => 'Acme Corp',
+            'contact_person_name' => 'Jane Smith',
+            'mobile_number' => '919999999999',
+            'vacancies' => '5',
+            'location' => 'Remote',
+            'salary' => '₹12,00,000 P.A.',
+            'experience' => '3-5 Years',
+            'apply_whatsapp_or_email' => '919999999999',
+            'description' => 'Test Job Description',
+        ]);
+
+        $this->assertDatabaseHas('job_links', [
+            'id' => $job->id,
+            'title' => 'Backend Developer',
+            'job_title' => 'Senior Laravel Developer',
+            'job_url' => null,
+            'contact_person_name' => 'Jane Smith',
+            'mobile_number' => '919999999999',
+        ]);
+
+        // Accessors fallback test
+        $this->assertEquals('Remote', $job->location);
+        $this->assertEquals('3-5 Years', $job->experience);
+        $this->assertEquals('₹12,00,000 P.A.', $job->salary);
+    }
 }

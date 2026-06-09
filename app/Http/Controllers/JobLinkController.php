@@ -20,8 +20,16 @@ class JobLinkController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'company_name' => 'nullable|string|max:255',
-            'job_url' => 'required|url',
+            'job_url' => 'nullable|url',
             'description' => 'nullable|string',
+            'contact_person_name' => 'nullable|string|max:255',
+            'mobile_number' => 'nullable|string|max:50',
+            'job_title' => 'nullable|string|max:255',
+            'vacancies' => 'nullable|string|max:100',
+            'location' => 'nullable|string|max:255',
+            'salary' => 'nullable|string|max:255',
+            'experience' => 'nullable|string|max:255',
+            'apply_whatsapp_or_email' => 'nullable|string|max:255',
         ]);
 
         $job = JobLink::create($request->all());
@@ -45,8 +53,16 @@ class JobLinkController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'company_name' => 'nullable|string|max:255',
-            'job_url' => 'required|url',
+            'job_url' => 'nullable|url',
             'description' => 'nullable|string',
+            'contact_person_name' => 'nullable|string|max:255',
+            'mobile_number' => 'nullable|string|max:50',
+            'job_title' => 'nullable|string|max:255',
+            'vacancies' => 'nullable|string|max:100',
+            'location' => 'nullable|string|max:255',
+            'salary' => 'nullable|string|max:255',
+            'experience' => 'nullable|string|max:255',
+            'apply_whatsapp_or_email' => 'nullable|string|max:255',
         ]);
 
         $job->update($request->all());

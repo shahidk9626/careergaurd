@@ -1,90 +1,12 @@
--- ==========================================
--- 1. ADD COMMISSION COLUMN TO PLANS TABLE
--- ==========================================
--- Note: If this column already exists, you can skip this command.
-ALTER TABLE plans ADD COLUMN commission_amount DECIMAL(10, 2) DEFAULT 0.00 AFTER premium_amount;
+-- SQL Queries to update the job_links table schema
 
+ALTER TABLE job_links MODIFY COLUMN job_url VARCHAR(255) NULL;
 
--- ==========================================
--- 2. REGISTER NEW PERMISSIONS & MODULES
--- ==========================================
-
--- Insert staff-commission.export permission
-INSERT INTO permissions (module_id, name, slug, created_at, updated_at)
-SELECT id, 'Export Staff Commission Invoices', 'staff-commission.export', NOW(), NOW()
-FROM modules 
-WHERE slug = 'staff-commission'
-ON DUPLICATE KEY UPDATE name = 'Export Staff Commission Invoices', updated_at = NOW();
-
--- Map staff-commission.export permission to admin role (if not already mapped)
-INSERT INTO role_permissions (role_id, permission_id, allowed, created_at, updated_at)
-SELECT admin_role.id, perm.id, 1, NOW(), NOW()
-FROM roles admin_role
-CROSS JOIN permissions perm
-WHERE admin_role.slug = 'admin'
-  AND perm.slug = 'staff-commission.export'
-  AND NOT EXISTS (
-      SELECT 1 FROM role_permissions rp 
-      WHERE rp.role_id = admin_role.id 
-        AND rp.permission_id = perm.id
-  );
-
-
--- Insert new Commission Management module
-INSERT INTO modules (name, slug, status, created_at, updated_at) 
-VALUES ('Commission Management', 'commission', 'active', NOW(), NOW())
-ON DUPLICATE KEY UPDATE name = 'Commission Management', status = 'active', updated_at = NOW();
-
--- Insert commission permissions
-INSERT INTO permissions (module_id, name, slug, created_at, updated_at)
-SELECT id, 'View Commission Listing', 'commission.view', NOW(), NOW()
-FROM modules WHERE slug = 'commission'
-ON DUPLICATE KEY UPDATE name = 'View Commission Listing', updated_at = NOW();
-
-INSERT INTO permissions (module_id, name, slug, created_at, updated_at)
-SELECT id, 'Export Commission Invoices', 'commission.export', NOW(), NOW()
-FROM modules WHERE slug = 'commission'
-ON DUPLICATE KEY UPDATE name = 'Export Commission Invoices', updated_at = NOW();
-
-INSERT INTO permissions (module_id, name, slug, created_at, updated_at)
-SELECT id, 'View Commission Summaries', 'commission.summary', NOW(), NOW()
-FROM modules WHERE slug = 'commission'
-ON DUPLICATE KEY UPDATE name = 'View Commission Summaries', updated_at = NOW();
-
-
--- Map new commission permissions to admin role (if not already mapped)
-INSERT INTO role_permissions (role_id, permission_id, allowed, created_at, updated_at)
-SELECT admin_role.id, perm.id, 1, NOW(), NOW()
-FROM roles admin_role
-CROSS JOIN permissions perm
-WHERE admin_role.slug = 'admin'
-  AND perm.slug = 'commission.view'
-  AND NOT EXISTS (
-      SELECT 1 FROM role_permissions rp 
-      WHERE rp.role_id = admin_role.id 
-        AND rp.permission_id = perm.id
-  );
-
-INSERT INTO role_permissions (role_id, permission_id, allowed, created_at, updated_at)
-SELECT admin_role.id, perm.id, 1, NOW(), NOW()
-FROM roles admin_role
-CROSS JOIN permissions perm
-WHERE admin_role.slug = 'admin'
-  AND perm.slug = 'commission.export'
-  AND NOT EXISTS (
-      SELECT 1 FROM role_permissions rp 
-      WHERE rp.role_id = admin_role.id 
-        AND rp.permission_id = perm.id
-  );
-
-INSERT INTO role_permissions (role_id, permission_id, allowed, created_at, updated_at)
-SELECT admin_role.id, perm.id, 1, NOW(), NOW()
-FROM roles admin_role
-CROSS JOIN permissions perm
-WHERE admin_role.slug = 'admin'
-  AND perm.slug = 'commission.summary'
-  AND NOT EXISTS (
-      SELECT 1 FROM role_permissions rp 
-      WHERE rp.role_id = admin_role.id 
-        AND rp.permission_id = perm.id
-  );
+ALTER TABLE job_links ADD COLUMN job_title VARCHAR(255) NULL AFTER title;
+ALTER TABLE job_links ADD COLUMN vacancies VARCHAR(255) NULL AFTER job_title;
+ALTER TABLE job_links ADD COLUMN location VARCHAR(255) NULL AFTER vacancies;
+ALTER TABLE job_links ADD COLUMN salary VARCHAR(255) NULL AFTER location;
+ALTER TABLE job_links ADD COLUMN experience VARCHAR(255) NULL AFTER salary;
+ALTER TABLE job_links ADD COLUMN contact_person_name VARCHAR(255) NULL AFTER company_name;
+ALTER TABLE job_links ADD COLUMN mobile_number VARCHAR(255) NULL AFTER contact_person_name;
+ALTER TABLE job_links ADD COLUMN apply_whatsapp_or_email VARCHAR(255) NULL AFTER description;

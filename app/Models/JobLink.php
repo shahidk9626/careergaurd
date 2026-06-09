@@ -16,6 +16,14 @@ class JobLink extends Model
         'job_url',
         'description',
         'status',
+        'contact_person_name',
+        'mobile_number',
+        'job_title',
+        'vacancies',
+        'location',
+        'salary',
+        'experience',
+        'apply_whatsapp_or_email',
     ];
 
     public function categories()
@@ -23,20 +31,29 @@ class JobLink extends Model
         return $this->belongsToMany(ServiceCategory::class, 'job_link_categories');
     }
 
-    public function getLocationAttribute()
+    public function getLocationAttribute($value)
     {
+        if ($value) {
+            return $value;
+        }
         $locations = ['Bengaluru', 'Mumbai', 'Delhi NCR', 'Pune', 'Hyderabad', 'Remote', 'Chennai', 'Noida'];
         return $locations[$this->id % count($locations)];
     }
 
-    public function getExperienceAttribute()
+    public function getExperienceAttribute($value)
     {
+        if ($value) {
+            return $value;
+        }
         $experiences = ['0-1 Years', '1-3 Years', '2-5 Years', '3-7 Years', '4-8 Years', '5-10 Years'];
         return $experiences[$this->id % count($experiences)];
     }
 
-    public function getSalaryAttribute()
+    public function getSalaryAttribute($value)
     {
+        if ($value) {
+            return $value;
+        }
         $salaries = [
             '₹3,50,000 - ₹6,00,000 P.A.',
             '₹6,00,000 - ₹9,50,000 P.A.',

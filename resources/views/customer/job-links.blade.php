@@ -516,10 +516,10 @@
                             {{-- Left: logo + info --}}
                             <div class="jb-card-main">
                                 <div class="jb-logo">
-                                    {{ substr($job->company_name ?? $job->title, 0, 1) }}
+                                    {{ substr($job->company_name ?? $job->job_title ?? $job->title, 0, 1) }}
                                 </div>
                                 <div class="jb-info">
-                                    <h6 class="jb-job-title">{{ $job->title }}</h6>
+                                    <h6 class="jb-job-title">{{ $job->job_title ?? $job->title }}</h6>
                                     <span class="jb-company">{{ $job->company_name ?? 'Confidential Recruiter' }}</span>
 
                                     <div class="jb-meta-row">
@@ -538,6 +538,11 @@
                                                 <i class="fas fa-wallet"></i> {{ $job->salary }}
                                             </span>
                                         @endif
+                                        @if($job->vacancies)
+                                            <span class="jb-meta-chip">
+                                                <i class="fas fa-users"></i> {{ $job->vacancies }} Vacancies
+                                            </span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -545,11 +550,52 @@
                             {{-- Right: date + CTA --}}
                             <div class="jb-card-right">
                                 <span class="jb-date">{{ $job->posted_date }}</span>
-                                <a href="{{ $job->job_url }}" target="_blank" rel="noopener noreferrer" class="jb-cta-btn">
-                                    Apply Now <i class="fas fa-external-link-alt"></i>
-                                </a>
+                                @if($job->mobile_number)
+                                    @php
+                                        $cleanPhone = preg_replace('/[^0-9]/', '', $job->mobile_number);
+                                        if (strlen($cleanPhone) === 10) {
+                                            $cleanPhone = '91' . $cleanPhone;
+                                        }
+                                        $waMessage = 'Hello, I am interested in the ' . ($job->job_title ?? $job->title) . ' job position.';
+                                        if ($job->company_name) {
+                                            $waMessage .= ' at ' . $job->company_name;
+                                        }
+                                        $waUrl = 'https://wa.me/' . $cleanPhone . '?text=' . rawurlencode($waMessage);
+                                    @endphp
+                                    <a href="{{ $waUrl }}" target="_blank" rel="noopener noreferrer" class="jb-cta-btn" style="background: linear-gradient(310deg, #128c7e 0%, #25d366 100%); box-shadow: 0 4px 7px -1px rgba(37, 211, 102, 0.25);">
+                                        Apply via WhatsApp <i class="fab fa-whatsapp" style="font-size: 12px; margin-left: 4px;"></i>
+                                    </a>
+                                @elseif($job->job_url)
+                                    <a href="{{ $job->job_url }}" target="_blank" rel="noopener noreferrer" class="jb-cta-btn">
+                                        Apply Now <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                @endif
                             </div>
                         </div>
+
+                        {{-- Contact Details Box --}}
+                        @if($job->contact_person_name || $job->mobile_number || $job->apply_whatsapp_or_email)
+                            <div style="margin-top: 16px; padding: 12px 16px; background: #f8fafc; border-radius: 12px; border: 1px dashed #e2e8f0; font-size: 13px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px;">
+                                @if($job->contact_person_name)
+                                    <div>
+                                        <strong style="color: #475569;"><i class="fas fa-user-tie" style="margin-right: 6px; color: #94a3b8;"></i> Contact Person:</strong>
+                                        <span style="color: #334155; font-weight: 500;">{{ $job->contact_person_name }}</span>
+                                    </div>
+                                @endif
+                                @if($job->mobile_number)
+                                    <div>
+                                        <strong style="color: #475569;"><i class="fab fa-whatsapp" style="margin-right: 6px; color: #25d366;"></i> Mobile / WhatsApp:</strong>
+                                        <span style="color: #334155; font-weight: 500;">{{ $job->mobile_number }}</span>
+                                    </div>
+                                @endif
+                                @if($job->apply_whatsapp_or_email)
+                                    <div>
+                                        <strong style="color: #475569;"><i class="fas fa-envelope-open-text" style="margin-right: 6px; color: #94a3b8;"></i> Apply Info:</strong>
+                                        <span style="color: #334155; font-weight: 500;">{{ $job->apply_whatsapp_or_email }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
 
                         {{-- Description --}}
                         @if($job->description)

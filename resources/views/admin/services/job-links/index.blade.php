@@ -77,19 +77,64 @@
                             <input type="text" name="title" id="title" required style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Frontend Developer">
                         </div>
                         <div>
-                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Company Name</label>
-                            <input type="text" name="company_name" id="company_name" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Google">
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Job Title</label>
+                            <input type="text" name="job_title" id="job_title" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Senior Frontend Developer">
                         </div>
                     </div>
 
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Job URL <span style="color: #ef4444;">*</span></label>
-                        <input type="url" name="job_url" id="job_url" required style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="https://...">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Company Name</label>
+                            <input type="text" name="company_name" id="company_name" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Google">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Job Location</label>
+                            <input type="text" name="location" id="location" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Bengaluru">
+                        </div>
                     </div>
 
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Categories</label>
-                        <div id="categoryCheckboxes" style="display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Salary Range</label>
+                            <input type="text" name="salary" id="salary" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. ₹6,00,000 - ₹9,50,000 P.A.">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Experience Required</label>
+                            <input type="text" name="experience" id="experience" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. 2-5 Years">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Number of Vacancies</label>
+                            <input type="text" name="vacancies" id="vacancies" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. 3">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Job URL</label>
+                            <input type="url" name="job_url" id="job_url" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Contact Person Name</label>
+                            <input type="text" name="contact_person_name" id="contact_person_name" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. John Doe">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Mobile Number / WhatsApp</label>
+                            <input type="text" name="mobile_number" id="mobile_number" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. 919876543210">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Apply WhatsApp or Email</label>
+                            <input type="text" name="apply_whatsapp_or_email" id="apply_whatsapp_or_email" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. apply@company.com or 919876543210">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Categories</label>
+                            <div id="categoryCheckboxes" style="display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 0.75rem; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 0.5rem; max-height: 120px; overflow-y: auto;">
+                            </div>
                         </div>
                     </div>
 
@@ -273,6 +318,14 @@
         function openCreateModal() {
             $('#jobForm')[0].reset();
             $('#jobId').val('');
+            $('#job_title').val('');
+            $('#location').val('');
+            $('#salary').val('');
+            $('#experience').val('');
+            $('#vacancies').val('');
+            $('#contact_person_name').val('');
+            $('#mobile_number').val('');
+            $('#apply_whatsapp_or_email').val('');
             $('#modalTitle').text('Add Job Link');
             loadCategories();
             openModalLogic();
@@ -282,7 +335,15 @@
             $.get("{{ url('admin/services/job-links/edit') }}/" + id, function (data) {
                 $('#jobId').val(data.id);
                 $('#title').val(data.title);
+                $('#job_title').val(data.job_title);
                 $('#company_name').val(data.company_name);
+                $('#location').val(data.location);
+                $('#salary').val(data.salary);
+                $('#experience').val(data.experience);
+                $('#vacancies').val(data.vacancies);
+                $('#contact_person_name').val(data.contact_person_name);
+                $('#mobile_number').val(data.mobile_number);
+                $('#apply_whatsapp_or_email').val(data.apply_whatsapp_or_email);
                 $('#job_url').val(data.job_url);
                 $('#description').val(data.description);
                 $('#modalTitle').text('Edit Job Link');
