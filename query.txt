@@ -1,7 +1,11 @@
--- SQL Queries to update the job_links table schema
+-- ==========================================
+-- 1. JOB LINKS SCHEMA ENHANCEMENTS
+-- ==========================================
 
+-- Modify job_url to be optional (nullable)
 ALTER TABLE job_links MODIFY COLUMN job_url VARCHAR(255) NULL;
 
+-- Add new descriptive and contact fields to job_links
 ALTER TABLE job_links ADD COLUMN job_title VARCHAR(255) NULL AFTER title;
 ALTER TABLE job_links ADD COLUMN vacancies VARCHAR(255) NULL AFTER job_title;
 ALTER TABLE job_links ADD COLUMN location VARCHAR(255) NULL AFTER vacancies;
@@ -10,3 +14,66 @@ ALTER TABLE job_links ADD COLUMN experience VARCHAR(255) NULL AFTER salary;
 ALTER TABLE job_links ADD COLUMN contact_person_name VARCHAR(255) NULL AFTER company_name;
 ALTER TABLE job_links ADD COLUMN mobile_number VARCHAR(255) NULL AFTER contact_person_name;
 ALTER TABLE job_links ADD COLUMN apply_whatsapp_or_email VARCHAR(255) NULL AFTER description;
+
+
+-- ==========================================
+-- 2. COMMISSION PAYMENT SYSTEM
+-- ==========================================
+
+-- Add commission amount column to plans table
+ALTER TABLE plans ADD COLUMN commission_amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00 AFTER compensation_amount;
+
+-- Create staff commission payments batch table
+CREATE TABLE staff_commission_payments (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    staff_id BIGINT UNSIGNED NOT NULL,
+    batch_reference VARCHAR(255) NOT NULL UNIQUE,
+    total_policies INT NOT NULL,
+    total_commission_amount DECIMAL(10, 2) NOT NULL,
+    payment_proof VARCHAR(255) NULL,
+    description TEXT NULL,
+    payment_date DATE NOT NULL,
+    created_by BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    FOREIGN KEY (staff_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Create staff commission payment details status table
+CREATE TABLE staff_commission_payment_details (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    payment_id BIGINT UNSIGNED NULL,
+    purchased_plan_id BIGINT UNSIGNED NOT NULL,
+    customer_id BIGINT UNSIGNED NOT NULL,
+    plan_id BIGINT UNSIGNED NOT NULL,
+    commission_amount DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(255) NOT NULL DEFAULT 'Pending', -- Pending, Paid, Hold, Rejected
+    description TEXT NULL, -- Hold or rejection reason
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    FOREIGN KEY (payment_id) REFERENCES staff_commission_payments(id) ON DELETE CASCADE,
+    FOREIGN KEY (purchased_plan_id) REFERENCES purchased_plans(id) ON DELETE CASCADE,
+    FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (plan_id) REFERENCES plans(id) ON DELETE CASCADE
+);
+
+-- Register Commission Management Module and Permissions
+INSERT INTO modules (name, slug, status, created_at, updated_at) 
+VALUES ('Commission Management', 'commission', 'active', NOW(), NOW());
+
+INSERT INTO permissions (module_id, name, slug, created_at, updated_at) VALUES 
+((SELECT id FROM modules WHERE slug = 'commission' LIMIT 1), 'View Commission Listing', 'commission.view', NOW(), NOW()),
+((SELECT id FROM modules WHERE slug = 'commission' LIMIT 1), 'Export Commission Invoices', 'commission.export', NOW(), NOW()),
+((SELECT id FROM modules WHERE slug = 'commission' LIMIT 1), 'View Commission Summaries', 'commission.summary', NOW(), NOW());
+
+-- Map Permissions to Admin Role (assumes 'admin' slug role exists)
+INSERT INTO role_permissions (role_id, permission_id, allowed, created_at, updated_at)
+SELECT 
+    (SELECT id FROM roles WHERE slug = 'admin' LIMIT 1), 
+    id, 
+    1, 
+    NOW(), 
+    NOW()
+FROM permissions 
+WHERE slug IN ('commission.view', 'commission.export', 'commission.summary');

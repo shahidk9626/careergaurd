@@ -48,9 +48,34 @@ class DashboardController extends Controller
             $totalActivePolicies = (clone $baseQuery)->count();
             $totalPremiumGenerated = (clone $baseQuery)->sum('amount');
             
-            $overallCommissionEarned = (clone $baseQuery)->get()->sum(function($p) {
-                return (float)($p->plan->commission_amount ?? 0);
-            });
+            $policies = (clone $baseQuery)->get();
+            $policyIds = $policies->pluck('id');
+            
+            $statuses = DB::table('staff_commission_payment_details')
+                ->whereIn('purchased_plan_id', $policyIds)
+                ->get()
+                ->keyBy('purchased_plan_id');
+
+            $overallCommissionEarned = 0;
+            $totalPaid = 0;
+            $totalDue = 0;
+            $totalRejected = 0;
+
+            foreach ($policies as $p) {
+                $commAmount = (float)($p->plan->commission_amount ?? 0);
+                $overallCommissionEarned += $commAmount;
+
+                $dbStatus = $statuses->get($p->id);
+                $statusStr = $dbStatus ? $dbStatus->status : 'Pending';
+
+                if ($statusStr === 'Paid') {
+                    $totalPaid += $commAmount;
+                } elseif ($statusStr === 'Pending' || $statusStr === 'Hold') {
+                    $totalDue += $commAmount;
+                } elseif ($statusStr === 'Rejected') {
+                    $totalRejected += $commAmount;
+                }
+            }
 
             $currentMonthQuery = (clone $baseQuery)->whereBetween('start_date', [
                 Carbon::now()->startOfMonth(),
@@ -64,8 +89,17 @@ class DashboardController extends Controller
                 'total_active_policies' => $totalActivePolicies,
                 'total_premium_generated' => $totalPremiumGenerated,
                 'overall_commission_earned' => $overallCommissionEarned,
-                'current_month_commission' => $currentMonthCommission
+                'current_month_commission' => $currentMonthCommission,
+                'total_paid' => $totalPaid,
+                'total_due' => $totalDue,
+                'total_rejected' => $totalRejected,
             ];
+            $payouts = \App\Models\StaffCommissionPayment::where('staff_id', $user->id)
+                ->latest()
+                ->take(5)
+                ->get();
+        } else {
+            $payouts = [];
         }
 
         return view('dashboard', compact(
@@ -73,7 +107,8 @@ class DashboardController extends Controller
             'totalPlansPurchased',
             'totalPurchasedAmount',
             'totalActiveStaff',
-            'staffStats'
+            'staffStats',
+            'payouts'
         ));
     }
 }

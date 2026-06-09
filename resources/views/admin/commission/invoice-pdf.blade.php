@@ -167,12 +167,22 @@
             text-transform: uppercase;
         }
 
-        .badge-active {
+        .badge-pending {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .badge-paid {
             background-color: #dcfce7;
             color: #15803d;
         }
 
-        .badge-expired {
+        .badge-hold {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+
+        .badge-rejected {
             background-color: #fee2e2;
             color: #b91c1c;
         }
@@ -245,24 +255,34 @@
 
     <!-- Period Summary Section -->
     <div class="section-title">Performance Summary (Selected Period)</div>
+    <div style="margin-bottom: 12px; font-size: 12px; color: #475569;">
+        <strong>Total Policies Converted:</strong> {{ $periodStats['total_policies'] }} | 
+        <strong>Total Premium Generated:</strong> Rs. {{ number_format($periodStats['total_premium'], 2) }}
+    </div>
     <table class="summary-box-table">
         <tr>
-            <td style="width: 32%; padding-right: 1.5%;">
-                <div class="summary-box">
-                    <div class="summary-num">{{ $periodStats['total_policies'] }}</div>
-                    <div class="summary-lbl">Policies Converted</div>
+            <td style="width: 25%; padding-right: 1%;">
+                <div class="summary-box" style="border-left: 3px solid #7e22ce; padding: 10px;">
+                    <div class="summary-num" style="font-size: 15px; color: #7e22ce;">Rs. {{ number_format($periodStats['total_commission'], 2) }}</div>
+                    <div class="summary-lbl" style="font-size: 9px;">Commission Earned</div>
                 </div>
             </td>
-            <td style="width: 32%; padding-right: 1.5%; padding-left: 1.5%;">
-                <div class="summary-box">
-                    <div class="summary-num">Rs. {{ number_format($periodStats['total_premium'], 2) }}</div>
-                    <div class="summary-lbl">Premium Generated</div>
+            <td style="width: 25%; padding-right: 1%; padding-left: 1%;">
+                <div class="summary-box" style="border-left: 3px solid #16a34a; padding: 10px;">
+                    <div class="summary-num" style="font-size: 15px; color: #16a34a;">Rs. {{ number_format($periodStats['total_paid'], 2) }}</div>
+                    <div class="summary-lbl" style="font-size: 9px;">Commission Paid</div>
                 </div>
             </td>
-            <td style="width: 32%; padding-left: 1.5%;">
-                <div class="summary-box" style="border-left: 3px solid #7e22ce;">
-                    <div class="summary-num" style="color: #7e22ce;">Rs. {{ number_format($periodStats['total_commission'], 2) }}</div>
-                    <div class="summary-lbl">Commission Earned</div>
+            <td style="width: 25%; padding-right: 1%; padding-left: 1%;">
+                <div class="summary-box" style="border-left: 3px solid #ca8a04; padding: 10px;">
+                    <div class="summary-num" style="font-size: 15px; color: #ca8a04;">Rs. {{ number_format($periodStats['total_due'], 2) }}</div>
+                    <div class="summary-lbl" style="font-size: 9px;">Commission Due</div>
+                </div>
+            </td>
+            <td style="width: 25%; padding-left: 1%;">
+                <div class="summary-box" style="border-left: 3px solid #dc2626; padding: 10px;">
+                    <div class="summary-num" style="font-size: 15px; color: #dc2626;">Rs. {{ number_format($periodStats['total_rejected'], 2) }}</div>
+                    <div class="summary-lbl" style="font-size: 9px;">Rejected</div>
                 </div>
             </td>
         </tr>
@@ -274,12 +294,12 @@
         <thead>
             <tr>
                 <th style="width: 25%;">Policy Number</th>
-                <th style="width: 25%;">Customer Name</th>
+                <th style="width: 20%;">Customer Name</th>
                 <th style="width: 20%;">Membership</th>
                 <th style="width: 15%;">Purchase Date</th>
                 <th style="width: 15%; text-align: right;">Premium</th>
                 <th style="width: 15%; text-align: right;">Plan Commission</th>
-                <th style="width: 10%; text-align: center;">Status</th>
+                <th style="width: 15%; text-align: center;">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -292,8 +312,8 @@
                     <td class="text-right">Rs. {{ number_format($ref['premium_amount'], 2) }}</td>
                     <td class="text-right" style="font-weight: bold; color: #7e22ce;">Rs. {{ number_format($ref['commission_amount'], 2) }}</td>
                     <td class="text-center">
-                        <span class="badge badge-active">
-                            SUCCESS
+                        <span class="badge badge-{{ strtolower($ref['commission_status']) }}">
+                            {{ $ref['commission_status'] }}
                         </span>
                     </td>
                 </tr>
@@ -301,6 +321,37 @@
                 <tr>
                     <td colspan="7" class="text-center" style="color: #64748b; font-style: italic; padding: 20px;">
                         No commission records found for the selected period.
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <!-- Payment History Table -->
+    <div class="section-title">Payment Settlement History</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width: 25%;">Batch Reference</th>
+                <th style="width: 20%;">Payment Date</th>
+                <th style="width: 15%; text-align: center;">Policies</th>
+                <th style="width: 20%; text-align: right;">Amount Paid</th>
+                <th style="width: 20%;">Paid By</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($payments as $pay)
+                <tr>
+                    <td style="font-family: monospace; font-size: 11px;">{{ $pay->batch_reference }}</td>
+                    <td>{{ $pay->payment_date ? $pay->payment_date->format('Y-m-d') : 'N/A' }}</td>
+                    <td class="text-center">{{ $pay->total_policies }}</td>
+                    <td class="text-right" style="font-weight: bold; color: #15803d;">Rs. {{ number_format($pay->total_commission_amount, 2) }}</td>
+                    <td>{{ $pay->creator->name ?? 'Admin' }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="5" class="text-center" style="color: #64748b; font-style: italic; padding: 15px;">
+                        No payment settlements have been recorded yet.
                     </td>
                 </tr>
             @endforelse

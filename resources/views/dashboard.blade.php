@@ -30,7 +30,7 @@
                 </div>
             </div>
 
-            <!-- Widget 2: Current Month Commission -->
+            <!-- Widget 2: Total Commission Earned -->
             <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
                 <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border h-full">
                     <div class="flex-auto p-4">
@@ -38,32 +38,7 @@
                             <div class="flex-none w-2/3 max-w-full px-3">
                                 <div>
                                     <p class="mb-0 font-sans font-semibold leading-normal text-sm text-slate-600">
-                                        Current Month Commission
-                                    </p>
-                                    <h5 class="mb-0 font-bold text-slate-800">
-                                        ₹{{ number_format($staffStats['current_month_commission'], 2) }}
-                                    </h5>
-                                </div>
-                            </div>
-                            <div class="px-3 text-right basis-1/3">
-                                <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md">
-                                    <i class="fas fa-calendar-check leading-none text-lg relative top-3 text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Widget 3: Overall Commission Earned -->
-            <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
-                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border h-full">
-                    <div class="flex-auto p-4">
-                        <div class="flex flex-row -mx-3">
-                            <div class="flex-none w-2/3 max-w-full px-3">
-                                <div>
-                                    <p class="mb-0 font-sans font-semibold leading-normal text-sm text-slate-600">
-                                        Overall Commission Earned
+                                        Total Commission Earned
                                     </p>
                                     <h5 class="mb-0 font-bold text-slate-800">
                                         ₹{{ number_format($staffStats['overall_commission_earned'], 2) }}
@@ -80,7 +55,32 @@
                 </div>
             </div>
 
-            <!-- Widget 4: Total Premium Generated -->
+            <!-- Widget 3: Total Commission Paid -->
+            <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border h-full">
+                    <div class="flex-auto p-4">
+                        <div class="flex flex-row -mx-3">
+                            <div class="flex-none w-2/3 max-w-full px-3">
+                                <div>
+                                    <p class="mb-0 font-sans font-semibold leading-normal text-sm text-slate-600">
+                                        Total Commission Paid
+                                    </p>
+                                    <h5 class="mb-0 font-bold text-slate-800">
+                                        ₹{{ number_format($staffStats['total_paid'], 2) }}
+                                    </h5>
+                                </div>
+                            </div>
+                            <div class="px-3 text-right basis-1/3">
+                                <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-500 shadow-soft-md">
+                                    <i class="fas fa-check-circle leading-none text-lg relative top-3 text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Widget 4: Total Commission Due -->
             <div class="w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:w-1/4">
                 <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border h-full">
                     <div class="flex-auto p-4">
@@ -88,16 +88,16 @@
                             <div class="flex-none w-2/3 max-w-full px-3">
                                 <div>
                                     <p class="mb-0 font-sans font-semibold leading-normal text-sm text-slate-600">
-                                        Total Premium Generated
+                                        Total Commission Due
                                     </p>
                                     <h5 class="mb-0 font-bold text-slate-800">
-                                        ₹{{ number_format($staffStats['total_premium_generated'], 2) }}
+                                        ₹{{ number_format($staffStats['total_due'], 2) }}
                                     </h5>
                                 </div>
                             </div>
                             <div class="px-3 text-right basis-1/3">
-                                <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md">
-                                    <i class="fas fa-gem leading-none text-lg relative top-3 text-white"></i>
+                                <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-orange-600 to-amber-400 shadow-soft-md">
+                                    <i class="fas fa-hourglass-half leading-none text-lg relative top-3 text-white"></i>
                                 </div>
                             </div>
                         </div>
@@ -117,6 +117,76 @@
                     <a href="{{ route('admin.commission.index') }}" class="inline-block px-6 py-2.5 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85 text-xs mb-0">
                         <i class="fas fa-chart-pie mr-1"></i> View Full Commission Report
                     </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payout History Log Card -->
+        <div class="flex flex-wrap mt-6 -mx-3">
+            <div class="w-full px-3">
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
+                    <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl flex items-center justify-between">
+                        <div>
+                            <h6 class="mb-1 font-bold text-slate-700">Recent Commission Settlements</h6>
+                            <p class="text-xs text-slate-400 mb-0">Your latest payout batches and transaction details.</p>
+                        </div>
+                    </div>
+                    <div class="flex-auto p-6 overflow-x-auto">
+                        <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
+                            <thead class="align-bottom">
+                                <tr>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">Batch Reference</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">Payment Date</th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">Policies Settled</th>
+                                    <th class="px-6 py-3 font-bold text-right uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">Paid Amount</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">Description</th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400">Proof Document</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($payouts as $payout)
+                                    <tr>
+                                        <td class="px-6 py-3 text-sm font-semibold align-middle bg-transparent border-b whitespace-nowrap shadow-none text-slate-700 font-mono">{{ $payout->batch_reference }}</td>
+                                        <td class="px-6 py-3 text-sm align-middle bg-transparent border-b whitespace-nowrap shadow-none">{{ $payout->payment_date ? $payout->payment_date->format('Y-m-d') : 'N/A' }}</td>
+                                        <td class="px-6 py-3 text-sm text-center align-middle bg-transparent border-b whitespace-nowrap shadow-none">{{ $payout->total_policies }}</td>
+                                        <td class="px-6 py-3 text-sm text-right font-bold text-green-600 align-middle bg-transparent border-b whitespace-nowrap shadow-none">₹{{ number_format($payout->total_commission_amount, 2) }}</td>
+                                        <td class="px-6 py-3 text-sm align-middle bg-transparent border-b shadow-none max-w-xs truncate" title="{{ $payout->description }}">{{ $payout->description ?? 'N/A' }}</td>
+                                        <td class="px-6 py-3 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-none">
+                                            @if($payout->payment_proof)
+                                                <button type="button" onclick="viewProofModal('{{ asset('storage/' . $payout->payment_proof) }}')" class="inline-block px-3 py-1 mb-0 text-white font-bold text-center uppercase align-middle transition-all bg-gradient-to-tl from-green-600 to-lime-500 rounded-lg text-xxs cursor-pointer shadow-soft-sm">
+                                                    <i class="fas fa-file-invoice mr-1"></i> View Proof
+                                                </button>
+                                            @else
+                                                <span class="text-xs italic text-slate-400">None</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center text-slate-400 italic py-6 text-sm">
+                                            No payout batch logs found.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Proof Document Viewer Modal for Dashboard -->
+        <div id="proofViewerDashboardModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+            <div style="background-color: #ffffff; width: 100%; max-width: 700px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 85vh;">
+                <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                    <h6 style="margin: 0; font-weight: 700; color: #334155; font-size: 1.125rem;">Payment Proof Document</h6>
+                    <div style="display: flex; gap: 8px;">
+                        <a id="downloadDashboardProofLink" href="#" download class="inline-block px-3 py-1 bg-purple-600 text-white rounded text-xs font-bold decoration-none"><i class="fas fa-download"></i> Download</a>
+                        <button type="button" onclick="closeDashboardProofModal()" style="background: none; border: none; font-size: 1.5rem; line-height: 1; color: #94a3b8; cursor: pointer; padding: 0;">&times;</button>
+                    </div>
+                </div>
+                <div id="proofDashboardViewerBody" style="padding: 1.5rem; overflow-y: auto; text-align: center; display: flex; align-items: center; justify-content: center; min-height: 300px;">
+                    <!-- Dynamically loaded img or iframe for PDF -->
                 </div>
             </div>
         </div>
@@ -299,4 +369,23 @@
 @push('scripts')
     <script src="{{ asset('assets/js/chart-1.js') }}" async></script>
     <script src="{{ asset('assets/js/chart-2.js') }}" async></script>
+    <script>
+        function viewProofModal(url) {
+            let fileExt = url.split('.').pop().toLowerCase();
+            let viewerHtml = '';
+            if (fileExt === 'pdf') {
+                viewerHtml = `<iframe src="${url}" style="width: 100%; height: 500px; border: none;"></iframe>`;
+            } else {
+                viewerHtml = `<img src="${url}" class="img-fluid rounded" style="max-height: 500px; max-width: 100%; object-fit: contain;">`;
+            }
+
+            $('#proofDashboardViewerBody').html(viewerHtml);
+            $('#downloadDashboardProofLink').attr('href', url);
+            $('#proofViewerDashboardModal').css('display', 'flex');
+        }
+
+        function closeDashboardProofModal() {
+            $('#proofViewerDashboardModal').hide();
+        }
+    </script>
 @endpush

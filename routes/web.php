@@ -203,6 +203,9 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
             Route::get('/commission', [App\Http\Controllers\CommissionController::class, 'index'])->name('admin.commission.index');
             Route::get('/commission/summary', [App\Http\Controllers\CommissionController::class, 'summary'])->name('admin.commission.summary');
             Route::get('/commission/export-pdf', [App\Http\Controllers\CommissionController::class, 'downloadInvoice'])->name('admin.commission.export-pdf')->middleware('permission:commission.export');
+            Route::post('/commission/manage', [App\Http\Controllers\CommissionController::class, 'manageCommission'])->name('admin.commission.manage');
+            Route::post('/commission/bulk-settle', [App\Http\Controllers\CommissionController::class, 'bulkSettle'])->name('admin.commission.bulk-settle');
+            Route::get('/commission/payment-history', [App\Http\Controllers\CommissionController::class, 'paymentHistory'])->name('admin.commission.payment-history');
         });
     });
     // Customer-specific routes
