@@ -232,7 +232,7 @@
                 {{ $purchasedPlan->start_date ? $purchasedPlan->start_date->copy()->addDays($purchasedPlan->plan->claim_duration_days ?? 0)->format('d M, Y') : 'N/A' }}
             </td>
             <td class="label">Amount</td>
-            <td class="value">₹{{ number_format($purchasedPlan->amount, 2) }}</td>
+            <td class="value">Rs. {{ number_format($purchasedPlan->amount, 2) }}</td>
         </tr>
         <tr>
             <td class="label">Status</td>
@@ -262,7 +262,7 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $tx->created_at->format('d M, Y H:i') }}</td>
-                    <td>₹{{ number_format($tx->amount, 2) }}</td>
+                    <td>Rs. {{ number_format($tx->amount, 2) }}</td>
                     <td>{{ strtoupper($tx->payment_method) }}</td>
                     <td>{{ $tx->transaction_reference }}</td>
                     <td>

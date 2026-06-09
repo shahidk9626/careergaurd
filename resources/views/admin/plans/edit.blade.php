@@ -25,6 +25,12 @@
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                                     required>
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">Commission Amount (₹)</label>
+                                <input type="number" name="commission_amount" value="{{ $plan->commission_amount }}" step="0.01" min="0"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                    required>
+                            </div>
 
                             <!-- Row 2 -->
                             <div>

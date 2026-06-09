@@ -424,15 +424,31 @@
 
             @if(auth()->user()->role_id !== 0)
                 @if(hasPermission('staff-commission.view'))
-                    @php $isCommissionActive = request()->routeIs('admin.staff-commission.index') || request()->is('*staff-commission*'); @endphp
+                    @php $isReferralsActive = request()->routeIs('admin.staff-commission.index') || request()->is('*staff-commission*'); @endphp
                     <li class="w-full mt-0.5">
-                        <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isCommissionActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
+                        <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isReferralsActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
                             href="{{ route('admin.staff-commission.index') }}">
                             <div
-                                class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ $isCommissionActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
-                                <i class="fas fa-percentage {{ $isCommissionActive ? 'text-white' : 'text-slate-700' }}"></i>
+                                class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ $isReferralsActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
+                                <i class="fas fa-share-alt {{ $isReferralsActive ? 'text-white' : 'text-slate-700' }}"></i>
                             </div>
-                            <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Staff Commission</span>
+                            <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Referrals</span>
+                        </a>
+                    </li>
+                @endif
+            @endif
+
+            @if(auth()->user()->role_id !== 0)
+                @if(hasPermission('commission.view'))
+                    @php $isCommissionActive = request()->is('admin/commission*'); @endphp
+                    <li class="w-full mt-0.5">
+                        <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors rounded-lg {{ $isCommissionActive ? 'bg-white shadow-soft-xl font-semibold text-slate-700' : 'text-slate-700 hover:bg-gray-50' }}"
+                            href="{{ route('admin.commission.index') }}">
+                            <div
+                                class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5 {{ $isCommissionActive ? 'bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl' : 'bg-white shadow-soft-2xl' }}">
+                                <i class="fas fa-wallet {{ $isCommissionActive ? 'text-white' : 'text-slate-700' }}"></i>
+                            </div>
+                            <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Commission</span>
                         </a>
                     </li>
                 @endif

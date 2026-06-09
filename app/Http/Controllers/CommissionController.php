@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StaffMembershipReferral;
 use App\Models\StaffDetail;
 use App\Models\PurchasedPlan;
 use App\Models\User;
@@ -11,81 +10,54 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class StaffCommissionController extends Controller
+class CommissionController extends Controller
 {
     /**
-     * Display listing of referred memberships
+     * Display listing of staff and their commission calculations
      */
     public function index(Request $request)
     {
         $user = auth()->user();
+        $isAdmin = ($user->id === 1) || ($user->role && $user->role->slug === 'admin');
 
         if ($request->ajax()) {
-            // Admin role sees all referrals, standard staff see only theirs
-            $isAdmin = ($user->id === 1) || ($user->role && $user->role->slug === 'admin');
-
-            $query = StaffMembershipReferral::with(['staff', 'customer', 'plan', 'transaction']);
-
             if (!$isAdmin) {
-                $query->where('staff_id', $user->id);
+                $staffDetails = StaffDetail::with(['user.role'])->where('user_id', $user->id)->get();
+            } else {
+                $staffDetails = StaffDetail::with(['user.role'])->get();
             }
 
-            $referrals = $query->latest()->get();
+            $period = $request->input('period', 'overall');
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
 
-            $data = $referrals->map(function ($ref) {
+            $data = $staffDetails->map(function ($detail) use ($period, $startDate, $endDate) {
+                $staffUserId = $detail->user_id;
+                
+                // Fetch stats based on period
+                $stats = $this->getCommissionData($staffUserId, $period, $startDate, $endDate);
+
                 return [
-                    'id' => $ref->id,
-                    'staff_name' => $ref->staff->name ?? 'N/A',
-                    'customer_name' => $ref->customer->name ?? 'N/A',
-                    'plan_name' => $ref->plan->name ?? 'N/A',
-                    'amount' => $ref->plan ? number_format($ref->plan->premium_amount, 2) : '0.00',
-                    'purchase_date' => $ref->created_at->format('Y-m-d H:i'),
-                    'payment_status' => $ref->payment_status,
-                    'referral_status' => $ref->status,
-                    'transaction_id' => $ref->transaction ? ($ref->transaction->transaction_reference ?? 'N/A') : ($ref->payment_status === 'success' ? 'Pending' : 'N/A'),
+                    'staff_code' => $detail->emp_code,
+                    'staff_name' => $detail->user->name ?? $detail->full_name,
+                    'role' => $detail->user->role->name ?? 'Staff',
+                    'active_policies' => $stats['total_policies'],
+                    'premium_generated' => $stats['total_premium'],
+                    'commission_earned' => $stats['total_commission'],
+                    'commission_due' => $stats['total_commission'], // Due = Earned for now
                 ];
             });
 
             return response()->json(['data' => $data]);
         }
 
-        return view('admin.staff-commission.index');
+        return view('admin.commission.index', compact('isAdmin'));
     }
 
     /**
-     * Cancel or Expire a pending payment order referral link manually
+     * View detailed commission summary for a staff member
      */
-    public function updateStatus(Request $request, $id)
-    {
-        $request->validate([
-            'status' => 'required|in:cancelled,expired',
-        ]);
-
-        $referral = StaffMembershipReferral::findOrFail($id);
-        $user = auth()->user();
-        $isAdmin = ($user->id === 1) || ($user->role && $user->role->slug === 'admin');
-
-        // Check ownership
-        if (!$isAdmin && $referral->staff_id !== $user->id) {
-            return response()->json(['error' => 'Unauthorized action.'], 403);
-        }
-
-        if ($referral->status !== 'pending') {
-            return response()->json(['error' => 'Can only change status of pending referrals.'], 400);
-        }
-
-        $referral->update([
-            'status' => $request->status,
-            'payment_status' => $request->status
-        ]);
-
-        return response()->json(['success' => 'Referral status updated successfully.']);
-    }
-
-    /**
-     * Search staff member and calculate commission summary
-     */
-    public function search(Request $request)
+    public function summary(Request $request)
     {
         $request->validate([
             'staff_code' => 'required|string',
@@ -94,10 +66,18 @@ class StaffCommissionController extends Controller
             'end_date' => 'nullable|date',
         ]);
 
+        $user = auth()->user();
+        $isAdmin = ($user->id === 1) || ($user->role && $user->role->slug === 'admin');
+
         $staffDetail = StaffDetail::where('emp_code', $request->staff_code)->first();
 
         if (!$staffDetail || !$staffDetail->user) {
             return response()->json(['error' => 'No staff found with the entered code.'], 404);
+        }
+
+        // Security check: standard staff can only view their own summary
+        if (!$isAdmin && $staffDetail->user_id !== $user->id) {
+            return response()->json(['error' => 'Unauthorized action.'], 403);
         }
 
         $staffUser = $staffDetail->user;
@@ -110,7 +90,6 @@ class StaffCommissionController extends Controller
         $currentMonthStats = $this->getCommissionData($staffUser->id, 'current_month');
         $periodStats = $this->getCommissionData($staffUser->id, $period, $startDate, $endDate);
 
-        // Get profile image url or placeholder
         $profileImage = $staffUser->profile_image ? asset('storage/' . $staffUser->profile_image) : null;
 
         return response()->json([
@@ -145,10 +124,18 @@ class StaffCommissionController extends Controller
             'end_date' => 'nullable|date',
         ]);
 
+        $user = auth()->user();
+        $isAdmin = ($user->id === 1) || ($user->role && $user->role->slug === 'admin');
+
         $staffDetail = StaffDetail::where('emp_code', $request->staff_code)->first();
 
         if (!$staffDetail || !$staffDetail->user) {
             abort(404, 'Staff member not found.');
+        }
+
+        // Security check: standard staff can only download their own invoice
+        if (!$isAdmin && $staffDetail->user_id !== $user->id) {
+            abort(403, 'Unauthorized action.');
         }
 
         $staffUser = $staffDetail->user;
@@ -164,10 +151,7 @@ class StaffCommissionController extends Controller
         $dateRangeLabel = $periodStats['label'];
         $referrals = $periodStats['referrals'];
 
-        // Get admin user doing the export
-        $adminUser = auth()->user();
-
-        $pdf = Pdf::loadView('admin.staff-commission.invoice-pdf', [
+        $pdf = Pdf::loadView('admin.commission.invoice-pdf', [
             'staff' => [
                 'name' => $staffUser->name,
                 'code' => $staffDetail->emp_code,
@@ -185,7 +169,7 @@ class StaffCommissionController extends Controller
             'dateRangeLabel' => $dateRangeLabel,
             'referrals' => $referrals,
             'generated_at' => Carbon::now()->format('Y-m-d H:i:s'),
-            'generated_by' => $adminUser->name,
+            'generated_by' => $user->name,
         ]);
 
         $filename = 'Commission_Invoice_' . $staffDetail->emp_code . '_' . Carbon::now()->format('Ymd') . '.pdf';
@@ -194,11 +178,19 @@ class StaffCommissionController extends Controller
     }
 
     /**
-     * Compute statistics and referred policies list
+     * Compute statistics and referred policies list using plan-wise commission values
      */
     private function getCommissionData($staffUserId, $period, $startDate = null, $endDate = null)
     {
-        $query = PurchasedPlan::with('user')->where('referred_by', $staffUserId);
+        $query = PurchasedPlan::with(['user', 'plan'])
+            ->where('referred_by', $staffUserId)
+            ->whereHas('plan')
+            ->whereExists(function($q) {
+                $q->select(DB::raw(1))
+                  ->from('transactions')
+                  ->whereColumn('transactions.plan_unique_id', 'purchased_plans.plan_unique_id')
+                  ->where('transactions.payment_status', 'success');
+            });
 
         $now = Carbon::now();
         $start = null;
@@ -241,15 +233,13 @@ class StaffCommissionController extends Controller
 
         $mapped = $referrals->map(function ($plan) {
             $premium = (float)$plan->amount;
-            $commPercent = 10;
-            $commAmount = $premium * 0.10;
+            $commAmount = (float)($plan->plan->commission_amount ?? 0);
             return [
                 'policy_number' => $plan->plan_unique_id,
                 'customer_name' => $plan->user->name ?? 'N/A',
                 'membership_name' => $plan->plan_name,
                 'purchase_date' => $plan->start_date ? $plan->start_date->format('Y-m-d') : 'N/A',
                 'premium_amount' => $premium,
-                'commission_percent' => $commPercent,
                 'commission_amount' => $commAmount,
                 'status' => $plan->status,
             ];
@@ -270,4 +260,3 @@ class StaffCommissionController extends Controller
         ];
     }
 }
-

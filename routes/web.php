@@ -191,9 +191,18 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         // Staff Commission Management
         Route::middleware('permission:staff-commission.view')->group(function () {
             Route::get('/staff-commission', [App\Http\Controllers\StaffCommissionController::class, 'index'])->name('admin.staff-commission.index');
+            Route::get('/staff-commission/search', [App\Http\Controllers\StaffCommissionController::class, 'search'])->name('admin.staff-commission.search');
+            Route::get('/staff-commission/export-pdf', [App\Http\Controllers\StaffCommissionController::class, 'downloadInvoice'])->name('admin.staff-commission.export-pdf')->middleware('permission:staff-commission.export');
         });
         Route::middleware('permission:staff-commission.status')->group(function () {
             Route::post('/staff-commission/{id}/status', [App\Http\Controllers\StaffCommissionController::class, 'updateStatus'])->name('admin.staff-commission.status');
+        });
+
+        // Commission Management
+        Route::middleware('permission:commission.view')->group(function () {
+            Route::get('/commission', [App\Http\Controllers\CommissionController::class, 'index'])->name('admin.commission.index');
+            Route::get('/commission/summary', [App\Http\Controllers\CommissionController::class, 'summary'])->name('admin.commission.summary');
+            Route::get('/commission/export-pdf', [App\Http\Controllers\CommissionController::class, 'downloadInvoice'])->name('admin.commission.export-pdf')->middleware('permission:commission.export');
         });
     });
     // Customer-specific routes

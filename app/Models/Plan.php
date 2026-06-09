@@ -15,6 +15,7 @@ class Plan extends Model
         'slug',
         'short_description',
         'premium_amount',
+        'commission_amount',
         'tenure_type',
         'tenure_value',
         'claim_duration_days',

@@ -47,8 +47,13 @@ task to be done->
 
 7-june-2026
 1.pdf giving error
-2.multi delete on every listing
-3.on plans listing order by amount
+2.multi delete on every listing -> done
+3.on plans listing order by amount -> done
 4.remove link in job links and add new columns
-5.on refeal and comisison calulation according to employee
+5.on refeal and comisison calulation according to employee -> done
 6.staff referal code we have to genenrate
+
+9-june-2026.
+1.in case of staff commision we have to show status like for this premium we have paid the commision
+2.when we creating plan add new column comissionn according to that amount comisison will calculate.
+4.remove link in job links and add new columns

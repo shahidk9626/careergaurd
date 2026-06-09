@@ -25,7 +25,7 @@ class StaffReferralController extends Controller
         $customer = User::where('role_id', 0)->findOrFail($id);
 
         $search = $request->input('search');
-        $query = Plan::with('planServices.category')->where('status', 'active');
+        $query = Plan::with('planServices.category')->where('status', 'active')->orderBy('premium_amount', 'asc');
 
         if ($search) {
             $query->where(function($q) use ($search) {

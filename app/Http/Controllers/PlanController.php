@@ -23,7 +23,7 @@ class PlanController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $plans = Plan::latest()->get();
+            $plans = Plan::orderBy('premium_amount', 'asc')->get();
             return response()->json(['data' => $plans]);
         }
         return view('admin.plans.index');
@@ -39,6 +39,7 @@ class PlanController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'premium_amount' => 'required|numeric|min:0',
+            'commission_amount' => 'required|numeric|min:0',
             'tenure_type' => 'required|string',
             'tenure_value' => 'nullable|integer|min:0',
             'claim_duration_days' => 'required|integer|min:0',
@@ -93,6 +94,7 @@ class PlanController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'premium_amount' => 'required|numeric|min:0',
+            'commission_amount' => 'required|numeric|min:0',
             'tenure_type' => 'required|string',
             'tenure_value' => 'nullable|integer|min:0',
             'claim_duration_days' => 'required|integer|min:0',
@@ -213,7 +215,7 @@ class PlanController extends Controller
     {
         $search = $request->input('search');
 
-        $query = Plan::with('planServices.category')->where('status', 'active');
+        $query = Plan::with('planServices.category')->where('status', 'active')->orderBy('premium_amount', 'asc');
 
         if ($search) {
             $query->where(function($q) use ($search) {
