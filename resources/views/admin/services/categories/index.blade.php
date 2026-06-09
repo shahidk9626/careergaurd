@@ -31,9 +31,11 @@
                             class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400" style="width: 40px;">
-                                        <input type="checkbox" id="selectAll" class="rounded text-purple-600 cursor-pointer">
-                                    </th>
+                                    @if(hasPermission('service-categories.delete'))
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400" style="width: 40px;">
+                                            <input type="checkbox" id="selectAll" class="rounded text-purple-600 cursor-pointer">
+                                        </th>
+                                    @endif
                                     <th class="w-3/12 px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Name</th>
                                     <th class="w-3/12 px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Parent Category</th>
                                     <th class="w-2/12 px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Slug</th>
@@ -111,6 +113,7 @@
                     dataSrc: ''
                 },
                 columns: [
+                    @if(hasPermission('service-categories.delete'))
                     {
                         data: 'id',
                         className: 'px-6 py-3 align-middle text-center bg-transparent border-b whitespace-nowrap shadow-none',
@@ -120,6 +123,7 @@
                             return `<input type="checkbox" class="row-checkbox rounded text-purple-600 cursor-pointer" value="${data}">`;
                         }
                     },
+                    @endif
                     {
                         data: 'name',
                         className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
@@ -166,7 +170,7 @@
                                 actions += `
                                     <button type="button" 
                                              class="edit-category-btn inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-110 mx-2" 
-                                            title="Edit">
+                                             title="Edit">
                                         <i class="fas fa-edit text-sm pointer-events-none"></i>
                                     </button>`;
                             }
@@ -174,8 +178,8 @@
                             if (canDelete) {
                                 actions += `
                                     <button type="button" onclick="deleteCategory(${data})" 
-                                            class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-110 mx-2"
-                                            title="Delete">
+                                             class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-110 mx-2"
+                                             title="Delete">
                                         <i class="fas fa-trash text-sm pointer-events-none"></i>
                                     </button>`;
                             }
@@ -309,7 +313,15 @@
                             ids: selectedIds
                         },
                         success: function (response) {
-                            Swal.fire('Deleted!', response.success, 'success');
+                            if (response.summary) {
+                                Swal.fire({
+                                    title: 'Bulk Delete Summary',
+                                    html: response.summary.message.replace(/\n/g, '<br>'),
+                                    icon: response.summary.deleted > 0 ? 'success' : 'info'
+                                });
+                            } else {
+                                Swal.fire('Deleted!', 'Selected records deleted.', 'success');
+                            }
                             table.ajax.reload(null, false);
                             $('#selectAll').prop('checked', false);
                             toggleBulkDeleteButton();
@@ -339,10 +351,14 @@
                         type: 'DELETE',
                         data: { _token: "{{ csrf_token() }}" },
                         success: function (response) {
-                            Swal.fire('Deleted!', 'Record deleted successfully.', 'success');
-                            table.ajax.reload(null, false);
-                            $('#selectAll').prop('checked', false);
-                            toggleBulkDeleteButton();
+                            if (response.error) {
+                                Swal.fire('Cannot Delete!', response.error, 'error');
+                            } else {
+                                Swal.fire('Deleted!', 'Record deleted successfully.', 'success');
+                                table.ajax.reload(null, false);
+                                $('#selectAll').prop('checked', false);
+                                toggleBulkDeleteButton();
+                            }
                         },
                         error: function() {
                             Swal.fire('Error', 'Failed to delete category.', 'error');

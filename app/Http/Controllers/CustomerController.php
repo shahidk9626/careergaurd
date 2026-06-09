@@ -461,7 +461,61 @@ class CustomerController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
+
+        $hasDependencies = \App\Models\PurchasedPlan::where('user_id', $id)->exists()
+            || \App\Models\Transaction::where('user_id', $id)->exists()
+            || \App\Models\Claim::where('user_id', $id)->exists()
+            || \App\Models\CallbackRequest::where('user_id', $id)->exists();
+
+        if ($hasDependencies) {
+            return response()->json([
+                'error' => 'This customer cannot be deleted because they have active purchased plans, transactions, claims, or callback requests.'
+            ]);
+        }
+
         $user->delete(); // Or toggle status
         return response()->json(['success' => 'Customer deleted successfully']);
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:users,id',
+        ]);
+
+        $ids = $request->ids;
+        $totalSelected = count($ids);
+        $deletedCount = 0;
+        $skippedCount = 0;
+
+        foreach ($ids as $id) {
+            $hasDependencies = \App\Models\PurchasedPlan::where('user_id', $id)->exists()
+                || \App\Models\Transaction::where('user_id', $id)->exists()
+                || \App\Models\Claim::where('user_id', $id)->exists()
+                || \App\Models\CallbackRequest::where('user_id', $id)->exists();
+
+            if ($hasDependencies) {
+                $skippedCount++;
+            } else {
+                $user = User::find($id);
+                if ($user) {
+                    $user->delete();
+                    $deletedCount++;
+                } else {
+                    $skippedCount++;
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'summary' => [
+                'selected' => $totalSelected,
+                'deleted' => $deletedCount,
+                'skipped' => $skippedCount,
+                'message' => "{$totalSelected} selected\n{$deletedCount} deleted\n{$skippedCount} skipped because they have purchased plans, transactions, claims, or callback requests"
+            ]
+        ]);
     }
 }

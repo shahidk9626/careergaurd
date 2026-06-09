@@ -80,6 +80,11 @@ class ServiceCategoryController extends Controller
 
     public function destroy($id)
     {
+        $dependencyError = $this->checkCategoryDependencies($id);
+        if ($dependencyError) {
+            return response()->json(['error' => $dependencyError]);
+        }
+
         ServiceCategory::findOrFail($id)->delete();
         return response()->json(['success' => 'Category deleted successfully']);
     }
@@ -91,8 +96,67 @@ class ServiceCategoryController extends Controller
             'ids.*' => 'exists:service_categories,id',
         ]);
 
-        $count = ServiceCategory::whereIn('id', $request->ids)->delete();
+        $ids = $request->ids;
+        $totalSelected = count($ids);
+        $deletedCount = 0;
+        $skippedCount = 0;
 
-        return response()->json(['success' => "{$count} records deleted successfully."]);
+        foreach ($ids as $id) {
+            $dependencyError = $this->checkCategoryDependencies($id);
+            if ($dependencyError) {
+                $skippedCount++;
+            } else {
+                $category = ServiceCategory::find($id);
+                if ($category) {
+                    $category->delete();
+                    $deletedCount++;
+                } else {
+                    $skippedCount++;
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'summary' => [
+                'selected' => $totalSelected,
+                'deleted' => $deletedCount,
+                'skipped' => $skippedCount,
+                'message' => "{$totalSelected} categories selected\n{$deletedCount} deleted\n{$skippedCount} skipped because they are linked to subcategories, plans, or services"
+            ]
+        ]);
+    }
+
+    private function checkCategoryDependencies($id)
+    {
+        // 1. Subcategories (parent_id)
+        if (ServiceCategory::where('parent_id', $id)->exists()) {
+            return 'This category cannot be deleted because it has one or more subcategories assigned.';
+        }
+
+        // 2. Plan Services (service_category_id)
+        if (\App\Models\PlanService::where('service_category_id', $id)->exists()) {
+            return 'This category cannot be deleted because it is linked to one or more membership plans.';
+        }
+
+        $category = ServiceCategory::find($id);
+        if ($category) {
+            // 3. Resume Templates
+            if ($category->resumeTemplates()->exists()) {
+                return 'This category cannot be deleted because it is linked to one or more resume templates.';
+            }
+
+            // 4. Job Links
+            if ($category->jobLinks()->exists()) {
+                return 'This category cannot be deleted because it is linked to one or more job links.';
+            }
+
+            // 5. Interview Questions
+            if ($category->interviewQuestions()->exists()) {
+                return 'This category cannot be deleted because it is linked to one or more interview questions.';
+            }
+        }
+
+        return null;
     }
 }

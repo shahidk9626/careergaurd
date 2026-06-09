@@ -31,9 +31,11 @@
                         <table id="templateTable" class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70" style="width: 40px;">
-                                        <input type="checkbox" id="selectAll" class="rounded text-purple-600 cursor-pointer">
-                                    </th>
+                                    @if(hasPermission('resumes.delete'))
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70" style="width: 40px;">
+                                            <input type="checkbox" id="selectAll" class="rounded text-purple-600 cursor-pointer">
+                                        </th>
+                                    @endif
                                     <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">Template</th>
                                     <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">Categories</th>
                                     <th class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">Status</th>
@@ -113,6 +115,7 @@
             table = $('#templateTable').DataTable({
                 ajax: "{{ route('admin.services.resumes.index') }}",
                 columns: [
+                    @if(hasPermission('resumes.delete'))
                     {
                         data: 'id',
                         className: 'px-6 py-3 align-middle text-center bg-transparent border-b whitespace-nowrap shadow-none',
@@ -122,6 +125,7 @@
                             return `<input type="checkbox" class="row-checkbox rounded text-purple-600 cursor-pointer" value="${data}">`;
                         }
                     },
+                    @endif
                     {
                         data: null,
                         className: 'px-6 align-middle bg-transparent border-b whitespace-nowrap shadow-none',
@@ -348,7 +352,11 @@
                             ids: selectedIds
                         },
                         success: function (response) {
-                            Swal.fire('Deleted!', response.success, 'success');
+                            if (response.error) {
+                                Swal.fire('Cannot Delete!', response.error, 'error');
+                            } else {
+                                Swal.fire('Deleted!', response.success || 'Selected records deleted successfully.', 'success');
+                            }
                             table.ajax.reload(null, false);
                             $('#selectAll').prop('checked', false);
                             toggleBulkDeleteButton();
@@ -378,10 +386,14 @@
                         type: 'DELETE',
                         data: { _token: "{{ csrf_token() }}" },
                         success: function (res) {
-                            Swal.fire('Deleted!', 'Record deleted successfully.', 'success');
-                            table.ajax.reload(null, false);
-                            $('#selectAll').prop('checked', false);
-                            toggleBulkDeleteButton();
+                            if (res.error) {
+                                Swal.fire('Cannot Delete!', res.error, 'error');
+                            } else {
+                                Swal.fire('Deleted!', 'Record deleted successfully.', 'success');
+                                table.ajax.reload(null, false);
+                                $('#selectAll').prop('checked', false);
+                                toggleBulkDeleteButton();
+                            }
                         },
                         error: function() {
                             Swal.fire('Error', 'Failed to delete template.', 'error');

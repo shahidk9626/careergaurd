@@ -33,6 +33,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
     Route::middleware('permission:roles.create')->post('/roles/store', [App\Http\Controllers\RoleController::class, 'store'])->name('roles.store');
     Route::middleware('permission:roles.edit')->post('/roles/update/{id}', [App\Http\Controllers\RoleController::class, 'update'])->name('roles.update');
     Route::middleware('permission:roles.delete')->delete('/roles/delete/{id}', [App\Http\Controllers\RoleController::class, 'destroy'])->name('roles.destroy');
+    Route::middleware('permission:roles.delete')->post('/roles/bulk-delete', [App\Http\Controllers\RoleController::class, 'bulkDestroy'])->name('roles.bulk-destroy');
     Route::middleware('permission:roles.status')->post('/roles/status/{id}', [App\Http\Controllers\RoleController::class, 'toggleStatus'])->name('roles.status');
     Route::middleware('permission:roles.edit')->get('/roles/permissions/{id}', [App\Http\Controllers\RoleController::class, 'getPermissions'])->name('roles.permissions');
 
@@ -61,11 +62,12 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
     });
     Route::middleware('permission:staff.delete')->group(function () {
         Route::delete('/staff/delete/{id}', [App\Http\Controllers\StaffController::class, 'destroy'])->name('staff.destroy');
+        Route::post('/staff/bulk-delete', [App\Http\Controllers\StaffController::class, 'bulkDestroy'])->name('staff.bulk-destroy');
         Route::delete('/staff/delete-document/{id}', [App\Http\Controllers\StaffController::class, 'deleteDocument'])->name('staff.delete-document');
     });
     Route::middleware('permission:staff.status')->post('/staff/status/{id}', [App\Http\Controllers\StaffController::class, 'toggleStatus'])->name('staff.status');
 
-    // Customer Registration (Forced Flow)
+    // Customer Onboarding (Force Complete / flow validation)
     Route::get('/customer/registration', [App\Http\Controllers\CustomerController::class, 'registration'])->name('customer.registration');
     Route::post('/customer/registration', [App\Http\Controllers\CustomerController::class, 'storeProfile'])->name('customer.store-profile');
 
@@ -91,6 +93,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
             Route::post('/customers/{id}/verify', [App\Http\Controllers\CustomerController::class, 'verify'])->name('admin.customers.verify');
         });
         Route::middleware('permission:customers.delete')->delete('/customers/delete/{id}', [App\Http\Controllers\CustomerController::class, 'destroy'])->name('admin.customers.destroy');
+        Route::middleware('permission:customers.delete')->post('/customers/bulk-delete', [App\Http\Controllers\CustomerController::class, 'bulkDestroy'])->name('admin.customers.bulk-destroy');
 
         Route::middleware('permission:customers.purchase_membership')->group(function () {
             Route::get('/customers/{id}/purchase-membership', [App\Http\Controllers\StaffReferralController::class, 'selectMembership'])->name('admin.customers.purchase-membership');

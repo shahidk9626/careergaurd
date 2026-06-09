@@ -350,18 +350,14 @@
         @if(hasPermission('request-callback.delete'))
         function deleteCallback(id) {
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Are you sure you want to delete this callback request?",
+                title: 'Delete Record',
+                text: "Are you sure you want to delete this record?",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!',
-                customClass: {
-                    confirmButton: 'bg-gradient-to-tl from-red-600 to-rose-500 text-white px-4 py-2 rounded-lg font-bold mr-2',
-                    cancelButton: 'bg-gradient-to-tl from-gray-900 to-slate-800 text-white px-4 py-2 rounded-lg font-bold'
-                },
-                buttonsStyling: false
+                confirmButtonColor: '#cb0c9f',
+                cancelButtonColor: '#8392ab',
+                confirmButtonText: 'Yes Delete',
+                cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -371,21 +367,25 @@
                             _token: "{{ csrf_token() }}"
                         },
                         success: function(response) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Deleted!',
-                                text: response.success || 'Callback request deleted successfully.',
-                                timer: 2000,
-                                showConfirmButton: false
-                            }).then(() => {
-                                location.reload();
-                            });
+                            if (response.error) {
+                                Swal.fire('Cannot Delete!', response.error, 'error');
+                            } else {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted!',
+                                    text: response.success || 'Callback request deleted successfully.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            }
                         },
                         error: function(xhr) {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error!',
-                                text: xhr.responseJSON.error || 'Failed to delete callback request.'
+                                text: xhr.responseJSON?.error || 'Failed to delete callback request.'
                             });
                         }
                     });
@@ -409,18 +409,14 @@
             }
 
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Are you sure you want to delete selected callback requests?",
+                title: 'Delete Selected Records',
+                text: "Are you sure you want to delete the selected records?",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete selected!',
-                customClass: {
-                    confirmButton: 'bg-gradient-to-tl from-red-600 to-rose-500 text-white px-4 py-2 rounded-lg font-bold mr-2',
-                    cancelButton: 'bg-gradient-to-tl from-gray-900 to-slate-800 text-white px-4 py-2 rounded-lg font-bold'
-                },
-                buttonsStyling: false
+                confirmButtonColor: '#cb0c9f',
+                cancelButtonColor: '#8392ab',
+                confirmButtonText: 'Yes Delete',
+                cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -431,21 +427,25 @@
                             ids: selectedIds
                         },
                         success: function(response) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Deleted!',
-                                text: response.success || 'Selected callback requests deleted successfully.',
-                                timer: 2000,
-                                showConfirmButton: false
-                            }).then(() => {
-                                location.reload();
-                            });
+                            if (response.error) {
+                                Swal.fire('Cannot Delete!', response.error, 'error');
+                            } else {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted!',
+                                    text: response.success || 'Selected callback requests deleted successfully.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            }
                         },
                         error: function(xhr) {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error!',
-                                text: xhr.responseJSON.error || 'Failed to delete selected callback requests.'
+                                text: xhr.responseJSON?.error || 'Failed to delete selected callback requests.'
                             });
                         }
                     });

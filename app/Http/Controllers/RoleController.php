@@ -105,9 +105,61 @@ class RoleController extends Controller
     public function destroy($id)
     {
         $role = Role::findOrFail($id);
+
+        $hasStaff = \App\Models\User::where('role_id', $id)
+            ->whereHas('staffDetail')
+            ->exists();
+
+        if ($hasStaff) {
+            return response()->json([
+                'error' => 'This role cannot be deleted because it is currently assigned to one or more staff members. Please remove or reassign staff before deleting this role.'
+            ]);
+        }
+
         $role->delete();
 
         return response()->json(['success' => 'Role deleted successfully.']);
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:roles,id',
+        ]);
+
+        $ids = $request->ids;
+        $totalSelected = count($ids);
+        $deletedCount = 0;
+        $skippedCount = 0;
+
+        foreach ($ids as $id) {
+            $hasStaff = \App\Models\User::where('role_id', $id)
+                ->whereHas('staffDetail')
+                ->exists();
+
+            if ($hasStaff) {
+                $skippedCount++;
+            } else {
+                $role = Role::find($id);
+                if ($role) {
+                    $role->delete();
+                    $deletedCount++;
+                } else {
+                    $skippedCount++;
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'summary' => [
+                'selected' => $totalSelected,
+                'deleted' => $deletedCount,
+                'skipped' => $skippedCount,
+                'message' => "{$totalSelected} selected\n{$deletedCount} deleted\n{$skippedCount} skipped because staff are assigned"
+            ]
+        ]);
     }
 
     public function rolePermissionsIndex(Request $request)

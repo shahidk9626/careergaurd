@@ -10,7 +10,13 @@
                         <div class="flex items-center flex-none w-1/2 max-w-full px-3">
                             <h6 class="mb-0">Staff List</h6>
                         </div>
-                        <div class="flex-none w-1/2 max-w-full px-3 text-right">
+                        <div class="flex-none w-1/2 max-w-full px-3 text-right flex items-center justify-end gap-2">
+                            @if(hasPermission('staff.delete'))
+                                <button id="bulkDeleteBtn" style="display: none;" onclick="bulkDelete()"
+                                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-102 active:opacity-85 mr-2">
+                                    <i class="fas fa-trash-alt mr-1"></i> Delete Selected
+                                </button>
+                            @endif
                             @if(hasPermission('staff.create'))
                                 <a href="{{ route('staff.create') }}"
                                     class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 active:opacity-85">
@@ -25,6 +31,11 @@
                         <table id="staffTable" class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
+                                    @if(hasPermission('staff.delete'))
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-70 text-slate-400" style="width: 40px;">
+                                            <input type="checkbox" id="selectAll" class="rounded text-purple-600 cursor-pointer">
+                                        </th>
+                                    @endif
                                     <th
                                         class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-40 text-slate-400 opacity-70">
                                         Emp Code</th>
@@ -73,7 +84,19 @@
                     url: "{{ route('staff.index') }}",
                     type: 'GET'
                 },
-                columns: [{
+                columns: [
+                @if(hasPermission('staff.delete'))
+                {
+                    data: 'id',
+                    className: 'text-center align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none',
+                    orderable: false,
+                    searchable: false,
+                    render: function (data) {
+                        return `<input type="checkbox" class="row-checkbox rounded text-purple-600 cursor-pointer" value="${data}">`;
+                    }
+                },
+                @endif
+                {
                     data: 'emp_code',
                     className: 'text-sm font-semibold leading-normal px-6 align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none'
                 },
@@ -105,8 +128,8 @@
                             'bg-gradient-to-tl from-slate-600 to-slate-300';
                         let statusText = data ? 'Active' : 'Inactive';
                         return `
-                                            <span class="text-xxs px-2.5 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white rounded-1.8 ${badgeClass}">${statusText}</span>
-                                        `;
+                            <span class="text-xxs px-2.5 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white rounded-1.8 ${badgeClass}">${statusText}</span>
+                        `;
                     }
                 },
                 {
@@ -162,7 +185,7 @@
                 }
                 ],
                 order: [
-                    [0, 'desc']
+                    [@if(hasPermission('staff.delete')) 1 @else 0 @endif, 'desc']
                 ],
                 responsive: true,
                 language: {
@@ -171,6 +194,26 @@
                         next: "<i class='fas fa-angle-right'></i>"
                     }
                 }
+            });
+
+            // Select All Checkbox
+            $(document).on('change', '#selectAll', function() {
+                $('.row-checkbox').prop('checked', this.checked);
+                toggleBulkDeleteButton();
+            });
+
+            $(document).on('change', '.row-checkbox', function() {
+                if (!this.checked) {
+                    $('#selectAll').prop('checked', false);
+                } else if ($('.row-checkbox:checked').length === $('.row-checkbox').length) {
+                    $('#selectAll').prop('checked', true);
+                }
+                toggleBulkDeleteButton();
+            });
+
+            table.on('draw', function() {
+                $('#selectAll').prop('checked', false);
+                toggleBulkDeleteButton();
             });
         });
 
@@ -211,13 +254,14 @@
 
         function confirmDelete(id) {
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                title: 'Delete Record',
+                text: "Are you sure you want to delete this record?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!',
+                confirmButtonText: 'Yes Delete',
+                cancelButtonText: 'Cancel',
                 customClass: {
                     confirmButton: 'bg-gradient-to-tl from-red-600 to-rose-400 text-white px-4 py-2 rounded-lg font-bold',
                     cancelButton: 'bg-gradient-to-tl from-gray-900 to-slate-800 text-white px-4 py-2 rounded-lg font-bold ml-2'
@@ -232,11 +276,82 @@
                             _token: "{{ csrf_token() }}"
                         },
                         success: function (response) {
-                            table.ajax.reload();
-                            Toast.fire({
-                                icon: 'success',
-                                title: response.success
-                            });
+                            if (response.error) {
+                                Swal.fire('Cannot Delete!', response.error, 'error');
+                            } else {
+                                Swal.fire('Deleted!', 'Record deleted successfully.', 'success');
+                                table.ajax.reload(null, false);
+                                $('#selectAll').prop('checked', false);
+                                toggleBulkDeleteButton();
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'Failed to delete staff member.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+        function toggleBulkDeleteButton() {
+            const checkedCount = $('.row-checkbox:checked').length;
+            if (checkedCount > 0) {
+                $('#bulkDeleteBtn').show();
+            } else {
+                $('#bulkDeleteBtn').hide();
+            }
+        }
+
+        function bulkDelete() {
+            const selectedIds = [];
+            $('.row-checkbox:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
+
+            if (selectedIds.length === 0) {
+                Swal.fire('Warning', 'Please select at least one record.', 'warning');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Delete Selected Records',
+                text: "Are you sure you want to delete the selected records?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes Delete',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'bg-gradient-to-tl from-red-600 to-rose-400 text-white px-4 py-2 rounded-lg font-bold',
+                    cancelButton: 'bg-gradient-to-tl from-gray-900 to-slate-800 text-white px-4 py-2 rounded-lg font-bold ml-2'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('staff.bulk-destroy') }}",
+                        type: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            ids: selectedIds
+                        },
+                        success: function (response) {
+                            if (response.summary) {
+                                Swal.fire({
+                                    title: 'Bulk Delete Summary',
+                                    html: response.summary.message.replace(/\n/g, '<br>'),
+                                    icon: response.summary.deleted > 0 ? 'success' : 'info'
+                                });
+                            } else {
+                                Swal.fire('Deleted!', 'Selected records deleted.', 'success');
+                            }
+                            table.ajax.reload(null, false);
+                            $('#selectAll').prop('checked', false);
+                            toggleBulkDeleteButton();
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Failed to delete selected staff.', 'error');
                         }
                     });
                 }

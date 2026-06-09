@@ -251,6 +251,17 @@ class StaffController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
+
+        $hasReferrals = \App\Models\User::where('referred_by_staff_id', $id)->exists()
+            || \App\Models\StaffMembershipReferral::where('staff_id', $id)->exists()
+            || \App\Models\PurchasedPlan::where('referred_by', $id)->exists();
+
+        if ($hasReferrals) {
+            return response()->json([
+                'error' => 'This staff member cannot be deleted because they have active referrals or commission records associated with them.'
+            ]);
+        }
+
         $user->status = 'inactive';
         $user->save();
 
@@ -259,6 +270,52 @@ class StaffController extends Controller
         }
 
         return response()->json(['success' => 'Staff deleted successfully']);
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:users,id',
+        ]);
+
+        $ids = $request->ids;
+        $totalSelected = count($ids);
+        $deletedCount = 0;
+        $skippedCount = 0;
+
+        foreach ($ids as $id) {
+            $hasReferrals = \App\Models\User::where('referred_by_staff_id', $id)->exists()
+                || \App\Models\StaffMembershipReferral::where('staff_id', $id)->exists()
+                || \App\Models\PurchasedPlan::where('referred_by', $id)->exists();
+
+            if ($hasReferrals) {
+                $skippedCount++;
+            } else {
+                $user = User::find($id);
+                if ($user) {
+                    $user->status = 'inactive';
+                    $user->save();
+
+                    if ($user->staffDetail) {
+                        $user->staffDetail->delete();
+                    }
+                    $deletedCount++;
+                } else {
+                    $skippedCount++;
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'summary' => [
+                'selected' => $totalSelected,
+                'deleted' => $deletedCount,
+                'skipped' => $skippedCount,
+                'message' => "{$totalSelected} selected\n{$deletedCount} deleted\n{$skippedCount} skipped because they have referrals or commissions"
+            ]
+        ]);
     }
 
     public function toggleStatus($id)

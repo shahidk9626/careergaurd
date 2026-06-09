@@ -140,6 +140,18 @@ class PlanController extends Controller
     public function destroy($id)
     {
         $plan = Plan::findOrFail($id);
+
+        $hasActiveMemberships = \App\Models\PurchasedPlan::where('plan_id', $id)
+            ->where('status', 'active')
+            ->where('end_date', '>=', now())
+            ->exists();
+
+        if ($hasActiveMemberships) {
+            return response()->json([
+                'error' => 'This membership plan cannot be deleted because it has active customer subscriptions.'
+            ]);
+        }
+
         $plan->delete();
         return response()->json(['success' => 'Membership deleted successfully!']);
     }
@@ -159,9 +171,39 @@ class PlanController extends Controller
             'ids.*' => 'exists:plans,id',
         ]);
 
-        $count = Plan::whereIn('id', $request->ids)->delete();
+        $ids = $request->ids;
+        $totalSelected = count($ids);
+        $deletedCount = 0;
+        $skippedCount = 0;
 
-        return response()->json(['success' => "{$count} records deleted successfully."]);
+        foreach ($ids as $id) {
+            $hasActiveMemberships = \App\Models\PurchasedPlan::where('plan_id', $id)
+                ->where('status', 'active')
+                ->where('end_date', '>=', now())
+                ->exists();
+
+            if ($hasActiveMemberships) {
+                $skippedCount++;
+            } else {
+                $plan = Plan::find($id);
+                if ($plan) {
+                    $plan->delete();
+                    $deletedCount++;
+                } else {
+                    $skippedCount++;
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'summary' => [
+                'selected' => $totalSelected,
+                'deleted' => $deletedCount,
+                'skipped' => $skippedCount,
+                'message' => "{$totalSelected} plans selected\n{$deletedCount} deleted\n{$skippedCount} skipped because customers have active memberships"
+            ]
+        ]);
     }
 
     /**

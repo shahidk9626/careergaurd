@@ -30,9 +30,9 @@ pdf download
 
 task to be done->
 1.pdf export giving error
-2.customer can buy plan before profile complete
-3.resend link button
-4.popup when profile is not complete
+2.customer can buy plan before profile complete -> done
+3.resend link button -> done
+4.popup when profile is not complete -> done
 5.on callback on admin side add column summary ->done
 6.role content update 
 7.plan creation time give offer price column -> done
@@ -43,3 +43,12 @@ task to be done->
 9.standarnd to monthly one time to yearly -> done
 
 
+
+
+7-june-2026
+1.pdf giving error
+2.multi delete on every listing
+3.on plans listing order by amount
+4.remove link in job links and add new columns
+5.on refeal and comisison calulation according to employee
+6.staff referal code we have to genenrate

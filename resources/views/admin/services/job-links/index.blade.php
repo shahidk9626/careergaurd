@@ -9,7 +9,13 @@
                         <div class="flex items-center w-full max-w-full px-3 lg:w-1/2 lg:flex-none">
                             <h6 class="mb-0">Job Links Management</h6>
                         </div>
-                        <div class="w-full max-w-full px-3 text-right lg:w-1/2 lg:flex-none">
+                        <div class="w-full max-w-full px-3 text-right lg:w-1/2 lg:flex-none flex items-center justify-end gap-2">
+                            @if(hasPermission('job-links.delete'))
+                                <button id="bulkDeleteBtn" style="display: none;" onclick="bulkDelete()"
+                                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-102 active:opacity-85 mr-2">
+                                    <i class="fas fa-trash-alt mr-1"></i> Delete Selected
+                                </button>
+                            @endif
                             @if(hasPermission('job-links.create'))
                                 <button onclick="openCreateModal()"
                                     class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85">
@@ -26,6 +32,11 @@
                             class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
+                                    @if(hasPermission('job-links.delete'))
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400" style="width: 40px;">
+                                            <input type="checkbox" id="selectAll" class="rounded text-purple-600 cursor-pointer">
+                                        </th>
+                                    @endif
                                     <!-- Playbook Step 1: Explicit Widths -->
                                     <th class="w-3/12 px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Title</th>
                                     <th class="w-3/12 px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-tight-soft opacity-100 text-slate-400">Categories</th>
@@ -115,6 +126,17 @@
                     dataSrc: ''
                 },
                 columns: [
+                    @if(hasPermission('job-links.delete'))
+                    {
+                        data: 'id',
+                        className: 'px-6 py-3 align-middle text-center bg-transparent border-b whitespace-nowrap shadow-none',
+                        orderable: false,
+                        searchable: false,
+                        render: function (data) {
+                            return `<input type="checkbox" class="row-checkbox rounded text-purple-600 cursor-pointer" value="${data}">`;
+                        }
+                    },
+                    @endif
                     {
                         data: 'title',
                         className: 'px-6 py-3 align-middle bg-transparent border-b shadow-none',
@@ -188,6 +210,26 @@
                 }
             });
 
+            // Select All Checkbox
+            $(document).on('change', '#selectAll', function() {
+                $('.row-checkbox').prop('checked', this.checked);
+                toggleBulkDeleteButton();
+            });
+
+            $(document).on('change', '.row-checkbox', function() {
+                if (!this.checked) {
+                    $('#selectAll').prop('checked', false);
+                } else if ($('.row-checkbox:checked').length === $('.row-checkbox').length) {
+                    $('#selectAll').prop('checked', true);
+                }
+                toggleBulkDeleteButton();
+            });
+
+            table.on('draw', function() {
+                $('#selectAll').prop('checked', false);
+                toggleBulkDeleteButton();
+            });
+
             $('#jobForm').on('submit', function (e) {
                 e.preventDefault();
                 const id = $('#jobId').val();
@@ -250,15 +292,72 @@
             });
         }
 
-        function deleteJob(id) {
+        function toggleBulkDeleteButton() {
+            const checkedCount = $('.row-checkbox:checked').length;
+            if (checkedCount > 0) {
+                $('#bulkDeleteBtn').show();
+            } else {
+                $('#bulkDeleteBtn').hide();
+            }
+        }
+
+        function bulkDelete() {
+            const selectedIds = [];
+            $('.row-checkbox:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
+
+            if (selectedIds.length === 0) {
+                Swal.fire('Warning', 'Please select at least one record.', 'warning');
+                return;
+            }
+
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                title: 'Delete Selected Records',
+                text: "Are you sure you want to delete the selected records?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#cb0c9f',
                 cancelButtonColor: '#8392ab',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes Delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('admin.services.job-links.bulk-delete') }}",
+                        type: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            ids: selectedIds
+                        },
+                        success: function (response) {
+                            if (response.error) {
+                                Swal.fire('Cannot Delete!', response.error, 'error');
+                            } else {
+                                Swal.fire('Deleted!', response.success || 'Selected records deleted successfully.', 'success');
+                            }
+                            table.ajax.reload(null, false);
+                            $('#selectAll').prop('checked', false);
+                            toggleBulkDeleteButton();
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Failed to delete selected job links.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+        function deleteJob(id) {
+            Swal.fire({
+                title: 'Delete Record',
+                text: "Are you sure you want to delete this record?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#cb0c9f',
+                cancelButtonColor: '#8392ab',
+                confirmButtonText: 'Yes Delete',
+                cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -266,8 +365,17 @@
                         type: 'DELETE',
                         data: { _token: "{{ csrf_token() }}" },
                         success: function (response) {
-                            Swal.fire('Deleted!', response.success, 'success');
-                            table.ajax.reload();
+                            if (response.error) {
+                                Swal.fire('Cannot Delete!', response.error, 'error');
+                            } else {
+                                Swal.fire('Deleted!', 'Record deleted successfully.', 'success');
+                                table.ajax.reload(null, false);
+                                $('#selectAll').prop('checked', false);
+                                toggleBulkDeleteButton();
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Failed to delete job link.', 'error');
                         }
                     });
                 }
