@@ -119,7 +119,7 @@
                                 <strong class="text-slate-700">Support Duration:</strong> &nbsp; {{ $purchasedPlan->plan->claim_duration_days ?? 0 }} Days
                             </li>
                             <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
-                                <strong class="text-slate-700">Support Amount:</strong> &nbsp; ₹{{ number_format($purchasedPlan->plan->compensation_amount ?? 0, 2) }}
+                                <strong class="text-slate-700">Support Amount:</strong> &nbsp; Upto  ₹{{ number_format($purchasedPlan->plan->compensation_amount ?? 0, 2) }}
                             </li>
                             <li class="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
                                 <strong class="text-slate-700">Included Services:</strong>
