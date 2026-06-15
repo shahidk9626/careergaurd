@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ServiceCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class ServiceCategoryController extends Controller
 {
@@ -30,14 +31,25 @@ class ServiceCategoryController extends Controller
 
     public function store(Request $request)
     {
+        $parentId = $request->parent_id;
+
         $request->validate([
-            'name' => 'required|string|max:255|unique:service_categories,name',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('service_categories')->where(function ($query) use ($parentId) {
+                    return $query->where('parent_id', $parentId);
+                }),
+            ],
             'parent_id' => 'nullable|exists:service_categories,id',
         ]);
 
+        $slug = $this->generateUniqueSlug($request->name);
+
         ServiceCategory::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->name),
+            'slug' => $slug,
             'status' => $request->status ?? 'active',
             'parent_id' => $request->parent_id,
         ]);
@@ -53,15 +65,25 @@ class ServiceCategoryController extends Controller
     public function update(Request $request, $id)
     {
         $category = ServiceCategory::findOrFail($id);
+        $parentId = $request->parent_id;
 
         $request->validate([
-            'name' => 'required|string|max:255|unique:service_categories,name,' . $id,
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('service_categories')->where(function ($query) use ($parentId) {
+                    return $query->where('parent_id', $parentId);
+                })->ignore($id),
+            ],
             'parent_id' => 'nullable|exists:service_categories,id',
         ]);
 
+        $slug = $this->generateUniqueSlug($request->name, $id);
+
         $category->update([
             'name' => $request->name,
-            'slug' => Str::slug($request->name),
+            'slug' => $slug,
             'status' => $request->status,
             'parent_id' => $request->parent_id,
         ]);
@@ -158,5 +180,26 @@ class ServiceCategoryController extends Controller
         }
 
         return null;
+    }
+
+    private function generateUniqueSlug($name, $ignoreId = null)
+    {
+        $slug = Str::slug($name);
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (true) {
+            $query = ServiceCategory::where('slug', $slug);
+            if ($ignoreId) {
+                $query->where('id', '!=', $ignoreId);
+            }
+            if (!$query->exists()) {
+                break;
+            }
+            $slug = $originalSlug . '-' . $count;
+            $count++;
+        }
+
+        return $slug;
     }
 }
