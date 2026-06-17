@@ -34,7 +34,7 @@ class InterviewPdfResourceController extends Controller
         $pdf = InterviewPdfResource::create([
             'title'       => $request->title,
             'description' => $request->description,
-            'file_path'   => 'uploads/interview-pdfs/' . $filename,
+            'file_path'   => 'public/uploads/interview-pdfs/' . $filename,
             'status'      => 'active',
         ]);
 

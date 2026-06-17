@@ -497,7 +497,7 @@
                     ${pdf.categories && pdf.categories.length
                         ? `<div class="pdf-res-cats">${pdf.categories.map(c => `<span class="pdf-res-cat">${c.name}</span>`).join('')}</div>`
                         : ''}
-                    <a href="/public/${pdf.file_url}" target="_blank" download class="pdf-res-download">
+                    <a href="${pdf.file_url}" target="_blank" download class="pdf-res-download">
                         <i class="fas fa-download"></i> Download PDF
                     </a>
                 </div>
