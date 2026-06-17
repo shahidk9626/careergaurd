@@ -21,7 +21,7 @@ class ResumeTemplateController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title'     => 'required|string|max:255',
             'description' => 'nullable|string',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'file_path' => 'required|file|mimes:pdf,doc,docx|max:5120',
@@ -31,11 +31,11 @@ class ResumeTemplateController extends Controller
         $data['slug'] = Str::slug($request->title) . '-' . Str::random(5);
 
         if ($request->hasFile('thumbnail')) {
-            $data['thumbnail'] = $request->file('thumbnail')->store('resumes/thumbnails', 'public');
+            $data['thumbnail'] = $this->uploadFile($request->file('thumbnail'), 'uploads/resumes/thumbnails');
         }
 
         if ($request->hasFile('file_path')) {
-            $data['file_path'] = $request->file('file_path')->store('resumes/templates', 'public');
+            $data['file_path'] = $this->uploadFile($request->file('file_path'), 'uploads/resumes/templates');
         }
 
         $template = ResumeTemplate::create($data);
@@ -58,7 +58,7 @@ class ResumeTemplateController extends Controller
         $template = ResumeTemplate::findOrFail($id);
 
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title'     => 'required|string|max:255',
             'description' => 'nullable|string',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'file_path' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
@@ -71,15 +71,13 @@ class ResumeTemplateController extends Controller
         }
 
         if ($request->hasFile('thumbnail')) {
-            if ($template->thumbnail)
-                Storage::disk('public')->delete($template->thumbnail);
-            $data['thumbnail'] = $request->file('thumbnail')->store('resumes/thumbnails', 'public');
+            $this->deleteFile($template->thumbnail);
+            $data['thumbnail'] = $this->uploadFile($request->file('thumbnail'), 'uploads/resumes/thumbnails');
         }
 
         if ($request->hasFile('file_path')) {
-            if ($template->file_path)
-                Storage::disk('public')->delete($template->file_path);
-            $data['file_path'] = $request->file('file_path')->store('resumes/templates', 'public');
+            $this->deleteFile($template->file_path);
+            $data['file_path'] = $this->uploadFile($request->file('file_path'), 'uploads/resumes/templates');
         }
 
         $template->update($data);
@@ -94,12 +92,8 @@ class ResumeTemplateController extends Controller
     public function destroy($id)
     {
         $template = ResumeTemplate::findOrFail($id);
-        if ($template->thumbnail) {
-            Storage::disk('public')->delete($template->thumbnail);
-        }
-        if ($template->file_path) {
-            Storage::disk('public')->delete($template->file_path);
-        }
+        $this->deleteFile($template->thumbnail);
+        $this->deleteFile($template->file_path);
         $template->delete();
         return response()->json(['success' => 'Resume Template deleted successfully!']);
     }
@@ -115,21 +109,45 @@ class ResumeTemplateController extends Controller
     public function bulkDestroy(Request $request)
     {
         $request->validate([
-            'ids' => 'required|array',
+            'ids'   => 'required|array',
             'ids.*' => 'exists:resume_templates,id',
         ]);
 
         $templates = ResumeTemplate::whereIn('id', $request->ids)->get();
         foreach ($templates as $template) {
-            if ($template->thumbnail) {
-                Storage::disk('public')->delete($template->thumbnail);
-            }
-            if ($template->file_path) {
-                Storage::disk('public')->delete($template->file_path);
-            }
+            $this->deleteFile($template->thumbnail);
+            $this->deleteFile($template->file_path);
             $template->delete();
         }
 
         return response()->json(['success' => count($templates) . ' records deleted successfully.']);
+    }
+
+    // ─── Helpers ────────────────────────────────────────────────────────────────
+
+    /**
+     * Move an uploaded file into public/{$folder} and return the relative path.
+     * Creates the directory automatically if it doesn't exist.
+     */
+    private function uploadFile($file, string $folder): string
+    {
+        $dir = public_path($folder);
+        if (!file_exists($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        $filename = time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
+        $file->move($dir, $filename);
+        return $folder . '/' . $filename;
+    }
+
+    /**
+     * Delete a file that lives inside public/ (path relative to public/).
+     * Silently ignores null or missing files.
+     */
+    private function deleteFile(?string $path): void
+    {
+        if ($path && file_exists(public_path($path))) {
+            unlink(public_path($path));
+        }
     }
 }

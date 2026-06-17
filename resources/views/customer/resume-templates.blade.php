@@ -471,7 +471,7 @@
                 <div class="rt-preview">
                     <div class="rt-preview-inner">
                         @if($template->thumbnail)
-                            <img src="{{ asset('storage/' . $template->thumbnail) }}"
+                            <img src="{{ asset($template->thumbnail) }}"
                                  alt="{{ $template->title }}" class="rt-preview-img">
                         @else
                             <div class="rt-mockup">

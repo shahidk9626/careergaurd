@@ -21,6 +21,8 @@ class JobLink extends Model
         'job_title',
         'vacancies',
         'location',
+        'city',
+        'state',
         'salary',
         'experience',
         'apply_whatsapp_or_email',

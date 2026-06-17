@@ -1,0 +1,116 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\InterviewPdfResource;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+class InterviewPdfResourceController extends Controller
+{
+    public function index()
+    {
+        $pdfs = InterviewPdfResource::with('categories')->latest()->get()->map(function ($pdf) {
+            $pdf->created_at_human = $pdf->created_at->format('d M Y');
+            return $pdf;
+        });
+        return response()->json($pdfs);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'pdf_file'    => 'required|file|mimes:pdf|max:10240',
+        ]);
+
+        $file     = $request->file('pdf_file');
+        $filename = time() . '_' . Str::random(6) . '.pdf';
+        $folder   = public_path('uploads/interview-pdfs');
+        if (!file_exists($folder)) mkdir($folder, 0755, true);
+        $file->move($folder, $filename);
+
+        $pdf = InterviewPdfResource::create([
+            'title'       => $request->title,
+            'description' => $request->description,
+            'file_path'   => 'uploads/interview-pdfs/' . $filename,
+            'status'      => 'active',
+        ]);
+
+        if ($request->has('pdf_categories')) {
+            $pdf->categories()->sync($request->pdf_categories);
+        }
+
+        return response()->json(['success' => 'PDF resource uploaded successfully!']);
+    }
+
+    public function edit($id)
+    {
+        return response()->json(InterviewPdfResource::with('categories')->findOrFail($id));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $pdf = InterviewPdfResource::findOrFail($id);
+
+        $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $pdf->update([
+            'title'       => $request->title,
+            'description' => $request->description,
+        ]);
+
+        if ($request->has('pdf_categories')) {
+            $pdf->categories()->sync($request->pdf_categories);
+        }
+
+        return response()->json(['success' => 'PDF resource updated successfully!']);
+    }
+
+    public function destroy($id)
+    {
+        $pdf = InterviewPdfResource::findOrFail($id);
+        if ($pdf->file_path && file_exists(public_path($pdf->file_path))) {
+            unlink(public_path($pdf->file_path));
+        }
+        $pdf->delete();
+        return response()->json(['success' => 'PDF deleted successfully!']);
+    }
+
+    public function toggleStatus($id)
+    {
+        $pdf = InterviewPdfResource::findOrFail($id);
+        $pdf->status = $pdf->status === 'active' ? 'inactive' : 'active';
+        $pdf->save();
+        return response()->json(['success' => 'Status updated!']);
+    }
+
+    /** Customer-facing: list active PDFs accessible to logged-in user */
+    public function customerIndex()
+    {
+        $allowedCategories = auth()->user()->getActivePurchasedPlanCategories('question');
+
+        $pdfs = InterviewPdfResource::where('status', 'active')
+            ->whereHas('categories', function ($q) use ($allowedCategories) {
+                $q->whereIn('service_categories.id', $allowedCategories);
+            })
+            ->with('categories')
+            ->latest()
+            ->get();
+
+        return response()->json($pdfs->map(function ($pdf) {
+            return [
+                'id'          => $pdf->id,
+                'title'       => $pdf->title,
+                'description' => $pdf->description,
+                'file_url'    => asset($pdf->file_path),
+                'categories'  => $pdf->categories,
+                'uploaded'    => $pdf->created_at->format('d M Y'),
+            ];
+        }));
+    }
+}

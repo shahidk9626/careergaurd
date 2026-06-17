@@ -12,9 +12,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class CustomerBenefitController extends Controller
 {
-    /**
-     * Display a list of job links.
-     */
     public function jobLinks(Request $request)
     {
         $user = auth()->user();
@@ -23,12 +20,14 @@ class CustomerBenefitController extends Controller
         }
 
         $request->validate([
-            'keyword' => 'nullable|string|max:100',
-            'location' => 'nullable|string|max:100',
-            'experience' => 'nullable|string|max:100',
+            'keyword'     => 'nullable|string|max:100',
+            'location'    => 'nullable|string|max:100',
+            'city'        => 'nullable|string|max:100',
+            'state'       => 'nullable|string|max:100',
+            'experience'  => 'nullable|string|max:100',
             'category_id' => 'nullable|integer',
-            'sort' => 'nullable|string|in:latest,salary,relevant',
-            'page' => 'nullable|integer',
+            'sort'        => 'nullable|string|in:latest,salary,relevant',
+            'page'        => 'nullable|integer',
         ]);
 
         $allowedCategoryIds = $user->getActivePurchasedPlanCategories('job-link');
@@ -40,7 +39,6 @@ class CustomerBenefitController extends Controller
 
         $jobs = $query->with('categories')->get();
 
-        // Apply filters in memory since details are virtual
         if ($request->filled('keyword')) {
             $keyword = strtolower($request->keyword);
             $jobs = $jobs->filter(function ($job) use ($keyword) {
@@ -54,6 +52,20 @@ class CustomerBenefitController extends Controller
             $location = strtolower($request->location);
             $jobs = $jobs->filter(function ($job) use ($location) {
                 return str_contains(strtolower($job->location), $location);
+            });
+        }
+
+        if ($request->filled('city')) {
+            $city = strtolower($request->city);
+            $jobs = $jobs->filter(function ($job) use ($city) {
+                return str_contains(strtolower($job->city), $city);
+            });
+        }
+
+        if ($request->filled('state')) {
+            $state = strtolower($request->state);
+            $jobs = $jobs->filter(function ($job) use ($state) {
+                return str_contains(strtolower($job->state), $state);
             });
         }
 
@@ -71,20 +83,18 @@ class CustomerBenefitController extends Controller
             });
         }
 
-        // Apply sort
         $sort = $request->get('sort', 'latest');
         if ($sort === 'latest') {
             $jobs = $jobs->sortByDesc('created_at');
         } elseif ($sort === 'salary') {
             $jobs = $jobs->sortByDesc(function ($job) {
-                return $job->id % 5; // Proxy for sorting by salary levels
+                return $job->id % 5;
             });
         } else {
-            $jobs = $jobs->sortByDesc('id'); // Relevant
+            $jobs = $jobs->sortByDesc('id');
         }
 
-        // Pagination
-        $page = intval($request->get('page', 1));
+        $page    = intval($request->get('page', 1));
         $perPage = 10;
         $paginatedJobs = new LengthAwarePaginator(
             $jobs->forPage($page, $perPage)->values(),
@@ -97,14 +107,11 @@ class CustomerBenefitController extends Controller
         $categories = ServiceCategory::whereIn('id', $allowedCategoryIds)->where('status', 'active')->get();
 
         return view('customer.job-links', [
-            'jobs' => $paginatedJobs,
+            'jobs'       => $paginatedJobs,
             'categories' => $categories,
         ]);
     }
 
-    /**
-     * Display resume templates.
-     */
     public function resumeTemplates(Request $request)
     {
         $user = auth()->user();
@@ -113,10 +120,10 @@ class CustomerBenefitController extends Controller
         }
 
         $request->validate([
-            'keyword' => 'nullable|string|max:100',
+            'keyword'     => 'nullable|string|max:100',
             'category_id' => 'nullable|integer',
-            'page_size' => 'nullable|integer|in:9,18,36',
-            'page' => 'nullable|integer',
+            'page_size'   => 'nullable|integer|in:9,18,36',
+            'page'        => 'nullable|integer',
         ]);
 
         $allowedCategoryIds = $user->getActivePurchasedPlanCategories('resume');
@@ -141,20 +148,16 @@ class CustomerBenefitController extends Controller
             });
         }
 
-        $pageSize = intval($request->get('page_size', 9));
+        $pageSize  = intval($request->get('page_size', 9));
         $templates = $query->with('categories')->latest()->paginate($pageSize);
-
         $categories = ServiceCategory::whereIn('id', $allowedCategoryIds)->where('status', 'active')->get();
 
         return view('customer.resume-templates', [
-            'templates' => $templates,
+            'templates'  => $templates,
             'categories' => $categories,
         ]);
     }
 
-    /**
-     * Download a resume template as a DOCX.
-     */
     public function downloadResumeTemplate($id)
     {
         $user = auth()->user();
@@ -164,7 +167,7 @@ class CustomerBenefitController extends Controller
 
         $template = ResumeTemplate::findOrFail($id);
         $allowedCategoryIds = $user->getActivePurchasedPlanCategories('resume');
-        
+
         $hasCategoryAccess = $template->categories()->whereIn('service_categories.id', $allowedCategoryIds)->exists();
         if (!$hasCategoryAccess) {
             abort(403, 'You do not have access to this template.');
@@ -175,7 +178,6 @@ class CustomerBenefitController extends Controller
             return response()->download(Storage::disk('public')->path($filePath), $template->slug . '.docx');
         }
 
-        // Dynamically package a valid minimal DOCX archive in memory if missing
         $tempFile = tempnam(sys_get_temp_dir(), 'docx');
         $zip = new \ZipArchive();
         if ($zip->open($tempFile, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
@@ -188,9 +190,6 @@ class CustomerBenefitController extends Controller
         return response()->download($tempFile, $template->slug . '.docx')->deleteFileAfterSend(true);
     }
 
-    /**
-     * Display interview question tracks and tech categories.
-     */
     public function interviewQuestions(Request $request)
     {
         $user = auth()->user();
@@ -207,7 +206,6 @@ class CustomerBenefitController extends Controller
             }])
             ->get();
 
-        // Get question counts by technology for the badges
         $questions = InterviewQuestion::where('status', 'active')
             ->whereHas('categories', function ($q) use ($allowedCategoryIds) {
                 $q->whereIn('service_categories.id', $allowedCategoryIds);
@@ -224,9 +222,6 @@ class CustomerBenefitController extends Controller
         ]);
     }
 
-    /**
-     * Display questions for a specific category with accordion view.
-     */
     public function interviewQuestionsCategory($id, Request $request)
     {
         $user = auth()->user();
@@ -242,16 +237,15 @@ class CustomerBenefitController extends Controller
         $category = ServiceCategory::where('status', 'active')->findOrFail($id);
 
         $request->validate([
-            'search' => 'nullable|string|max:100',
+            'search'     => 'nullable|string|max:100',
             'technology' => 'nullable|string|max:100',
             'difficulty' => 'nullable|string|in:Easy,Medium,Hard',
-            'page' => 'nullable|integer',
+            'page'       => 'nullable|integer',
         ]);
 
-        $query = $category->interviewQuestions()->where('status', 'active');
+        $query     = $category->interviewQuestions()->where('status', 'active');
         $questions = $query->with('categories')->get();
 
-        // Apply filters in memory because of virtual fields
         if ($request->filled('search')) {
             $search = strtolower($request->search);
             $questions = $questions->filter(function ($q) use ($search) {
@@ -263,24 +257,22 @@ class CustomerBenefitController extends Controller
 
         if ($request->filled('technology')) {
             $technology = strtolower($request->technology);
-            $questions = $questions->filter(function ($q) use ($technology) {
+            $questions  = $questions->filter(function ($q) use ($technology) {
                 return strtolower($q->technology) === $technology;
             });
         }
 
         if ($request->filled('difficulty')) {
             $difficulty = strtolower($request->difficulty);
-            $questions = $questions->filter(function ($q) use ($difficulty) {
+            $questions  = $questions->filter(function ($q) use ($difficulty) {
                 return strtolower($q->difficulty) === $difficulty;
             });
         }
 
-        // Get technologies for this category
         $allCategoryQuestions = $category->interviewQuestions()->where('status', 'active')->get();
-        $technologies = $allCategoryQuestions->pluck('technology')->unique()->values();
+        $technologies         = $allCategoryQuestions->pluck('technology')->unique()->values();
 
-        // Paginate
-        $page = intval($request->get('page', 1));
+        $page    = intval($request->get('page', 1));
         $perPage = 10;
         $paginatedQuestions = new LengthAwarePaginator(
             $questions->forPage($page, $perPage)->values(),
@@ -291,8 +283,8 @@ class CustomerBenefitController extends Controller
         );
 
         return view('customer.interview-questions-category', [
-            'category' => $category,
-            'questions' => $paginatedQuestions,
+            'category'     => $category,
+            'questions'    => $paginatedQuestions,
             'technologies' => $technologies,
         ]);
     }

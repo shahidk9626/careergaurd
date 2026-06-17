@@ -83,15 +83,26 @@
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Company Name</label>
-                            <input type="text" name="company_name" id="company_name" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Google">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Job Location</label>
-                            <input type="text" name="location" id="location" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Bengaluru">
-                        </div>
-                    </div>
+    <div>
+        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Company Name</label>
+        <input type="text" name="company_name" id="company_name" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Google">
+    </div>
+    <div>
+        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Job Location</label>
+        <input type="text" name="location" id="location" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Bengaluru">
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div>
+        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">City</label>
+        <input type="text" name="city" id="city" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Bengaluru">
+    </div>
+    <div>
+        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">State</label>
+        <input type="text" name="state" id="state" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none;" placeholder="e.g. Karnataka">
+    </div>
+</div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div>
@@ -320,6 +331,8 @@
             $('#jobId').val('');
             $('#job_title').val('');
             $('#location').val('');
+            $('#city').val('');    
+            $('#state').val('');  
             $('#salary').val('');
             $('#experience').val('');
             $('#vacancies').val('');
@@ -338,6 +351,8 @@
                 $('#job_title').val(data.job_title);
                 $('#company_name').val(data.company_name);
                 $('#location').val(data.location);
+                $('#city').val(data.city);
+                $('#state').val(data.state);
                 $('#salary').val(data.salary);
                 $('#experience').val(data.experience);
                 $('#vacancies').val(data.vacancies);

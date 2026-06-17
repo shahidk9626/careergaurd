@@ -134,15 +134,25 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         });
 
         // Interview Questions
-        Route::prefix('services/questions')->middleware('permission:questions.view')->group(function () {
-            Route::get('/', [App\Http\Controllers\InterviewQuestionController::class, 'index'])->name('admin.services.questions.index');
-            Route::post('/store', [App\Http\Controllers\InterviewQuestionController::class, 'store'])->middleware('permission:questions.create')->name('admin.services.questions.store');
-            Route::get('/edit/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'edit'])->middleware('permission:questions.edit')->name('admin.services.questions.edit');
-            Route::post('/update/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'update'])->middleware('permission:questions.edit')->name('admin.services.questions.update');
-            Route::delete('/delete/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'destroy'])->middleware('permission:questions.delete')->name('admin.services.questions.destroy');
-            Route::post('/status/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'toggleStatus'])->middleware('permission:questions.status')->name('admin.services.questions.status');
-            Route::post('/bulk-delete', [App\Http\Controllers\InterviewQuestionController::class, 'bulkDestroy'])->middleware('permission:questions.delete')->name('admin.services.questions.bulk-delete');
-        });
+Route::prefix('services/questions')->middleware('permission:questions.view')->group(function () {
+    Route::get('/', [App\Http\Controllers\InterviewQuestionController::class, 'index'])->name('admin.services.questions.index');
+    Route::post('/store', [App\Http\Controllers\InterviewQuestionController::class, 'store'])->middleware('permission:questions.create')->name('admin.services.questions.store');
+    Route::get('/edit/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'edit'])->middleware('permission:questions.edit')->name('admin.services.questions.edit');
+    Route::post('/update/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'update'])->middleware('permission:questions.edit')->name('admin.services.questions.update');
+    Route::delete('/delete/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'destroy'])->middleware('permission:questions.delete')->name('admin.services.questions.destroy');
+    Route::post('/status/{id}', [App\Http\Controllers\InterviewQuestionController::class, 'toggleStatus'])->middleware('permission:questions.status')->name('admin.services.questions.status');
+    Route::post('/bulk-delete', [App\Http\Controllers\InterviewQuestionController::class, 'bulkDestroy'])->middleware('permission:questions.delete')->name('admin.services.questions.bulk-delete');
+
+    // PDF Resources
+    Route::get('/pdf-resources', [App\Http\Controllers\InterviewPdfResourceController::class, 'index'])->name('admin.services.questions.pdf-resources.index');
+    Route::post('/pdf-resources/store', [App\Http\Controllers\InterviewPdfResourceController::class, 'store'])->name('admin.services.questions.pdf-resources.store');
+    Route::get('/pdf-resources/edit/{id}', [App\Http\Controllers\InterviewPdfResourceController::class, 'edit'])->name('admin.services.questions.pdf-resources.edit');
+    Route::post('/pdf-resources/update/{id}', [App\Http\Controllers\InterviewPdfResourceController::class, 'update'])->name('admin.services.questions.pdf-resources.update');
+    Route::delete('/pdf-resources/delete/{id}', [App\Http\Controllers\InterviewPdfResourceController::class, 'destroy'])->name('admin.services.questions.pdf-resources.destroy');
+    Route::post('/pdf-resources/status/{id}', [App\Http\Controllers\InterviewPdfResourceController::class, 'toggleStatus'])->name('admin.services.questions.pdf-resources.status');
+});
+
+        
 
         // Plans
         Route::prefix('plans')->middleware('permission:plans.view')->group(function () {
@@ -221,7 +231,7 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
         Route::get('/resume-templates/{id}/download', [App\Http\Controllers\CustomerBenefitController::class, 'downloadResumeTemplate'])->name('customer.resume-templates.download');
         Route::get('/interview-questions', [App\Http\Controllers\CustomerBenefitController::class, 'interviewQuestions'])->name('customer.interview-questions');
         Route::get('/interview-questions/category/{id}', [App\Http\Controllers\CustomerBenefitController::class, 'interviewQuestionsCategory'])->name('customer.interview-questions.category');
-        
+        Route::get('/interview-pdfs', [App\Http\Controllers\InterviewPdfResourceController::class, 'customerIndex'])->name('customer.interview-pdfs');
         // Profile check logic
         Route::get('/profile-redirect', function () {
             if (auth()->user()->profile_completed) {
