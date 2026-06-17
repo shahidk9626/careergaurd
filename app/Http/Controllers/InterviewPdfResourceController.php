@@ -74,8 +74,12 @@ class InterviewPdfResourceController extends Controller
     public function destroy($id)
     {
         $pdf = InterviewPdfResource::findOrFail($id);
-        if ($pdf->file_path && file_exists(public_path($pdf->file_path))) {
-            unlink(public_path($pdf->file_path));
+        if ($pdf->file_path) {
+            $cleanPath = \Illuminate\Support\Str::startsWith($pdf->file_path, 'public/') ? substr($pdf->file_path, 7) : $pdf->file_path;
+            $fullPath = public_path($cleanPath);
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
         }
         $pdf->delete();
         return response()->json(['success' => 'PDF deleted successfully!']);

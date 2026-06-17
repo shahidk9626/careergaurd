@@ -471,7 +471,12 @@
                 <div class="rt-preview">
                     <div class="rt-preview-inner">
                         @if($template->thumbnail)
-                            <img src="{{ asset($template->thumbnail) }}"
+                            @php
+                                $thumbUrl = \Illuminate\Support\Str::startsWith($template->thumbnail, 'public/') 
+                                    ? asset($template->thumbnail) 
+                                    : asset('public/' . $template->thumbnail);
+                            @endphp
+                            <img src="{{ $thumbUrl }}"
                                  alt="{{ $template->title }}" class="rt-preview-img">
                         @else
                             <div class="rt-mockup">

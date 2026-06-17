@@ -130,7 +130,10 @@
                         data: null,
                         className: 'px-6 align-middle bg-transparent border-b whitespace-nowrap shadow-none',
                         render: function (data) {
-                            let thumb = data.thumbnail ? `/storage/${data.thumbnail}` : 'https://via.placeholder.com/50x70?text=No+Img';
+                            let thumb = 'https://via.placeholder.com/50x70?text=No+Img';
+                            if (data.thumbnail) {
+                                thumb = data.thumbnail.startsWith('public/') ? `/${data.thumbnail}` : `/public/${data.thumbnail}`;
+                            }
                             return `
                                 <div class="flex px-2 py-1">
                                     <div>

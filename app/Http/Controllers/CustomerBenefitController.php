@@ -174,8 +174,17 @@ class CustomerBenefitController extends Controller
         }
 
         $filePath = $template->file_path;
-        if ($filePath && Storage::disk('public')->exists($filePath) && strtolower(pathinfo($filePath, PATHINFO_EXTENSION)) === 'docx') {
-            return response()->download(Storage::disk('public')->path($filePath), $template->slug . '.docx');
+        $actualPath = null;
+        if ($filePath) {
+            $cleanPath = \Illuminate\Support\Str::startsWith($filePath, 'public/') ? substr($filePath, 7) : $filePath;
+            $fullPath = public_path($cleanPath);
+            if (file_exists($fullPath)) {
+                $actualPath = $fullPath;
+            }
+        }
+
+        if ($actualPath && strtolower(pathinfo($actualPath, PATHINFO_EXTENSION)) === 'docx') {
+            return response()->download($actualPath, $template->slug . '.docx');
         }
 
         $tempFile = tempnam(sys_get_temp_dir(), 'docx');

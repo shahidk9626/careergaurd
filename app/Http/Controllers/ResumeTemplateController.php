@@ -123,12 +123,6 @@ class ResumeTemplateController extends Controller
         return response()->json(['success' => count($templates) . ' records deleted successfully.']);
     }
 
-    // ─── Helpers ────────────────────────────────────────────────────────────────
-
-    /**
-     * Move an uploaded file into public/{$folder} and return the relative path.
-     * Creates the directory automatically if it doesn't exist.
-     */
     private function uploadFile($file, string $folder): string
     {
         $dir = public_path($folder);
@@ -137,7 +131,7 @@ class ResumeTemplateController extends Controller
         }
         $filename = time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
         $file->move($dir, $filename);
-        return $folder . '/' . $filename;
+        return 'public/' . $folder . '/' . $filename;
     }
 
     /**
@@ -146,8 +140,12 @@ class ResumeTemplateController extends Controller
      */
     private function deleteFile(?string $path): void
     {
-        if ($path && file_exists(public_path($path))) {
-            unlink(public_path($path));
+        if ($path) {
+            $cleanPath = Str::startsWith($path, 'public/') ? substr($path, 7) : $path;
+            $fullPath = public_path($cleanPath);
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
         }
     }
 }
