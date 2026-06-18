@@ -12,7 +12,7 @@
 
     <hr class="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent" />
 
-    <div class="items-center block w-auto max-h-screen overflow-auto h-sidenav grow basis-full">
+    <div class="items-center block w-auto overflow-y-auto grow basis-full" style="max-height: calc(100vh - 5rem);">
         <ul class="flex flex-col pl-0 mb-0">
 
             @if(auth()->user()->role_id !== 0)
