@@ -133,7 +133,7 @@
     </div>
 @endsection
 
-@@push('scripts')
+@push('scripts')
     <script>
         let table;
         const canEdit = {{ hasPermission('roles.edit') ? 'true' : 'false' }};
