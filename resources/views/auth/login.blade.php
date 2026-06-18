@@ -28,18 +28,12 @@
                             <ul class="flex flex-col pl-0 mx-auto mb-0 list-none lg:flex-row xl:ml-auto">
                                 <li>
                                     <a class="flex items-center px-4 py-2 mr-2 font-normal transition-all lg-max:opacity-0 duration-250 ease-soft-in-out text-sm text-slate-700 lg:px-2"
-                                        aria-current="page" href="{{ url('dashboard') }}">
+                                        aria-current="page" href="https://wa.me/919611956627">
                                         <i class="mr-1 fa fa-chart-pie opacity-60"></i>
-                                        Dashboard
+                                        Chat With Us
                                     </a>
                                 </li>
-                                <li>
-                                    <a class="block px-4 py-2 mr-2 font-normal transition-all lg-max:opacity-0 duration-250 ease-soft-in-out text-sm text-slate-700 lg:px-2"
-                                        href="{{ url('profile') }}">
-                                        <i class="mr-1 fa fa-user opacity-60"></i>
-                                        Profile
-                                    </a>
-                                </li>
+                               
                                 <li>
                                     <a class="block px-4 py-2 mr-2 font-normal transition-all lg-max:opacity-0 duration-250 ease-soft-in-out text-sm text-slate-700 lg:px-2"
                                         href="{{ route('register') }}">
