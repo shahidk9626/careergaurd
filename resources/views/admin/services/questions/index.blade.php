@@ -36,26 +36,31 @@
 
     /* PDF modal */
     .pdf-modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-        background: rgba(15,23,42,0.6);
-        z-index: 9999;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(4px);
-    }
-    .pdf-modal-overlay.open { display: flex; }
-    .pdf-modal-box {
-        background: #fff;
-        width: 100%;
-        max-width: 500px;
-        border-radius: 16px;
-        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-        margin: 1rem;
-        overflow: hidden;
-    }
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(15,23,42,0.6);
+    z-index: 9999;
+    align-items: flex-start;      /* changed from center */
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    overflow-y: auto;             /* add this */
+    padding: 16px;                /* add this */
+    box-sizing: border-box;       /* add this */
+}
+.pdf-modal-overlay.open { display: flex; }
+
+.pdf-modal-box {
+    background: #fff;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    overflow: hidden;
+    margin: auto;                 /* centers vertically when content is short */
+    flex-shrink: 0;               /* prevents it from squishing */
+}
     .pdf-modal-header {
         padding: 1.25rem 1.5rem;
         border-bottom: 1px solid #e2e8f0;
@@ -63,15 +68,24 @@
         justify-content: space-between;
         align-items: center;
     }
-    .pdf-modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
-    .pdf-modal-footer {
-        padding: 1rem 1.5rem;
-        border-top: 1px solid #e2e8f0;
-        background: #f8fafc;
-        display: flex;
-        justify-content: flex-end;
-        gap: 0.75rem;
-    }
+    .pdf-modal-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+    max-height: 60vh;             /* body scrolls, footer stays fixed */
+}
+
+.pdf-modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    flex-shrink: 0;               /* footer never gets pushed off screen */
+}
     .pdf-field-label {
         display: block;
         margin-bottom: 0.5rem;
