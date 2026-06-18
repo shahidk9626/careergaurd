@@ -19,21 +19,7 @@
                             class="block px-4 pt-0 pb-1 font-normal transition-all ease-soft-in-out text-sm text-slate-500"
                             target="_blank"></a>
                     </li>
-                    <li class="nav-item">
-                        <a href="https://test.careerguard.in/about.html"
-                            class="block px-4 pt-0 pb-1 font-normal transition-all ease-soft-in-out text-sm text-slate-500"
-                            target="_blank">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="https://test.careerguard.in/contact-us.html"
-                            class="block px-4 pt-0 pb-1 font-normal transition-all ease-soft-in-out text-sm text-slate-500"
-                            target="_blank">Contact us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="https://test.careerguard.in/privacy-policy.html"
-                            class="block px-4 pt-0 pb-1 pr-0 font-normal transition-all ease-soft-in-out text-sm text-slate-500"
-                            target="_blank">Privacy Policy</a>
-                    </li>
+                    
                 </ul>
             </div>
         </div>
