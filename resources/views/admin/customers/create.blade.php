@@ -33,9 +33,10 @@
                 </div>
 
                 <div class="flex-auto p-6">
+                    
                     <!-- Step Navigation -->
-                    <div class="relative mb-12 mt-6">
-                        <div class="flex justify-between items-start w-full px-2">
+<div class="relative mb-12 mt-6 overflow-x-auto pb-2 -mx-2 px-2">
+    <div class="flex justify-between items-start w-full min-w-max md:min-w-0">
                             <!-- Step 1 -->
                             <div class="step-tab flex flex-col items-center z-10 cursor-pointer" data-step="1">
                                 <div
@@ -45,8 +46,8 @@
                             </div>
 
                             <!-- Line 1-2 -->
-                            <div class="step-line flex-1 h-1 bg-gray-100 mt-5 transition-all duration-500 mx-2"
-                                data-line="1"></div>
+                            <div class="step-line flex-1 h-1 bg-gray-100 mt-5 transition-all duration-500 mx-2 min-w-8 md:min-w-0"
+    data-line="1"></div>
 
                             <!-- Step 2 -->
                             <div class="step-tab flex flex-col items-center z-10 cursor-default opacity-50" data-step="2">
@@ -57,8 +58,8 @@
                             </div>
 
                             <!-- Line 2-3 -->
-                            <div class="step-line flex-1 h-1 bg-gray-100 mt-5 transition-all duration-500 mx-2"
-                                data-line="2"></div>
+                            <div class="step-line flex-1 h-1 bg-gray-100 mt-5 transition-all duration-500 mx-2 min-w-8 md:min-w-0"
+    data-line="2"></div>
 
                             <!-- Step 3 -->
                             <div class="step-tab flex flex-col items-center z-10 cursor-default opacity-50" data-step="3">
@@ -69,8 +70,8 @@
                             </div>
 
                             <!-- Line 3-4 -->
-                            <div class="step-line flex-1 h-1 bg-gray-100 mt-5 transition-all duration-500 mx-2"
-                                data-line="3"></div>
+                            <div class="step-line flex-1 h-1 bg-gray-100 mt-5 transition-all duration-500 mx-2 min-w-8 md:min-w-0"
+    data-line="3"></div>
 
                             <!-- Step 4 -->
                             <div class="step-tab flex flex-col items-center z-10 cursor-default opacity-50" data-step="4">
@@ -81,8 +82,8 @@
                             </div>
 
                             <!-- Line 4-5 -->
-                            <div class="step-line flex-1 h-1 bg-gray-100 mt-5 transition-all duration-500 mx-2"
-                                data-line="4"></div>
+                            <div class="step-line flex-1 h-1 bg-gray-100 mt-5 transition-all duration-500 mx-2 min-w-8 md:min-w-0"
+    data-line="4"></div>
 
                             <!-- Step 5 -->
                             <div class="step-tab flex flex-col items-center z-10 cursor-default opacity-50" data-step="5">
@@ -93,8 +94,8 @@
                             </div>
 
                             <!-- Line 5-6 -->
-                            <div class="step-line flex-1 h-1 bg-gray-100 mt-5 transition-all duration-500 mx-2"
-                                data-line="5"></div>
+                            <div class="step-line flex-1 h-1 bg-gray-100 mt-5 transition-all duration-500 mx-2 min-w-8 md:min-w-0"
+    data-line="5"></div>
 
                             <!-- Step 6 -->
                             <div class="step-tab flex flex-col items-center z-10 cursor-default opacity-50" data-step="6">
