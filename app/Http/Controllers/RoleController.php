@@ -24,6 +24,18 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
+        $slug = Str::slug($request->name);
+        $existingSoftDeleted = Role::onlyTrashed()
+            ->where(function($query) use ($request, $slug) {
+                $query->where('name', $request->name)
+                      ->orWhere('slug', $slug);
+            })
+            ->first();
+        if ($existingSoftDeleted) {
+            RolePermission::where('role_id', $existingSoftDeleted->id)->delete();
+            $existingSoftDeleted->forceDelete();
+        }
+
         $request->validate([
             'name' => 'required|unique:roles,name',
             'status' => 'required|boolean',
@@ -61,6 +73,18 @@ class RoleController extends Controller
     public function update(Request $request, $id)
     {
         $role = Role::findOrFail($id);
+
+        $slug = Str::slug($request->name);
+        $existingSoftDeleted = Role::onlyTrashed()
+            ->where(function($query) use ($request, $slug) {
+                $query->where('name', $request->name)
+                      ->orWhere('slug', $slug);
+            })
+            ->first();
+        if ($existingSoftDeleted && $existingSoftDeleted->id !== $role->id) {
+            RolePermission::where('role_id', $existingSoftDeleted->id)->delete();
+            $existingSoftDeleted->forceDelete();
+        }
 
         $request->validate([
             'name' => 'required|unique:roles,name,' . $id,
