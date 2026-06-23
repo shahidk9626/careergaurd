@@ -27,8 +27,21 @@
                     </div>
                 </div>
                 <div class="flex-auto px-0 pt-0 pb-2">
-                    <div class="p-6 overflow-x-auto">
-                        <table id="staffTable" class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
+                    <div class="relative">
+                        <!-- Horizontal Scroll Buttons for mobile / small screen sizes -->
+                        <div class="absolute inset-y-0 left-0 flex items-center z-10 pointer-events-none">
+                            <button type="button" id="tableScrollLeft" class="pointer-events-auto flex items-center justify-center w-9 h-9 ml-2 bg-white/95 backdrop-blur text-slate-800 rounded-full shadow-md border border-gray-200 transition-all duration-200 hover:bg-slate-50 hover:scale-105 active:scale-95 opacity-0 pointer-events-none" onclick="scrollTable(-150)" aria-label="Scroll Left">
+                                <i class="fas fa-chevron-left text-xs"></i>
+                            </button>
+                        </div>
+                        <div class="absolute inset-y-0 right-0 flex items-center z-10 pointer-events-none">
+                            <button type="button" id="tableScrollRight" class="pointer-events-auto flex items-center justify-center w-9 h-9 mr-2 bg-white/95 backdrop-blur text-slate-800 rounded-full shadow-md border border-gray-200 transition-all duration-200 hover:bg-slate-50 hover:scale-105 active:scale-95 opacity-0 pointer-events-none" onclick="scrollTable(150)" aria-label="Scroll Right">
+                                <i class="fas fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
+
+                        <div id="tableScrollContainer" class="p-6 overflow-x-auto scroll-smooth">
+                            <table id="staffTable" class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
                                     @if(hasPermission('staff.delete'))
@@ -67,6 +80,7 @@
                     </div>
                 </div>
             </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -77,6 +91,16 @@
         const canEdit = {{ hasPermission('staff.edit') ? 'true' : 'false' }};
         const canDelete = {{ hasPermission('staff.delete') ? 'true' : 'false' }};
         const canStatus = {{ hasPermission('staff.status') ? 'true' : 'false' }};
+
+        function scrollTable(offset) {
+            const container = document.getElementById('tableScrollContainer');
+            if (container) {
+                container.scrollBy({
+                    left: offset,
+                    behavior: 'smooth'
+                });
+            }
+        }
 
         $(document).ready(function () {
             table = $('#staffTable').DataTable({
@@ -187,7 +211,7 @@
                 order: [
                     [@if(hasPermission('staff.delete')) 1 @else 0 @endif, 'desc']
                 ],
-                responsive: true,
+                responsive: false,
                 language: {
                     paginate: {
                         previous: "<i class='fas fa-angle-left'></i>",
@@ -195,6 +219,51 @@
                     }
                 }
             });
+
+            // Scroll Button Visibility Control
+            const container = document.getElementById('tableScrollContainer');
+            const leftBtn = document.getElementById('tableScrollLeft');
+            const rightBtn = document.getElementById('tableScrollRight');
+
+            function updateScrollButtons() {
+                if (!container || !leftBtn || !rightBtn) return;
+                
+                const showButtons = container.scrollWidth > container.clientWidth;
+                
+                if (showButtons) {
+                    // Show right button if not scrolled to the end
+                    if (container.scrollLeft + container.clientWidth < container.scrollWidth - 5) {
+                        rightBtn.classList.remove('opacity-0', 'pointer-events-none');
+                        rightBtn.classList.add('opacity-100');
+                    } else {
+                        rightBtn.classList.add('opacity-0', 'pointer-events-none');
+                        rightBtn.classList.remove('opacity-100');
+                    }
+                    
+                    // Show left button if scrolled away from start
+                    if (container.scrollLeft > 5) {
+                        leftBtn.classList.remove('opacity-0', 'pointer-events-none');
+                        leftBtn.classList.add('opacity-100');
+                    } else {
+                        leftBtn.classList.add('opacity-0', 'pointer-events-none');
+                        leftBtn.classList.remove('opacity-100');
+                    }
+                } else {
+                    leftBtn.classList.add('opacity-0', 'pointer-events-none');
+                    leftBtn.classList.remove('opacity-100');
+                    rightBtn.classList.add('opacity-0', 'pointer-events-none');
+                    rightBtn.classList.remove('opacity-100');
+                }
+            }
+
+            if (container) {
+                container.addEventListener('scroll', updateScrollButtons);
+                window.addEventListener('resize', updateScrollButtons);
+                
+                table.on('draw', function() {
+                    setTimeout(updateScrollButtons, 150);
+                });
+            }
 
             // Select All Checkbox
             $(document).on('change', '#selectAll', function() {
@@ -368,6 +437,15 @@
     </script>
 
     <style>
+        #tableScrollContainer {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #tableScrollLeft, #tableScrollRight {
+            transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+        }
+
         .dataTables_wrapper .dataTables_length,
         .dataTables_wrapper .dataTables_filter,
         .dataTables_wrapper .dataTables_info,

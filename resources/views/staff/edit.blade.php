@@ -447,7 +447,7 @@
                 rules: {
                     role_id: { required: true },
                     first_name: { required: true, lettersnspaces: true, minlength: 3 },
-                    last_name: { lettersnspaces: true, minlength: 3 },
+                    last_name: { lettersnspaces: true, minlength: 1 },
                     father_name: { required: true, lettersnspaces: true, minlength: 3 },
                     mother_name: { lettersnspaces: true, minlength: 3 },
                     dob: { pastdate: true },
