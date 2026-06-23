@@ -130,6 +130,9 @@ Route::middleware(['auth', 'customer.profile'])->group(function () {
             Route::post('/update/{id}', [App\Http\Controllers\JobLinkController::class, 'update'])->middleware('permission:job-links.edit')->name('admin.services.job-links.update');
             Route::delete('/delete/{id}', [App\Http\Controllers\JobLinkController::class, 'destroy'])->middleware('permission:job-links.delete')->name('admin.services.job-links.destroy');
             Route::post('/status/{id}', [App\Http\Controllers\JobLinkController::class, 'toggleStatus'])->middleware('permission:job-links.status')->name('admin.services.job-links.status');
+            Route::post('/export', [App\Http\Controllers\JobLinkController::class, 'export'])->middleware('permission:job-links.export')->name('admin.services.job-links.export');
+            Route::post('/import', [App\Http\Controllers\JobLinkController::class, 'import'])->middleware('permission:job-links.import')->name('admin.services.job-links.import');
+            Route::get('/download-template', [App\Http\Controllers\JobLinkController::class, 'downloadTemplate'])->middleware('permission:job-links.import')->name('admin.services.job-links.download-template');
             Route::post('/bulk-delete', [App\Http\Controllers\JobLinkController::class, 'bulkDestroy'])->middleware('permission:job-links.delete')->name('admin.services.job-links.bulk-delete');
         });
 

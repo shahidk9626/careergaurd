@@ -33,6 +33,8 @@ class ServicesPlansPermissionSeeder extends Seeder
             ['module_id' => $servicesModule->id, 'name' => 'Create Job Links', 'slug' => 'job-links.create'],
             ['module_id' => $servicesModule->id, 'name' => 'Edit Job Links', 'slug' => 'job-links.edit'],
             ['module_id' => $servicesModule->id, 'name' => 'Delete Job Links', 'slug' => 'job-links.delete'],
+            ['module_id' => $servicesModule->id, 'name' => 'Export Job Links', 'slug' => 'job-links.export'],
+            ['module_id' => $servicesModule->id, 'name' => 'Import Job Links', 'slug' => 'job-links.import'],
 
             ['module_id' => $servicesModule->id, 'name' => 'View Questions', 'slug' => 'questions.view'],
             ['module_id' => $servicesModule->id, 'name' => 'Create Questions', 'slug' => 'questions.create'],

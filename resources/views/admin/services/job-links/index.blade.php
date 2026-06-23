@@ -18,8 +18,20 @@
                             @endif
                             @if(hasPermission('job-links.create'))
                                 <button onclick="openCreateModal()"
-                                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85">
+                                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85 mr-2">
                                     <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Job Link
+                                </button>
+                            @endif
+                            @if(hasPermission('job-links.export'))
+                                <button onclick="exportJobs()"
+                                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-green-600 to-teal-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85 mr-2">
+                                    <i class="fas fa-file-export"></i>&nbsp;&nbsp;Export
+                                </button>
+                            @endif
+                            @if(hasPermission('job-links.import'))
+                                <button onclick="openImportModal()"
+                                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-blue-600 to-cyan-500 leading-pro text-xs ease-soft-in tracking-tight-soft hover:scale-102 active:opacity-85">
+                                    <i class="fas fa-file-import"></i>&nbsp;&nbsp;Import
                                 </button>
                             @endif
                         </div>
@@ -164,6 +176,47 @@
 
         </div>
     </div>
+
+    <!-- Job Import Modal -->
+    <div id="importModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div style="background-color: #ffffff; width: 100%; max-width: 500px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 90vh; margin: 1rem; overflow: hidden;">
+            <form id="importForm" enctype="multipart/form-data" style="display: flex; flex-direction: column; flex: 1; overflow: hidden; margin: 0;">
+                @csrf
+                <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+                    <h6 style="margin: 0; font-weight: 700; color: #334155; font-size: 1.125rem;">Import Job Links</h6>
+                    <button type="button" onclick="closeImportModal()" style="background: none; border: none; font-size: 1.5rem; line-height: 1; color: #94a3b8; cursor: pointer; padding: 0;">&times;</button>
+                </div>
+
+                <div style="padding: 1.5rem; overflow-y: auto; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569;">Select Excel Sheet <span style="color: #ef4444;">*</span></label>
+                        <input type="file" name="file" id="importFile" required accept=".xlsx, .xls, .csv" style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; outline: none; background-color: #f8fafc;">
+                        <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #64748b; line-height: 1.4;">
+                            Supported formats: <strong>.xlsx, .xls, .csv</strong>.
+                        </p>
+                    </div>
+
+                    <div style="padding: 1rem; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem; display: flex; align-items: start; gap: 0.75rem;">
+                        <i class="fas fa-info-circle" style="color: #16a34a; font-size: 1.125rem; margin-top: 0.125rem;"></i>
+                        <div style="font-size: 0.75rem; color: #14532d; line-height: 1.4;">
+                            Please ensure your spreadsheet matches the columns of our job form exactly. Click below to download a structured sample template.
+                        </div>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <a href="{{ route('admin.services.job-links.download-template') }}" class="inline-block px-4 py-2 font-bold text-center text-purple-700 hover:text-purple-900 border border-purple-300 hover:border-purple-500 rounded-lg cursor-pointer text-xs transition-all">
+                            <i class="fas fa-file-download mr-1"></i> Download Sample Excel Template
+                        </a>
+                    </div>
+                </div>
+
+                <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background-color: #f8fafc; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; justify-content: flex-end; gap: 0.75rem; flex-shrink: 0;">
+                    <button type="button" onclick="closeImportModal()" style="padding: 0.625rem 1.25rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569; background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; cursor: pointer;">Cancel</button>
+                    <button type="submit" id="submitImportBtn" style="padding: 0.625rem 1.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: white; background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%); border: none; border-radius: 0.5rem; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -295,6 +348,51 @@
                     Swal.fire('Success', response.success, 'success');
                     closeModal();
                     table.ajax.reload();
+                });
+            });
+
+            $('#importForm').on('submit', function (e) {
+                e.preventDefault();
+                let formData = new FormData(this);
+                
+                let submitBtn = $('#submitImportBtn');
+                submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Importing...');
+
+                Swal.fire({
+                    title: 'Processing...',
+                    text: 'Please wait while we import the job links.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: "{{ route('admin.services.job-links.import') }}",
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        Swal.close();
+                        submitBtn.prop('disabled', false).text('Import');
+                        closeImportModal();
+                        
+                        Swal.fire('Success', response.success || 'Jobs imported successfully.', 'success');
+                        table.ajax.reload();
+                    },
+                    error: function (xhr) {
+                        Swal.close();
+                        submitBtn.prop('disabled', false).text('Import');
+                        
+                        let errorMsg = 'Failed to import job links.';
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMsg = xhr.responseJSON.error;
+                        } else if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            errorMsg = Object.values(xhr.responseJSON.errors).map(err => err[0]).join('<br>');
+                        }
+                        Swal.fire('Error', errorMsg, 'error');
+                    }
                 });
             });
         });
@@ -462,6 +560,44 @@
             $.post("{{ url('admin/services/job-links/status') }}/" + id, { _token: "{{ csrf_token() }}" }, function (response) {
                 table.ajax.reload();
             });
+        }
+
+        function exportJobs() {
+            let filteredIds = table.rows({ filter: 'applied' }).data().toArray().map(row => row.id);
+            
+            if (filteredIds.length === 0) {
+                Swal.fire('Info', 'No records found to export.', 'info');
+                return;
+            }
+
+            let form = $('<form>', {
+                action: "{{ route('admin.services.job-links.export') }}",
+                method: 'POST'
+            }).append($('<input>', {
+                type: 'hidden',
+                name: '_token',
+                value: "{{ csrf_token() }}"
+            })).append($('<input>', {
+                type: 'hidden',
+                name: 'ids',
+                value: JSON.stringify(filteredIds)
+            }));
+            
+            $('body').append(form);
+            form.submit();
+            form.remove();
+        }
+
+        function openImportModal() {
+            $('#importForm')[0].reset();
+            let modal = document.getElementById('importModal');
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+        }
+
+        function closeImportModal() {
+            let modal = document.getElementById('importModal');
+            modal.style.display = 'none';
         }
     </script>
 

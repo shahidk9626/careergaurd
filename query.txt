@@ -77,3 +77,24 @@ SELECT
     NOW()
 FROM permissions 
 WHERE slug IN ('commission.view', 'commission.export', 'commission.summary');
+
+-- ==========================================
+-- 3. JOB LINKS EXPORT & IMPORT SYSTEM
+-- ==========================================
+
+-- Register Job Links Export & Import Permissions
+INSERT INTO permissions (module_id, name, slug, created_at, updated_at) VALUES 
+((SELECT id FROM modules WHERE slug = 'services' LIMIT 1), 'Export Job Links', 'job-links.export', NOW(), NOW()),
+((SELECT id FROM modules WHERE slug = 'services' LIMIT 1), 'Import Job Links', 'job-links.import', NOW(), NOW());
+
+-- Map Permissions to Admin Role
+INSERT INTO role_permissions (role_id, permission_id, allowed, created_at, updated_at)
+SELECT 
+    (SELECT id FROM roles WHERE slug = 'admin' LIMIT 1), 
+    id, 
+    1, 
+    NOW(), 
+    NOW()
+FROM permissions 
+WHERE slug IN ('job-links.export', 'job-links.import');
+
