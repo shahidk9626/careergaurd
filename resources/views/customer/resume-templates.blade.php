@@ -202,7 +202,7 @@
     .rt-preview {
         position: relative;
         width: 100%;
-        padding-top: 125%;
+        padding-top: 150%;
         background: #f8fafc;
         overflow: hidden;
     }
@@ -213,7 +213,7 @@
         align-items: center;
         justify-content: center;
     }
-    .rt-preview-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .rt-preview-img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.5s; }
     .rt-card:hover .rt-preview-img { transform: scale(1.05); }
 
     .rt-mockup {
@@ -529,7 +529,7 @@
                     <a href="{{ route('customer.resume-templates.download', $template->id) }}" class="rt-download-btn">
                         <i class="fas fa-download" style="font-size: 12px;"></i> Download Template
                     </a>
-                </div>
+                </div> 
             </div>
         @empty
             <div style="grid-column: 1 / -1;">

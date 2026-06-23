@@ -84,6 +84,9 @@
                     url: "{{ route('staff.index') }}",
                     type: 'GET'
                 },
+                scrollX: true,
+                responsive: false, 
+                autoWidth: false,
                 columns: [
                 @if(hasPermission('staff.delete'))
                 {
@@ -187,7 +190,7 @@
                 order: [
                     [@if(hasPermission('staff.delete')) 1 @else 0 @endif, 'desc']
                 ],
-                responsive: true,
+                scrollX: true,
                 language: {
                     paginate: {
                         previous: "<i class='fas fa-angle-left'></i>",
@@ -401,5 +404,17 @@
             border-bottom: 1px solid #f8f9fa;
             vertical-align: middle !important;
         }
+        /* Force the DataTables container to handle overflow */
+.dataTables_wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Prevent the table from shrinking smaller than its content */
+#staffTable {
+    width: 100% !important;
+    min-width: max-content; 
+}
     </style>
 @endpush
