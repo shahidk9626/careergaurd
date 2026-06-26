@@ -35,21 +35,65 @@
         max-width: 640px;
     }
 
-    /* ===== ALERT ===== */
-    .ih-alert {
-        margin-bottom: 24px;
-        padding: 14px 18px;
-        background: #fef2f2;
-        border: 1px solid #fecaca;
-        border-radius: 10px;
-        color: #b91c1c;
-        font-size: 13px;
+    /* ===== SEARCH BAR ===== */
+    .ih-search-wrap {
+        position: relative;
+        max-width: 520px;
+        margin-bottom: 32px;
     }
+    .ih-search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 14px;
+        pointer-events: none;
+    }
+    .ih-search-input {
+        width: 100%;
+        height: 48px;
+        padding: 0 44px 0 44px;
+        font-size: 14px;
+        color: #334155;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        outline: none;
+        transition: all 0.2s;
+        box-sizing: border-box;
+    }
+    .ih-search-input::placeholder { color: #94a3b8; }
+    .ih-search-input:focus {
+        border-color: #c084fc;
+        box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.15);
+    }
+    .ih-search-clear {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 26px;
+        height: 26px;
+        border: none;
+        background: #f1f5f9;
+        color: #64748b;
+        border-radius: 50%;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        transition: all 0.2s;
+    }
+    .ih-search-clear:hover { background: #e2e8f0; color: #334155; }
+    .ih-search-clear.is-visible { display: flex; }
 
     /* ===== SECTION BLOCK (shared) ===== */
     .ih-section {
         margin-bottom: 32px;
     }
+    .ih-section.is-hidden { display: none; }
     .ih-section-head {
         display: flex;
         align-items: center;
@@ -103,6 +147,7 @@
         transition: all 0.25s ease;
         cursor: default;
     }
+    .ih-tech-card.is-hidden { display: none; }
     .ih-tech-card:hover {
         border-color: #e9d5ff;
         background: linear-gradient(135deg, #fff 0%, #faf5ff 100%);
@@ -172,6 +217,7 @@
         position: relative;
         overflow: hidden;
     }
+    .ih-track-card.is-hidden { display: none; }
     .ih-track-card::before {
         content: '';
         position: absolute;
@@ -331,6 +377,41 @@
         line-height: 1.6;
     }
 
+    /* ===== NO RESULTS (search) ===== */
+    .ih-no-results {
+        display: none;
+        background: #fff;
+        border: 1px dashed #e2e8f0;
+        border-radius: 16px;
+        padding: 48px 32px;
+        text-align: center;
+    }
+    .ih-no-results.is-visible { display: block; }
+    .ih-no-results-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 14px;
+        background: #faf5ff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #d8b4fe;
+        font-size: 24px;
+    }
+    .ih-no-results h6 {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 6px 0;
+    }
+    .ih-no-results p {
+        font-size: 13px;
+        color: #64748b;
+        margin: 0;
+    }
+    .ih-no-results strong { color: #7e22ce; }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 640px) {
         .ih-title { font-size: 24px; }
@@ -356,8 +437,17 @@
         </div>
     @endif
 
+    {{-- ===== SEARCH BAR ===== --}}
+    <div class="ih-search-wrap">
+        <span class="ih-search-icon"><i class="fas fa-search"></i></span>
+        <input type="text" id="ihSearchInput" class="ih-search-input" placeholder="Search technologies or tracks..." autocomplete="off">
+        <button type="button" id="ihSearchClear" class="ih-search-clear" aria-label="Clear search">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
     {{-- ===== TECHNOLOGIES SECTION ===== --}}
-    <section class="ih-section">
+    <section class="ih-section" id="ihTechSection">
         <div class="ih-section-head">
             <div class="ih-section-title-wrap">
                 <h5 class="ih-section-title">Technologies Available</h5>
@@ -373,7 +463,7 @@
 
         <div class="ih-tech-grid">
             @forelse($techCounts as $tech => $count)
-                <div class="ih-tech-card">
+                <div class="ih-tech-card" data-search="{{ Str::lower($tech) }}">
                     <div class="ih-tech-icon"><i class="fas fa-code"></i></div>
                     <div class="ih-tech-info">
                         <span class="ih-tech-name">{{ $tech }}</span>
@@ -387,7 +477,7 @@
     </section>
 
     {{-- ===== PREPARATION TRACKS SECTION ===== --}}
-    <section class="ih-section">
+    <section class="ih-section" id="ihTracksSection">
         <div class="ih-section-head">
             <div class="ih-section-title-wrap">
                 <h5 class="ih-section-title">Preparation Tracks</h5>
@@ -403,7 +493,7 @@
 
         <div class="ih-tracks-grid">
             @forelse($categories as $category)
-                <div class="ih-track-card">
+                <div class="ih-track-card" data-search="{{ Str::lower($category->name) }}">
                     <div>
                         <div class="ih-track-head">
                             <div class="ih-track-icon">
@@ -440,6 +530,73 @@
         </div>
     </section>
 
+    {{-- ===== NO SEARCH RESULTS ===== --}}
+    <div class="ih-no-results" id="ihNoResults">
+        <div class="ih-no-results-icon"><i class="fas fa-search"></i></div>
+        <h6>No matches found</h6>
+        <p>Nothing matches "<strong id="ihNoResultsTerm"></strong>". Try a different keyword.</p>
+    </div>
+
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    (function () {
+        var input      = document.getElementById('ihSearchInput');
+        var clearBtn   = document.getElementById('ihSearchClear');
+        var techCards  = Array.prototype.slice.call(document.querySelectorAll('.ih-tech-card'));
+        var trackCards = Array.prototype.slice.call(document.querySelectorAll('.ih-track-card'));
+        var techSection   = document.getElementById('ihTechSection');
+        var tracksSection = document.getElementById('ihTracksSection');
+        var noResults     = document.getElementById('ihNoResults');
+        var noResultsTerm = document.getElementById('ihNoResultsTerm');
+
+        function applyFilter() {
+            var term = input.value.trim().toLowerCase();
+
+            clearBtn.classList.toggle('is-visible', term.length > 0);
+
+            var techVisible = 0;
+            techCards.forEach(function (card) {
+                var match = card.getAttribute('data-search').indexOf(term) !== -1;
+                card.classList.toggle('is-hidden', !match);
+                if (match) techVisible++;
+            });
+
+            var trackVisible = 0;
+            trackCards.forEach(function (card) {
+                var match = card.getAttribute('data-search').indexOf(term) !== -1;
+                card.classList.toggle('is-hidden', !match);
+                if (match) trackVisible++;
+            });
+
+            // Hide a whole section when it has cards but none match
+            if (techSection) {
+                techSection.classList.toggle('is-hidden', techCards.length > 0 && techVisible === 0);
+            }
+            if (tracksSection) {
+                tracksSection.classList.toggle('is-hidden', trackCards.length > 0 && trackVisible === 0);
+            }
+
+            // Global "no results" message
+            var totalCards = techCards.length + trackCards.length;
+            var totalVisible = techVisible + trackVisible;
+            if (totalCards > 0 && totalVisible === 0 && term.length > 0) {
+                noResultsTerm.textContent = input.value.trim();
+                noResults.classList.add('is-visible');
+            } else {
+                noResults.classList.remove('is-visible');
+            }
+        }
+
+        input.addEventListener('input', applyFilter);
+        clearBtn.addEventListener('click', function () {
+            input.value = '';
+            input.focus();
+            applyFilter();
+        });
+    })();
+</script>
+@endpush

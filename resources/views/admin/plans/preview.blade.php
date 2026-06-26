@@ -72,7 +72,7 @@
                                                 @if($s->category)
                                                     <span
                                                         class="text-xxs font-medium px-2 py-0.5 bg-gray-50 border border-gray-200 text-slate-500 rounded-md">
-                                                        {{ $s->category->name }}
+                                                        
                                                     </span>
                                                 @endif
                                             @endforeach

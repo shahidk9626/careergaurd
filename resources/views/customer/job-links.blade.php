@@ -19,7 +19,39 @@
     @media (max-width: 1023px) { .jb-layout { grid-template-columns: 1fr; } }
 
     /* SIDEBAR */
-    .jb-sidebar { position: sticky; top: 24px; background: #fff; border: 1px solid #f1f5f9; border-radius: 16px; padding: 24px; box-shadow: 0 20px 27px 0 rgba(0,0,0,0.05); }
+    /* REPLACE YOUR EXISTING .jb-sidebar WITH THIS EXACT BLOCK */
+.jb-sidebar { 
+    position: sticky; 
+    top: 24px; 
+    
+    /* THE DESKTOP SCROLL FIX */
+    height: calc(100vh - 48px); /* Forces exact height instead of max-height */
+    min-height: 0; /* Critical: overrides CSS Grid intrinsic sizing */
+    overflow-y: auto; /* Triggers the scrollbar */
+    overscroll-behavior: contain; /* Stops background scrolling when you hit the bottom */
+    
+    /* ORIGINAL STYLES */
+    background: #fff; 
+    border: 1px solid #f1f5f9; 
+    border-radius: 16px; 
+    padding: 24px; 
+    box-shadow: 0 20px 27px 0 rgba(0,0,0,0.05); 
+}
+
+/* SIDEBAR SCROLLBAR STYLING */
+.jb-sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+.jb-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.jb-sidebar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+.jb-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
+}
     @media (max-width: 1023px) { .jb-sidebar { position: static; } }
     .jb-sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9; }
     .jb-sidebar-title { font-size: 15px; font-weight: 700; color: #1e293b; margin: 0; display: flex; align-items: center; gap: 8px; }
@@ -265,24 +297,25 @@
                             </div>
 
                             <div class="jb-card-right">
-                                <span class="jb-date">{{ $job->posted_date }}</span>
-                                @if($job->mobile_number)
-                                    @php
-                                        $cleanPhone = preg_replace('/[^0-9]/', '', $job->mobile_number);
-                                        if (strlen($cleanPhone) === 10) $cleanPhone = '91' . $cleanPhone;
-                                        $waMessage = 'Hello, I am interested in the ' . ($job->job_title ?? $job->title) . ' job position.';
-                                        if ($job->company_name) $waMessage .= ' at ' . $job->company_name;
-                                        $waUrl = 'https://wa.me/' . $cleanPhone . '?text=' . rawurlencode($waMessage);
-                                    @endphp
-                                    <a href="{{ $waUrl }}" target="_blank" rel="noopener noreferrer" class="jb-cta-btn" style="background:linear-gradient(310deg,#128c7e 0%,#25d366 100%);box-shadow:0 4px 7px -1px rgba(37,211,102,0.25);">
-                                        Apply via WhatsApp <i class="fab fa-whatsapp" style="font-size:12px;margin-left:4px;"></i>
-                                    </a>
-                                @elseif($job->job_url)
-                                    <a href="{{ $job->job_url }}" target="_blank" rel="noopener noreferrer" class="jb-cta-btn">
-                                        Apply Now <i class="fas fa-external-link-alt"></i>
-                                    </a>
-                                @endif
-                            </div>
+    <span class="jb-date">{{ $job->posted_date }}</span>
+    @if($job->mobile_number)
+        @php
+            $cleanPhone = preg_replace('/[^0-9]/', '', $job->mobile_number);
+            if (strlen($cleanPhone) === 10) $cleanPhone = '91' . $cleanPhone;
+            $waMessage = 'Hello, I am interested in the ' . ($job->job_title ?? $job->title) . ' job position.';
+            if ($job->company_name) $waMessage .= ' at ' . $job->company_name;
+            $waUrl = 'https://wa.me/' . $cleanPhone . '?text=' . rawurlencode($waMessage);
+        @endphp
+        <a href="{{ $waUrl }}" target="_blank" rel="noopener noreferrer" class="jb-cta-btn" style="background:linear-gradient(310deg,#128c7e 0%,#25d366 100%);box-shadow:0 4px 7px -1px rgba(37,211,102,0.25);">
+            Apply via WhatsApp <i class="fab fa-whatsapp" style="font-size:12px;margin-left:4px;"></i>
+        </a>
+    @endif
+    @if($job->job_url)
+        <a href="{{ $job->job_url }}" target="_blank" rel="noopener noreferrer" class="jb-cta-btn">
+            Apply Now <i class="fas fa-external-link-alt"></i>
+        </a>
+    @endif
+</div>
                         </div>
 
                         {{-- Contact Details --}}
