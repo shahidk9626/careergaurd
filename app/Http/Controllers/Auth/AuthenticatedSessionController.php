@@ -28,6 +28,17 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
+        // Check if user is inactive
+        if ($user && $user->status === 'inactive') {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'email' => ['you are inactive contact to adminstrator'],
+            ]);
+        }
+
         // Run logic only if customer (role_id = 0)
         if ($user->role_id === 0) {
             if (!$user->hasVerifiedEmail()) {
