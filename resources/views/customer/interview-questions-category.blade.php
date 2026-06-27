@@ -96,6 +96,7 @@
         box-shadow: 0 20px 27px 0 rgba(0,0,0,0.05);
         margin-bottom: 24px;
     }
+    
     .iq-toolbar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
     .iq-search { flex: 1 1 280px; position: relative; }
     .iq-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 13px; pointer-events: none; }
@@ -114,6 +115,33 @@
         text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; white-space: nowrap;
     }
     .iq-clear:hover { color: #be185d; border-color: #fbcfe8; background: #fdf2f8; }
+
+    
+
+    /* ===== FILTER TOOLBAR — MOBILE ===== */
+@media (max-width: 640px) {
+    .iq-toolbar {
+        padding: 16px;
+    }
+    .iq-toolbar-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .iq-search,
+    .iq-select-wrap {
+        flex: 1 1 100%;
+        width: 100%;
+        min-width: 0;
+    }
+    .iq-clear {
+        width: 100%;
+        justify-content: center;
+    }
+    .iq-active-bar {
+        gap: 6px;
+    }
+}
 
     /* ===== ACTIVE FILTERS ===== */
     .iq-active-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #f1f5f9; }
@@ -320,7 +348,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="iq-select-wrap" style="flex:0 1 160px;">
+                    <div class="iq-select-wrap">
                         <select name="difficulty" id="difficulty" onchange="this.form.submit()" class="iq-select">
                             <option value="">All Difficulties</option>
                             <option value="Easy"   {{ request('difficulty') === 'Easy'   ? 'selected' : '' }}>Easy</option>

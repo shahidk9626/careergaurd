@@ -109,6 +109,7 @@ class CustomerBenefitController extends Controller
         return view('customer.job-links', [
             'jobs'       => $paginatedJobs,
             'categories' => $categories,
+        
         ]);
     }
 
@@ -209,11 +210,12 @@ class CustomerBenefitController extends Controller
         $allowedCategoryIds = $user->getActivePurchasedPlanCategories('question');
 
         $categories = ServiceCategory::whereIn('id', $allowedCategoryIds)
-            ->where('status', 'active')
-            ->withCount(['interviewQuestions' => function ($q) {
-                $q->where('status', 'active');
-            }])
-            ->get();
+    ->where('status', 'active')
+    ->withCount(['interviewQuestions' => function ($q) {
+        $q->where('status', 'active');
+    }])
+    ->paginate(16)
+    ->withQueryString();
 
         $questions = InterviewQuestion::where('status', 'active')
             ->whereHas('categories', function ($q) use ($allowedCategoryIds) {

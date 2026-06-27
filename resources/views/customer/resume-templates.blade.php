@@ -165,6 +165,37 @@
     .rt-clear { margin-left: auto; font-size: 11px; font-weight: 700; color: #64748b; text-decoration: none; }
     .rt-clear:hover { color: #7e22ce; }
 
+    /* TOOLBAR — MOBILE */
+@media (max-width: 640px) {
+    .rt-toolbar {
+        padding: 16px;
+    }
+    .rt-toolbar-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    .rt-field-search,
+    .rt-field-category,
+    .rt-field-show,
+    .rt-field-button {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+    .rt-apply-btn {
+        width: 100%;
+        padding: 0;
+    }
+    .rt-active-filters {
+        gap: 6px;
+    }
+    .rt-clear {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 4px;
+    }
+}
+
     /* RESULTS COUNT */
     .rt-count {
         font-size: 12px;

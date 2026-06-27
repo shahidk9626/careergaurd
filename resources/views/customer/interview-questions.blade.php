@@ -412,6 +412,61 @@
     }
     .ih-no-results strong { color: #7e22ce; }
 
+    /* ===== PAGINATION ===== */
+    .ih-pagination-wrap {
+        margin-top: 24px;
+        padding: 16px;
+        background: #fff;
+        border: 1px solid #f1f5f9;
+        border-radius: 16px;
+        display: flex;
+        justify-content: center;
+    }
+    .ih-pagination-wrap .pagination {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        align-items: center;
+    }
+    .ih-pagination-wrap .page-link {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px !important;
+        font-size: 12px;
+        font-weight: 600;
+        color: #475569;
+        border: 1px solid #f1f5f9;
+        background: #fff;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .ih-pagination-wrap .page-link:hover {
+        background: #faf5ff;
+        color: #7e22ce;
+        border-color: #e9d5ff;
+    }
+    .ih-pagination-wrap .page-item.active .page-link {
+        background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%);
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 4px 7px -1px rgba(126, 34, 206, 0.25);
+    }
+    .ih-pagination-wrap .page-item.disabled .page-link {
+        color: #cbd5e1;
+        background: #fff;
+        cursor: not-allowed;
+    }
+    /* Tailwind-paginator fallback (Laravel default svg arrows / aria links) */
+    .ih-pagination-wrap nav[role="navigation"] { width: 100%; }
+    .ih-pagination-wrap svg { width: 16px; height: 16px; }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 640px) {
         .ih-title { font-size: 24px; }
@@ -483,10 +538,10 @@
                 <h5 class="ih-section-title">Preparation Tracks</h5>
                 <p class="ih-section-sub">Choose a track to start practicing</p>
             </div>
-            @if(count($categories) > 0)
+            @if($categories->total() > 0)
                 <span class="ih-section-count">
                     <i class="fas fa-bookmark" style="font-size: 10px;"></i>
-                    {{ count($categories) }} {{ Str::plural('Track', count($categories)) }}
+                    {{ $categories->total() }} {{ Str::plural('Track', $categories->total()) }}
                 </span>
             @endif
         </div>
@@ -528,6 +583,13 @@
                 </div>
             @endforelse
         </div>
+
+        {{-- ===== PAGINATION ===== --}}
+        @if($categories->hasPages())
+            <div class="ih-pagination-wrap">
+                {{ $categories->onEachSide(1)->links() }}
+            </div>
+        @endif
     </section>
 
     {{-- ===== NO SEARCH RESULTS ===== --}}

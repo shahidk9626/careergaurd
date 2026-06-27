@@ -65,7 +65,7 @@
                                         class="flex items-center justify-center w-5 h-5 mr-3 mt-1 rounded-lg bg-gray-100 text-center flex-none">
                                         <i class="fas {{ $meta['icon'] }} {{ $meta['color'] }} text-xs"></i>
                                     </div>
-                                    <div class="flex flex-col">
+                                    <div class="flex flex-col border-none shadow-none !border-b-0">
                                         <span class="text-sm font-bold text-slate-700">{{ $meta['label'] }}</span>
                                         <div class="flex flex-wrap gap-1 mt-1">
                                             @foreach($services as $s)
@@ -81,7 +81,7 @@
                                 </li>
                             @endforeach
 
-                            <hr class="h-px my-4 bg-transparent bg-gradient-to-r from-transparent via-black/10 to-transparent">
+                            
 
                             <li class="relative flex items-center py-2 border-0 text-inherit">
                                 <div
