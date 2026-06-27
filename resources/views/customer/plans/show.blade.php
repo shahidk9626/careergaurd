@@ -192,6 +192,106 @@
     </div>
 </div>
 
+<!-- Terms and Conditions Modal -->
+<div id="termsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div style="background-color: #ffffff; width: 100%; max-width: 700px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; max-height: 85vh; margin: 1.5rem;">
+        
+        <!-- Modal Header -->
+        <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%); border-top-left-radius: 16px; border-top-right-radius: 16px;">
+            <h6 style="margin: 0; font-weight: 700; color: #ffffff; font-size: 1.125rem;">Terms & Conditions</h6>
+            <button type="button" onclick="closeTermsModal()" style="background: none; border: none; font-size: 1.5rem; line-height: 1; color: #ffffff; cursor: pointer; padding: 0; opacity: 0.8; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">&times;</button>
+        </div>
+
+        <!-- Modal Body (Scrollable Terms Content) -->
+        <div style="padding: 1.5rem; overflow-y: auto; flex-grow: 1; font-size: 0.875rem; color: #475569; line-height: 1.6; border-bottom: 1px solid #e2e8f0;">
+            <h5 style="font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 1rem; text-align: center; font-size: 1rem;">CareerGuard & FutureGuard Membership Terms & Conditions</h5>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div>
+                    <strong style="color: #1e293b;">1. Membership</strong>
+                    <p style="margin: 0.25rem 0 0 0;">CareerGuard and FutureGuard are membership-based support platforms providing career resources, education support programs, skill development opportunities, business guidance, and other member benefits. Membership is voluntary and available only to eligible applicants whose registration is accepted by the organization.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">2. Membership Plans</strong>
+                    <p style="margin: 0.25rem 0 0 0;">Membership benefits are available only during the active membership period. Each membership plan includes benefits described on the official website. Higher membership plans may provide a higher maximum support limit in accordance with the applicable membership policy.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">3. Membership Fees</strong>
+                    <p style="margin: 0.25rem 0 0 0;">All membership fees are payable in advance. Membership fees are non-refundable, non-transferable, and cannot be adjusted unless required by applicable law. Fees are collected for platform access, administration, member resources, skill development, digital content, support services, and other membership benefits.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">4. CareerGuard Benefits</strong>
+                    <p style="margin: 0.25rem 0 0 0;">Job Opportunities, Resume Templates, Interview Questions & Answers, Career Resources, Business Opportunities, Member Dashboard, WhatsApp & Email Notifications, and other member benefits introduced from time to time. Availability may change without prior notice.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">5. Financial Assistance Support</strong>
+                    <p style="margin: 0.25rem 0 0 0;">Financial Assistance Support is not guaranteed and is subject to active membership, eligibility verification, identity verification, employment verification, document submission, internal review, and compliance with the Membership Policy. Maximum support amounts represent the maximum eligible limit only. Final approved support, if any, is determined after assessment. Support may vary depending on layoff, company closure, workforce reduction, termination, resignation, or other employment circumstances.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">6. Claim Verification</strong>
+                    <p style="margin: 0.25rem 0 0 0;">Members must provide genuine information. False information or forged documents may result in rejection of benefits and cancellation of membership.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">7. FutureGuard Kids</strong>
+                    <p style="margin: 0.25rem 0 0 0;">FutureGuard Kids is a long-term membership-based education support program. Members may choose monthly or yearly membership. Education support eligibility arises only after the required membership period and successful verification. Education support is not guaranteed.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">8. Skill Development</strong>
+                    <p style="margin: 0.25rem 0 0 0;">Eligible members may attend skill development programs conducted in selected cities. Where included, no additional course fee will be charged. Members bear their own travel, accommodation, food, and personal expenses unless otherwise announced.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">9. Member Responsibilities</strong>
+                    <p style="margin: 0.25rem 0 0 0;">Members agree to provide accurate information, maintain updated contact details, protect login credentials, follow membership policies, and cooperate during verification.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">10. Cancellation & Suspension</strong>
+                    <p style="margin: 0.25rem 0 0 0;">Membership may be suspended or terminated for false information, fraud, policy violations, or illegal activity. Benefits may be cancelled.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">11. Third-Party Services</strong>
+                    <p style="margin: 0.25rem 0 0 0;">CareerGuard may provide access to third-party employers, educational resources, franchise information, and business opportunities. Members should independently verify all information.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">12. No Guarantee</strong>
+                    <p style="margin: 0.25rem 0 0 0;">CareerGuard and FutureGuard do not guarantee employment, interview selection, salary, business success, educational admission, financial assistance approval, or education support approval.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">13. Modification</strong>
+                    <p style="margin: 0.25rem 0 0 0;">The organization may modify, suspend, revise, or discontinue membership plans, benefits, eligibility criteria, policies, or services at any time, subject to applicable law.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">14. Limitation of Liability</strong>
+                    <p style="margin: 0.25rem 0 0 0;">The organization's liability is limited to the services provided under the membership to the maximum extent permitted by applicable law.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">15. Governing Law</strong>
+                    <p style="margin: 0.25rem 0 0 0;">These Terms & Conditions are governed by the laws of India. Jurisdiction shall lie with the competent courts where the organization has its registered office unless otherwise required by law.</p>
+                </div>
+                <div>
+                    <strong style="color: #1e293b;">16. Acceptance</strong>
+                    <p style="margin: 0.25rem 0 0 0;">By clicking 'I Agree', registering an account, or making payment, you confirm that you have read, understood, and accepted these Terms & Conditions, the Membership Policy, Privacy Policy, and Refund Policy.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div style="padding: 1.25rem 1.5rem; background-color: #f8fafc; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Checkbox Option -->
+            <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; user-select: none;">
+                <input type="checkbox" id="agreeTermsCheckbox" onchange="toggleAgreeButton()" style="margin-top: 0.25rem; width: 1.15rem; height: 1.15rem; border-radius: 0.25rem; border: 1px solid #cbd5e1; accent-color: #db2777; cursor: pointer;">
+                <span style="font-size: 0.8rem; font-weight: 600; color: #334155;">I have read, understood, and accept the CareerGuard & FutureGuard Membership Terms & Conditions.</span>
+            </label>
+            
+            <!-- Actions -->
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <button type="button" onclick="closeTermsModal()" style="padding: 0.625rem 1.25rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #475569; background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;">Cancel</button>
+                <button type="button" id="proceedPurchaseBtn" onclick="executePurchase()" disabled style="padding: 0.625rem 1.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: white; background: #94a3b8; border: none; border-radius: 0.5rem; cursor: not-allowed; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s;">Agree & Purchase</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 @if(auth()->user()->role_id == 0)
     @push('scripts')
         <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
@@ -215,21 +315,40 @@
                 @endif
             });
 
+            let currentPlanIdToPurchase = null;
+
             function confirmPurchase(planId, planName) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Are you sure you want to purchase this membership?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#cb0c9f',
-                    cancelButtonColor: '#8392ab',
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        purchasePlan(planId);
-                    }
-                })
+                currentPlanIdToPurchase = planId;
+                document.getElementById('agreeTermsCheckbox').checked = false;
+                toggleAgreeButton();
+                document.getElementById('termsModal').style.display = 'flex';
+            }
+
+            function toggleAgreeButton() {
+                const isChecked = document.getElementById('agreeTermsCheckbox').checked;
+                const btn = document.getElementById('proceedPurchaseBtn');
+                if (isChecked) {
+                    btn.disabled = false;
+                    btn.style.background = 'linear-gradient(310deg, #7e22ce 0%, #db2777 100%)';
+                    btn.style.cursor = 'pointer';
+                } else {
+                    btn.disabled = true;
+                    btn.style.background = '#94a3b8';
+                    btn.style.cursor = 'not-allowed';
+                }
+            }
+
+            function closeTermsModal() {
+                document.getElementById('termsModal').style.display = 'none';
+            }
+
+            function executePurchase() {
+                const isChecked = document.getElementById('agreeTermsCheckbox').checked;
+                if (!isChecked) return;
+                closeTermsModal();
+                if (currentPlanIdToPurchase) {
+                    purchasePlan(currentPlanIdToPurchase);
+                }
             }
 
             function purchasePlan(planId) {
