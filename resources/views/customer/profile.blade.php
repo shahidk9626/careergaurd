@@ -36,6 +36,20 @@
     $isActive     = strtolower($user->status) === 'active';
 @endphp
 
+<style>
+@media (max-width: 640px) {
+    .cta-wrap {
+        flex: 1 1 100% !important;
+        width: 100%;
+        margin-top: 12px;
+    }
+    .cta-btn {
+        display: block;
+        width: 100%;
+    }
+}
+</style>
+
 <div class="w-full mx-auto">
 
     {{-- HERO BANNER --}}
@@ -71,14 +85,14 @@
         </p>
     </div>
 
-    {{-- CTA button --}}
-    <div style="flex-shrink:0;">
-        <button type="button" onclick="openCallbackModal('direct')"
-            class="inline-block px-4 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all border-0 rounded-lg shadow-soft-md cursor-pointer leading-pro ease-soft-in bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85"
-            style="white-space:nowrap;">
-            Request Callback
-        </button>
-    </div>
+   {{-- CTA button --}}
+<div class="cta-wrap" style="flex-shrink:0;">
+    <button type="button" onclick="openCallbackModal('direct')"
+        class="cta-btn inline-block px-4 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all border-0 rounded-lg shadow-soft-md cursor-pointer leading-pro ease-soft-in bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85"
+        style="white-space:nowrap;">
+        Request Callback
+    </button>
+</div>
 
 </div>
     </div>
@@ -208,8 +222,8 @@
                 <div class="flex flex-wrap -mx-3">
                     @foreach($benefits as [$icon, $title, $desc, $count, $href])
                         <div class="w-full max-w-full px-3 mb-4 md:w-6/12 lg:w-4/12 md:flex-none">
-                            <div class="flex flex-col justify-between h-full p-5 border border-gray-100 rounded-xl shadow-soft-sm"
-                                 style="transition: box-shadow .2s, border-color .2s;">
+                            <div class="flex flex-col justify-between h-full border border-gray-100 rounded-xl shadow-soft-sm"
+     style="padding:24px; transition: box-shadow .2s, border-color .2s;">
                                 <div class="mb-4">
                                     <div class="inline-flex items-center justify-center mb-3 text-purple-700 rounded-xl"
                                          style="width:48px; height:48px; background:rgba(124,58,237,0.08);">
