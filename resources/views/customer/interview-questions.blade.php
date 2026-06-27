@@ -413,56 +413,56 @@
     .ih-no-results strong { color: #7e22ce; }
 
     /* ===== PAGINATION ===== */
-    .ih-pagination-wrap {
-        margin-top: 24px;
-        padding: 16px;
-        background: #fff;
-        border: 1px solid #f1f5f9;
-        border-radius: 16px;
-        display: flex;
-        justify-content: center;
-    }
-    .ih-pagination-wrap .pagination {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        align-items: center;
-    }
-    .ih-pagination-wrap .page-link {
-        min-width: 36px;
-        height: 36px;
-        padding: 0 10px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px !important;
-        font-size: 12px;
-        font-weight: 600;
-        color: #475569;
-        border: 1px solid #f1f5f9;
-        background: #fff;
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-    .ih-pagination-wrap .page-link:hover {
-        background: #faf5ff;
-        color: #7e22ce;
-        border-color: #e9d5ff;
-    }
-    .ih-pagination-wrap .page-item.active .page-link {
-        background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%);
-        color: #fff;
-        border-color: transparent;
-        box-shadow: 0 4px 7px -1px rgba(126, 34, 206, 0.25);
-    }
-    .ih-pagination-wrap .page-item.disabled .page-link {
-        color: #cbd5e1;
-        background: #fff;
-        cursor: not-allowed;
-    }
+.ih-pagination-wrap {
+    margin-top: 24px;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid #f1f5f9;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+}
+.ih-pager {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+}
+.ih-page-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    border: 1px solid #f1f5f9;
+    background: #fff;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.ih-page-btn:hover {
+    background: #faf5ff;
+    color: #7e22ce;
+    border-color: #e9d5ff;
+}
+.ih-page-btn.is-active {
+    background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 7px -1px rgba(126, 34, 206, 0.25);
+}
+.ih-page-btn.is-disabled {
+    color: #cbd5e1;
+    background: #fff;
+    cursor: not-allowed;
+}
     /* Tailwind-paginator fallback (Laravel default svg arrows / aria links) */
     .ih-pagination-wrap nav[role="navigation"] { width: 100%; }
     .ih-pagination-wrap svg { width: 16px; height: 16px; }
@@ -585,11 +585,37 @@
         </div>
 
         {{-- ===== PAGINATION ===== --}}
-        @if($categories->hasPages())
-            <div class="ih-pagination-wrap">
-                {{ $categories->onEachSide(1)->links() }}
-            </div>
-        @endif
+        {{-- ===== PAGINATION ===== --}}
+@if($categories->hasPages())
+    <div class="ih-pagination-wrap">
+        <nav aria-label="Page navigation">
+            <ul class="ih-pager">
+                {{-- Previous --}}
+                @if ($categories->onFirstPage())
+                    <li><span class="ih-page-btn is-disabled"><i class="fas fa-angle-left"></i></span></li>
+                @else
+                    <li><a href="{{ $categories->previousPageUrl() }}" class="ih-page-btn"><i class="fas fa-angle-left"></i></a></li>
+                @endif
+
+                {{-- Numbers --}}
+                @foreach ($categories->getUrlRange(1, $categories->lastPage()) as $page => $url)
+                    @if ($page == $categories->currentPage())
+                        <li><span class="ih-page-btn is-active">{{ $page }}</span></li>
+                    @else
+                        <li><a href="{{ $url }}" class="ih-page-btn">{{ $page }}</a></li>
+                    @endif
+                @endforeach
+
+                {{-- Next --}}
+                @if ($categories->hasMorePages())
+                    <li><a href="{{ $categories->nextPageUrl() }}" class="ih-page-btn"><i class="fas fa-angle-right"></i></a></li>
+                @else
+                    <li><span class="ih-page-btn is-disabled"><i class="fas fa-angle-right"></i></span></li>
+                @endif
+            </ul>
+        </nav>
+    </div>
+@endif
     </section>
 
     {{-- ===== NO SEARCH RESULTS ===== --}}
