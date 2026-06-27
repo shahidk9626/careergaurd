@@ -9,6 +9,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/clear-cache', function () {
+    \Illuminate\Support\Facades\Artisan::call('cache:clear');
+    \Illuminate\Support\Facades\Artisan::call('route:clear');
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    \Illuminate\Support\Facades\Artisan::call('view:clear');
+    return "All caches cleared successfully (cache, route, config, view).";
+});
+
 // Custom Manual Verification Route
 Route::get('/customer/verify/{id}/{hash}', [VerifyEmailController::class, 'verifyCustom'])
     ->middleware(['signed', 'throttle:6,1'])
