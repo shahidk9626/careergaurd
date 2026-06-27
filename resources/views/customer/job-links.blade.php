@@ -146,35 +146,6 @@
         justify-content: flex-end;
     }
 }
-/* ===== JOB CARD — MOBILE ===== */
-@media (max-width: 640px) {
-    .jb-card {
-        padding: 18px;
-    }
-    .jb-card-top {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 16px;
-    }
-    .jb-card-right {
-        flex-direction: column;
-        align-items: stretch;
-        width: 100%;
-        gap: 12px;
-    }
-    .jb-date {
-        order: -1;            /* date sits above buttons */
-        align-self: flex-start;
-    }
-    .jb-btn-group {
-        flex-direction: column;
-        width: 100%;
-        gap: 10px;
-    }
-    .jb-btn-group .jb-cta-btn {
-        width: 100%;
-    }
-}
 </style>
 
 <div class="jb-page">
@@ -412,59 +383,10 @@
                 @endforelse
 
                 @if($jobs->hasPages())
-    <div class="jb-pagination-wrap">
-        <nav aria-label="Page navigation">
-            <ul class="flex pl-0 list-none rounded-lg" style="gap:4px; margin:0;">
-                {{-- Previous --}}
-                @if ($jobs->onFirstPage())
-                    <li>
-                        <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-slate-300 cursor-not-allowed">
-                            <i class="fas fa-angle-left"></i>
-                        </span>
-                    </li>
-                @else
-                    <li>
-                        <a href="{{ $jobs->appends(request()->query())->previousPageUrl() }}" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-slate-600 hover:bg-gray-50 transition-all">
-                            <i class="fas fa-angle-left"></i>
-                        </a>
-                    </li>
+                    <div class="jb-pagination-wrap">
+                        {{ $jobs->appends(request()->query())->links() }}
+                    </div>
                 @endif
-
-                {{-- Numbers --}}
-                @foreach ($jobs->getUrlRange(1, $jobs->lastPage()) as $page => $url)
-                    @if ($page == $jobs->currentPage())
-                        <li>
-                            <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 text-white font-bold shadow-soft-md">
-                                {{ $page }}
-                            </span>
-                        </li>
-                    @else
-                        <li>
-                            <a href="{{ $url }}&{{ http_build_query(request()->except('page')) }}" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-slate-600 hover:bg-gray-50 transition-all">
-                                {{ $page }}
-                            </a>
-                        </li>
-                    @endif
-                @endforeach
-
-                {{-- Next --}}
-                @if ($jobs->hasMorePages())
-                    <li>
-                        <a href="{{ $jobs->appends(request()->query())->nextPageUrl() }}" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-slate-600 hover:bg-gray-50 transition-all">
-                            <i class="fas fa-angle-right"></i>
-                        </a>
-                    </li>
-                @else
-                    <li>
-                        <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-slate-300 cursor-not-allowed">
-                            <i class="fas fa-angle-right"></i>
-                        </span>
-                    </li>
-                @endif
-            </ul>
-        </nav>
-    </div>
-@endif
             </div>
         </main>
     </div>

@@ -147,7 +147,7 @@
                         data: null,
                         className: 'text-center align-middle bg-transparent border-b border-gray-200 whitespace-nowrap shadow-none',
                         render: function (data, type, row) {
-                            let actions = `<div style="display:flex; align-items:center; justify-content:center; gap:8px;">`;
+                            let actions = `<div class="flex items-center justify-center gap-2">`;
 
                             // Verify Button
                             if (row.verified !== 'verified') {
@@ -193,7 +193,7 @@
                                 let editUrl = "{{ url('admin/customers') }}/" + row.id + "/edit";
                                 actions += `
                                     <a href="${editUrl}" 
-                                       class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-110" 
+                                       class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-110 mx-2" 
                                        title="Edit">
                                         <i class="fas fa-edit text-sm pointer-events-none"></i>
                                     </a>`;
@@ -202,7 +202,7 @@
                             if (canDelete) {
                                 actions += `
                                     <button onclick="confirmDelete(${row.id})" 
-                                            class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-110" 
+                                            class="inline-block p-2 mb-0 text-white transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in bg-150 tracking-tight-soft bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-110 mx-2" 
                                             title="Delete">
                                         <i class="fas fa-trash text-sm pointer-events-none"></i>
                                     </button>`;
