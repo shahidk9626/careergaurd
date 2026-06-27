@@ -11,7 +11,8 @@
     <!-- Search Section -->
     <div class="row mb-8">
         <div class="col-12 flex justify-center">
-            <form action="{{ url()->current() }}" method="GET" class="w-full max-w-lg">
+            <form action="{{ url()->current() }}" method="GET" class="w-full max-w-lg" id="searchForm">
+
                 <div class="relative flex flex-wrap items-stretch w-full transition-all rounded-lg ease-soft">
                     <span class="text-sm ease-soft leading-5.6 absolute z-50 -ml-px flex h-full items-center whitespace-nowrap rounded-lg rounded-tr-none rounded-br-none border border-r-0 border-transparent bg-transparent py-2 px-2.5 text-center font-normal text-slate-500 transition-all">
                         <i class="fas fa-search"></i>

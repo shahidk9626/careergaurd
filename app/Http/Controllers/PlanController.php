@@ -218,15 +218,22 @@ class PlanController extends Controller
         $query = Plan::with('planServices.category')->where('status', 'active')->orderBy('premium_amount', 'asc');
 
         if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('slug', 'like', "%{$search}%")
-                  ->orWhere('short_description', 'like', "%{$search}%")
-                  ->orWhereHas('planServices.category', function($cq) use ($search) {
-                      $cq->where('name', 'like', "%{$search}%");
-                  });
-            });
+    $query->where(function($q) use ($search) {
+        $q->where('name', 'like', "%{$search}%")
+          ->orWhere('slug', 'like', "%{$search}%")
+          ->orWhere('short_description', 'like', "%{$search}%")
+          ->orWhereHas('planServices.category', function($cq) use ($search) {
+              $cq->where('name', 'like', "%{$search}%");
+          });
+
+        // match by amount when the search term is numeric
+        if (is_numeric($search)) {
+            $q->orWhere('premium_amount', $search)
+              ->orWhere('one_time_payment_amount', $search)
+              ->orWhere('discount_price', $search);
         }
+    });
+}
 
         $plans = $query->paginate(9)->withQueryString();
 

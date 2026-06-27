@@ -88,7 +88,7 @@
                         <hr class="h-px my-6 bg-transparent bg-gradient-to-r from-transparent via-black/10 to-transparent" />
                         <div class="mb-4">
                             <label class="block text-sm font-semibold text-slate-700 mb-2">Select Payment Option</label>
-                            <div class="flex gap-4">
+                           <div class="flex" style="gap:16px;">
                                 <label class="flex items-center p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-all w-1/2">
                                     <input type="radio" name="selected_payment_type" value="regular" checked class="mr-2 text-purple-600 focus:ring-purple-500">
                                     <div class="flex flex-col">
