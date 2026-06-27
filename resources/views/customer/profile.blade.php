@@ -48,38 +48,39 @@
     <div class="relative flex flex-col flex-auto min-w-0 p-4 mx-6 -mt-16 overflow-hidden break-words border-0 shadow-blur rounded-2xl bg-white/80 bg-clip-border backdrop-blur-2xl backdrop-saturate-200">
         <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
 
-            {{-- Avatar --}}
-            <div style="width:72px; height:72px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:700; color:#fff; flex-shrink:0;"
-                 class="bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md">
-                @if($user->profile_image)
-                    <img src="{{ asset('storage/' . $user->profile_image) }}" alt="profile"
-                         style="width:100%; height:100%; object-fit:cover; border-radius:14px;" />
-                @else
-                    {{ strtoupper($initials) ?: 'U' }}
-                @endif
-            </div>
+    {{-- Avatar --}}
+    <div style="width:72px; height:72px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:700; color:#fff; flex-shrink:0;"
+         class="bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md">
+        @if($user->profile_image)
+            <img src="{{ asset('storage/' . $user->profile_image) }}" alt="profile"
+                 style="width:100%; height:100%; object-fit:cover; border-radius:14px;" />
+        @else
+            {{ strtoupper($initials) ?: 'U' }}
+        @endif
+    </div>
 
-            {{-- Name & role --}}
-            <div style="flex:1; min-width:0;">
-                <h5 class="mb-1">{{ $user->name }}</h5>
-                <p class="mb-0 font-semibold leading-normal text-sm text-slate-500" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                    {{ ucfirst($user->role->name ?? 'Customer') }}
-                    <span class="inline-block px-2 py-1 text-xs font-bold text-center text-white align-middle rounded-lg
-                        {{ $isActive ? 'bg-gradient-to-tl from-green-600 to-lime-400' : 'bg-gradient-to-tl from-slate-600 to-slate-300' }}">
-                        {{ ucfirst($user->status) }}
-                    </span>
-                </p>
-            </div>
+    {{-- Name & role --}}
+    <div style="flex:1 1 160px; min-width:0;">
+        <h5 class="mb-1" style="word-break:normal; overflow-wrap:anywhere;">{{ $user->name }}</h5>
+        <p class="mb-0 font-semibold leading-normal text-sm text-slate-500" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            {{ ucfirst($user->role->name ?? 'Customer') }}
+            <span class="inline-block px-2 py-1 text-xs font-bold text-center text-white align-middle rounded-lg
+                {{ $isActive ? 'bg-gradient-to-tl from-green-600 to-lime-400' : 'bg-gradient-to-tl from-slate-600 to-slate-300' }}">
+                {{ ucfirst($user->status) }}
+            </span>
+        </p>
+    </div>
 
-            {{-- CTA button --}}
-            <div style="flex-shrink:0;">
-                <button type="button" onclick="openCallbackModal('direct')"
-                    class="inline-block px-4 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all border-0 rounded-lg shadow-soft-md cursor-pointer leading-pro ease-soft-in bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85">
-                    Request Callback
-                </button>
-            </div>
+    {{-- CTA button --}}
+    <div style="flex-shrink:0;">
+        <button type="button" onclick="openCallbackModal('direct')"
+            class="inline-block px-4 py-2 mb-0 text-xs font-bold text-center text-white uppercase transition-all border-0 rounded-lg shadow-soft-md cursor-pointer leading-pro ease-soft-in bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85"
+            style="white-space:nowrap;">
+            Request Callback
+        </button>
+    </div>
 
-        </div>
+</div>
     </div>
 
 </div>

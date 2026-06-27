@@ -29,32 +29,32 @@
                 </div>
             </div>
             <div class="w-full max-w-full px-3 mx-auto mt-4 sm:my-auto sm:mr-0 md:w-1/2 md:flex-none lg:w-4/12">
-                <div class="relative right-0 flex justify-end gap-2">
-                    @if($prev)
-                        <a href="{{ route('admin.customers.show', $prev->id) }}" class="inline-block px-4 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro text-xs ease-soft-in border-fuchsia-500 hover:scale-102 active:shadow-soft-xs text-fuchsia-500 hover:bg-fuchsia-500 hover:text-white">
-                            <i class="fas fa-chevron-left mr-1"></i> Prev
-                        </a>
-                    @endif
-                    @if($next)
-                        <a href="{{ route('admin.customers.show', $next->id) }}" class="inline-block px-4 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro text-xs ease-soft-in border-fuchsia-500 hover:scale-102 active:shadow-soft-xs text-fuchsia-500 hover:bg-fuchsia-500 hover:text-white">
-                            Next <i class="fas fa-chevron-right ml-1"></i>
-                        </a>
-                    @endif
-                    @if($customer->verification_status !== 'verified')
-                        <button onclick="confirmVerify({{ $customer->id }})" class="inline-block px-4 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 hover:scale-102">
-                            <i class="fas fa-check-circle mr-1"></i> Verify Customer
-                        </button>
-                    @else
-                        <span class="inline-block px-4 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 opacity-70">
-                            <i class="fas fa-check-double mr-1"></i> Verified
-                        </span>
-                    @endif
+    <div class="relative right-0 flex flex-wrap justify-center sm:justify-end gap-2">
+        @if($prev)
+            <a href="{{ route('admin.customers.show', $prev->id) }}" class="inline-flex items-center justify-center flex-1 sm:flex-none min-w-[80px] px-4 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro text-xs ease-soft-in border-fuchsia-500 hover:scale-102 active:shadow-soft-xs text-fuchsia-500 hover:bg-fuchsia-500 hover:text-white whitespace-nowrap">
+                <i class="fas fa-chevron-left mr-1"></i> Prev
+            </a>
+        @endif
+        @if($next)
+            <a href="{{ route('admin.customers.show', $next->id) }}" class="inline-flex items-center justify-center flex-1 sm:flex-none min-w-[80px] px-4 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro text-xs ease-soft-in border-fuchsia-500 hover:scale-102 active:shadow-soft-xs text-fuchsia-500 hover:bg-fuchsia-500 hover:text-white whitespace-nowrap">
+                Next <i class="fas fa-chevron-right ml-1"></i>
+            </a>
+        @endif
+        @if($customer->verification_status !== 'verified')
+            <button onclick="confirmVerify({{ $customer->id }})" class="inline-flex items-center justify-center flex-1 sm:flex-none min-w-[120px] px-4 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 hover:scale-102 whitespace-nowrap">
+                <i class="fas fa-check-circle mr-1"></i> Verify Customer
+            </button>
+        @else
+            <span class="inline-flex items-center justify-center flex-1 sm:flex-none min-w-[120px] px-4 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 opacity-70 whitespace-nowrap">
+                <i class="fas fa-check-double mr-1"></i> Verified
+            </span>
+        @endif
 
-                    <a href="{{ route('admin.customers.index') }}" class="inline-block px-4 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102">
-                        Back
-                    </a>
-                </div>
-            </div>
+        <a href="{{ route('admin.customers.index') }}" class="inline-flex items-center justify-center flex-1 sm:flex-none min-w-[80px] px-4 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 whitespace-nowrap">
+            Back
+        </a>
+    </div>
+</div>
         </div>
     </div>
 </div>

@@ -93,7 +93,20 @@
     .jb-job-title { font-size: 17px; font-weight: 700; color: #1e293b; margin: 0 0 4px 0; line-height: 1.3; }
     .jb-company { font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 12px; display: block; }
     .jb-meta-row { display: flex; flex-wrap: wrap; gap: 6px; }
-    .jb-meta-chip { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 999px; font-size: 11px; color: #475569; font-weight: 500; }
+    .jb-meta-chip { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 6px; 
+    min-height: 26px; /* Changed from fixed height so it CAN grow if absolutely necessary */
+    padding: 4px 10px; /* Added vertical padding for breathing room */
+    background: #f8fafc; 
+    border: 1px solid #f1f5f9; 
+    border-radius: 999px; 
+    font-size: 11px; 
+    color: #475569; 
+    font-weight: 500; 
+    white-space: nowrap; /* CRITICAL: Forces text to stay on one line so the whole chip wraps instead of the text */
+}
     .jb-meta-chip i { font-size: 10px; color: #94a3b8; }
 
     /* RIGHT SIDE */
@@ -120,6 +133,19 @@
     .jb-pagination-wrap .page-link:hover { background: #f8fafc; color: #7e22ce; }
     .jb-pagination-wrap .page-item.active .page-link { background: linear-gradient(310deg, #7e22ce 0%, #db2777 100%); color: #fff; box-shadow: 0 4px 7px -1px rgba(126,34,206,0.25); }
     .jb-pagination-wrap .page-item.disabled .page-link { color: #cbd5e1; background: transparent; }
+    .jb-btn-group {
+    display: flex;
+    gap: 10px; /* Space between the two buttons */
+    flex-wrap: wrap; /* Prevents overflow on extremely small screens */
+    align-items: center;
+}
+
+/* Optional: Ensures the wrapper aligns correctly on mobile view if you have a mobile media query for jb-card-right */
+@media (max-width: 640px) { 
+    .jb-btn-group {
+        justify-content: flex-end;
+    }
+}
 </style>
 
 <div class="jb-page">
@@ -298,23 +324,28 @@
 
                             <div class="jb-card-right">
     <span class="jb-date">{{ $job->posted_date }}</span>
-    @if($job->mobile_number)
-        @php
-            $cleanPhone = preg_replace('/[^0-9]/', '', $job->mobile_number);
-            if (strlen($cleanPhone) === 10) $cleanPhone = '91' . $cleanPhone;
-            $waMessage = 'Hello, I am interested in the ' . ($job->job_title ?? $job->title) . ' job position.';
-            if ($job->company_name) $waMessage .= ' at ' . $job->company_name;
-            $waUrl = 'https://wa.me/' . $cleanPhone . '?text=' . rawurlencode($waMessage);
-        @endphp
-        <a href="{{ $waUrl }}" target="_blank" rel="noopener noreferrer" class="jb-cta-btn" style="background:linear-gradient(310deg,#128c7e 0%,#25d366 100%);box-shadow:0 4px 7px -1px rgba(37,211,102,0.25);">
-            Apply via WhatsApp <i class="fab fa-whatsapp" style="font-size:12px;margin-left:4px;"></i>
-        </a>
-    @endif
-    @if($job->job_url)
-        <a href="{{ $job->job_url }}" target="_blank" rel="noopener noreferrer" class="jb-cta-btn">
-            Apply Now <i class="fas fa-external-link-alt"></i>
-        </a>
-    @endif
+    
+    {{-- NEW WRAPPER TO FORCE BUTTONS INTO ONE LINE --}}
+    <div class="jb-btn-group">
+        @if($job->mobile_number)
+            @php
+                $cleanPhone = preg_replace('/[^0-9]/', '', $job->mobile_number);
+                if (strlen($cleanPhone) === 10) $cleanPhone = '91' . $cleanPhone;
+                $waMessage = 'Hello, I am interested in the ' . ($job->job_title ?? $job->title) . ' job position.';
+                if ($job->company_name) $waMessage .= ' at ' . $job->company_name;
+                $waUrl = 'https://wa.me/' . $cleanPhone . '?text=' . rawurlencode($waMessage);
+            @endphp
+            <a href="{{ $waUrl }}" target="_blank" rel="noopener noreferrer" class="jb-cta-btn" style="background:linear-gradient(310deg,#128c7e 0%,#25d366 100%);box-shadow:0 4px 7px -1px rgba(37,211,102,0.25);">
+                Apply via WhatsApp <i class="fab fa-whatsapp" style="font-size:12px;margin-left:4px;"></i>
+            </a>
+        @endif
+
+        @if($job->job_url)
+            <a href="{{ $job->job_url }}" target="_blank" rel="noopener noreferrer" class="jb-cta-btn">
+                Apply Now <i class="fas fa-external-link-alt" style="margin-left:4px;"></i>
+            </a>
+        @endif
+    </div>
 </div>
                         </div>
 
