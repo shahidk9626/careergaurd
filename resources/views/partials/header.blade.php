@@ -43,10 +43,12 @@
             </li>
             @endif
 
-            <li class="flex items-center text-slate-500" style="margin-right:16px;">
-                <i class="fa fa-user" style="margin-right:6px;"></i>
-                <span class="hidden sm:inline text-sm font-semibold">{{ Auth::user()->name }}</span>
-            </li>
+            <li class="flex items-center" style="margin-right:16px;">
+    <a href="{{ route('customer.profile.edit') }}" class="flex items-center text-slate-500 hover:text-purple-700 transition-all" style="text-decoration:none;">
+        <i class="fa fa-user" style="margin-right:6px;"></i>
+        <span class="hidden sm:inline text-sm font-semibold">{{ Auth::user()->name }}</span>
+    </a>
+</li>
 
             <li class="flex items-center xl:hidden">
                 <a href="javascript:;" class="block p-0 transition-all ease-nav-brand text-sm text-slate-500"
