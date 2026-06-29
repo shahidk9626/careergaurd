@@ -60,27 +60,16 @@
                             @endphp
 
                             @foreach($groupedServices as $type => $services)
-                                @php $meta = $serviceIcons[$type] ?? ['icon' => 'fa-check', 'color' => 'text-green-500', 'label' => $type]; @endphp
-                                <li class="relative flex items-start py-2 border-0 rounded-t-lg text-inherit">
-                                    <div
-                                        class="flex items-center justify-center w-5 h-5 mr-3 mt-1 rounded-lg bg-gray-100 text-center flex-none">
-                                        <i class="fas {{ $meta['icon'] }} {{ $meta['color'] }} text-xs"></i>
-                                    </div>
-                                    <div class="flex flex-col border-none shadow-none !border-b-0">
-                                        <span class="text-sm font-bold text-slate-700">{{ $meta['label'] }}</span>
-                                        <div class="flex flex-wrap gap-1 mt-1">
-                                            @foreach($services as $s)
-                                                @if($s->category)
-                                                    <span
-                                                        class="text-xxs font-medium px-2 py-0.5 bg-gray-50 border border-gray-200 text-slate-500 rounded-md">
-                                                        
-                                                    </span>
-                                                @endif
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </li>
-                            @endforeach
+    @php $meta = $serviceIcons[$type] ?? ['icon' => 'fa-check', 'color' => 'text-green-500', 'label' => $type]; @endphp
+    <li class="relative flex items-start py-2 border-0 rounded-t-lg text-inherit">
+        <div class="flex items-center justify-center w-5 h-5 mr-3 mt-1 rounded-lg bg-gray-100 text-center flex-none">
+            <i class="fas {{ $meta['icon'] }} {{ $meta['color'] }} text-xs"></i>
+        </div>
+        <div class="flex flex-col">
+            <span class="text-sm font-bold text-slate-700">{{ $meta['label'] }}</span>
+        </div>
+    </li>
+@endforeach
 
                             
 
@@ -509,6 +498,34 @@
                             });
                         });
                 }
+                (function () {
+        var form  = document.getElementById('searchForm');
+        if (!form) return;
+        var input = form.querySelector('input[name="search"]');
+        if (!input) return;
+
+        var timer;
+        input.addEventListener('input', function () {
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                form.submit();
+            }, 500);
+        });
+
+        // block Enter from instant-submitting
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') e.preventDefault();
+        });
+
+        // restore focus + cursor after the page reloads with results
+        window.addEventListener('load', function () {
+            if (input.value) {
+                input.focus();
+                var len = input.value.length;
+                input.setSelectionRange(len, len);
+            }
+        });
+    })();
             </script>
         @endpush
     @endif

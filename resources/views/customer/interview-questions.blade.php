@@ -475,6 +475,15 @@
         .ih-track-footer { flex-direction: column; align-items: stretch; gap: 14px; }
         .ih-track-cta { width: 100%; }
     }
+    @media (max-width: 640px) {
+    .ih-tech-card {
+        min-width: 0;
+        overflow: hidden;
+    }
+    .ih-tech-name {
+        max-width: 100%;
+    }
+}
 </style>
 
 <div class="ih-page">

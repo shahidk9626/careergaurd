@@ -175,6 +175,10 @@
         width: 100%;
     }
 }
+@media (max-width: 640px) {
+    .jb-card-main { flex-wrap: wrap; }
+    .jb-meta-row { flex-basis: 100%; width: 100%; }
+}
 </style>
 
 <div class="jb-page">

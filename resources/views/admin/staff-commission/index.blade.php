@@ -15,14 +15,14 @@
                             <label class="block mb-2 text-xs font-bold text-slate-600 uppercase">Enter Staff Code</label>
                             <input type="text" id="staff_code_input" required class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600" placeholder="e.g. STAFF0001">
                         </div>
-                        <div class="flex gap-2">
-                            <button type="submit" class="inline-block px-6 py-2.5 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85 text-xs mb-0">
-                                <i class="fas fa-search mr-1"></i> Generate Summary
-                            </button>
-                            <button type="button" onclick="clearSearch()" class="inline-block px-6 py-2.5 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 active:opacity-85 text-xs mb-0">
-                                <i class="fas fa-times mr-1"></i> Clear
-                            </button>
-                        </div>
+                        <div class="flex" style="gap:10px;">
+    <button type="submit" class="inline-flex items-center justify-center font-bold text-center text-white uppercase transition-all border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85 text-xs whitespace-nowrap" style="height:38px; padding-left:18px; padding-right:18px;">
+    <i class="fas fa-search" style="margin-right:6px;"></i> Generate Summary
+</button>
+    <button type="button" onclick="clearSearch()" class="inline-flex items-center justify-center font-bold text-center text-white uppercase transition-all border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 active:opacity-85 text-xs whitespace-nowrap" style="height:38px; padding-left:18px; padding-right:18px;">
+    <i class="fas fa-times" style="margin-right:6px;"></i> Clear
+</button>
+</div>
                     </form>
                     <div id="searchValidationError" class="mt-2 text-xs text-red-500 font-semibold" style="display: none;"></div>
                 </div>

@@ -10,20 +10,22 @@
                         <div class="flex items-center flex-none w-1/2 max-w-full px-3">
                             <h6 class="mb-0">Staff List</h6>
                         </div>
-                        <div class="flex-none w-1/2 max-w-full px-3 text-right flex items-center justify-end gap-2">
-                            @if(hasPermission('staff.delete'))
-                                <button id="bulkDeleteBtn" style="display: none;" onclick="bulkDelete()"
-                                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-102 active:opacity-85 mr-2">
-                                    <i class="fas fa-trash-alt mr-1"></i> Delete Selected
-                                </button>
-                            @endif
-                            @if(hasPermission('staff.create'))
-                                <a href="{{ route('staff.create') }}"
-                                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 active:opacity-85">
-                                    <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Staff
-                                </a>
-                            @endif
-                        </div>
+                        <div class="w-full md:w-1/2 max-w-full px-3 flex flex-wrap items-center justify-center md:justify-end mt-3 md:mt-0" style="gap:10px;">
+    @if(hasPermission('staff.delete'))
+        <button id="bulkDeleteBtn" onclick="bulkDelete()"
+            style="display: none; white-space:nowrap; padding:10px 18px;"
+            class="inline-flex items-center justify-center font-bold text-center text-white uppercase transition-all border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-red-600 to-rose-400 hover:scale-102 active:opacity-85 text-xs">
+            <i class="fas fa-trash-alt" style="margin-right:6px;"></i> Delete Selected
+        </button>
+    @endif
+    @if(hasPermission('staff.create'))
+        <a href="{{ route('staff.create') }}"
+            style="white-space:nowrap; padding:10px 18px;"
+            class="inline-flex items-center justify-center font-bold text-center text-white uppercase transition-all border-0 rounded-lg cursor-pointer text-xs shadow-soft-md bg-gradient-to-tl from-gray-900 to-slate-800 hover:scale-102 active:opacity-85">
+            <i class="fas fa-plus" style="margin-right:6px;"></i> Add Staff
+        </a>
+    @endif
+</div>
                     </div>
                 </div>
                 <div class="flex-auto px-0 pt-0 pb-2">
