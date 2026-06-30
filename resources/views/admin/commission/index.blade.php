@@ -273,6 +273,59 @@ table.dataTable tbody td {
         gap: 8px 16px !important;
     }
 }
+/* ===== COMMISSION HUB — MOBILE ===== */
+@media (max-width: 768px) {
+    /* Stack header title above the filters */
+    .cmh-card-head {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+    .cmh-card-head > div:first-child {
+        margin-bottom: 12px;
+    }
+
+    /* Filters toolbar: stack each field full-width */
+    .cmh-card-head .flex.flex-wrap.items-end {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 12px !important;
+        width: 100%;
+    }
+    .cmh-card-head .flex.flex-wrap.items-end > .flex.flex-col {
+        width: 100%;
+    }
+
+    /* Period pills: let them wrap instead of overflowing */
+    .cmh-period-tabs {
+        display: flex !important;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .gperiod-btn {
+        flex: 1 1 auto;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    /* Status select + batch input full width */
+    #gfilter_status {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+    #gfilter_batch {
+        width: 100% !important;
+    }
+
+    /* Custom date inputs stack too */
+    #globalCustomDateInputs {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    #gfilter_start_date,
+    #gfilter_end_date {
+        flex: 1 1 100%;
+    }
+}
 </style>
 
 <!-- Main Listing Card -->
