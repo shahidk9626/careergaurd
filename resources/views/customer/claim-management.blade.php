@@ -67,17 +67,17 @@
         <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
             @if(!$plan->claim)
                 <a href="{{ route('customer.claim.form', $plan->plan_unique_id) }}"
-                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85">
+                    class="inline-block px-4 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer leading-pro text-xs ease-soft-in shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85">
                     Get Support
                 </a>
             @elseif($plan->claim->status === 'pending')
                 <button disabled
-                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg opacity-50 cursor-not-allowed leading-pro text-xs ease-soft-in shadow-none bg-150 bg-x-25 bg-gradient-to-tl from-slate-600 to-slate-300">
+                    class="inline-block px-4 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg opacity-50 cursor-not-allowed leading-pro text-xs ease-soft-in shadow-none bg-150 bg-x-25 bg-gradient-to-tl from-slate-600 to-slate-300">
                     Support Requested
                 </button>
             @elseif($plan->claim->status === 'approved')
                 <button disabled
-                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg opacity-80 cursor-not-allowed leading-pro text-xs ease-soft-in shadow-none bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400">
+                    class="inline-block px-4 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg opacity-80 cursor-not-allowed leading-pro text-xs ease-soft-in shadow-none bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400">
                     Support Approved
                 </button>
                 @if($plan->claim->claimedTransaction && $plan->claim->claimedTransaction->transaction_screenshot)
@@ -88,13 +88,13 @@
                 @endif
             @elseif($plan->claim->status === 'rejected')
                 <button disabled
-                    class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg opacity-50 cursor-not-allowed leading-pro text-xs ease-soft-in shadow-none bg-150 bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400">
+                    class="inline-block px-4 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg opacity-50 cursor-not-allowed leading-pro text-xs ease-soft-in shadow-none bg-150 bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400">
                     Rejected
                 </button>
             @endif
 
             <button type="button" onclick="openCallbackModal('enquiry', '{{ $plan->id }}', '{{ $plan->claim->id ?? '' }}')"
-                class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-soft-md cursor-pointer leading-pro text-xs ease-soft-in bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85">
+                class="inline-block px-4 py-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-soft-md cursor-pointer leading-pro text-xs ease-soft-in bg-150 bg-x-25 bg-gradient-to-tl from-purple-700 to-pink-500 hover:scale-102 active:opacity-85">
                 Request Callback
             </button>
         </div>

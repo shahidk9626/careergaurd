@@ -94,15 +94,30 @@ class InterviewPdfResourceController extends Controller
     }
 
     /** Customer-facing: list active PDFs accessible to logged-in user */
-    public function customerIndex()
+    public function customerIndex(Request $request)
     {
         $allowedCategories = auth()->user()->getActivePurchasedPlanCategories('question');
 
-        $pdfs = InterviewPdfResource::where('status', 'active')
+        $query = InterviewPdfResource::where('status', 'active')
             ->whereHas('categories', function ($q) use ($allowedCategories) {
                 $q->whereIn('service_categories.id', $allowedCategories);
-            })
-            ->with('categories')
+            });
+
+        if ($request->filled('category_id')) {
+            $query->whereHas('categories', function ($q) use ($request) {
+                $q->where('service_categories.id', $request->category_id);
+            });
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $pdfs = $query->with('categories')
             ->latest()
             ->get();
 

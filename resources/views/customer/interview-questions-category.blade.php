@@ -449,6 +449,20 @@
 
     {{-- ===== TAB: PDF RESOURCES ===== --}}
     <div id="tab-pdfs" class="iq-tab-panel">
+
+        {{-- Filter toolbar for PDFs --}}
+        <div class="iq-toolbar">
+            <div class="iq-toolbar-row">
+                <div class="iq-search" style="flex: 1;">
+                    <span class="iq-search-icon"><i class="fas fa-search"></i></span>
+                    <input type="text" id="pdfSearchInput" placeholder="Search PDF resources..." class="iq-input" onkeyup="filterPdfResources()">
+                </div>
+                <button type="button" id="pdfClearBtn" class="iq-clear" style="display: none;" onclick="clearPdfSearch()">
+                    <i class="fas fa-times" style="font-size:10px;"></i> Clear
+                </button>
+            </div>
+        </div>
+
         <div id="pdf-res-container">
             <div style="text-align:center; padding:48px; color:#94a3b8;">
                 <i class="fas fa-spinner fa-spin fa-2x"></i>
@@ -494,44 +508,15 @@
 
     // ── Load PDF resources from server ────────────────────────────────────────
     let pdfsLoaded = false;
+    let allPdfResources = [];
 
     function loadPdfResources() {
         if (pdfsLoaded) return; // only fetch once
 
         $.get("{{ url('customer/interview-pdfs') }}", { category_id: {{ $category->id }} }, function (data) {
             pdfsLoaded = true;
-            const wrap = document.getElementById('pdf-res-container');
-
-            if (!data.length) {
-                wrap.innerHTML = `
-                    <div class="pdf-res-empty">
-                        <div class="pdf-res-empty-icon"><i class="fas fa-file-pdf"></i></div>
-                        <h6>No PDF resources yet</h6>
-                        <p>There are no PDF downloads available for this category yet. Check back soon.</p>
-                    </div>`;
-                return;
-            }
-
-            const cards = data.map(pdf => `
-                <div class="pdf-res-card">
-                    <div style="display:flex;align-items:center;gap:12px;">
-                        <div class="pdf-res-icon"><i class="fas fa-file-pdf"></i></div>
-                        <div style="min-width:0;">
-                            <p class="pdf-res-title">${pdf.title}</p>
-                            <p class="pdf-res-meta">Uploaded ${pdf.uploaded}</p>
-                        </div>
-                    </div>
-                    ${pdf.description ? `<p class="pdf-res-desc">${pdf.description}</p>` : ''}
-                    ${pdf.categories && pdf.categories.length
-                        ? `<div class="pdf-res-cats">${pdf.categories.map(c => `<span class="pdf-res-cat">${c.name}</span>`).join('')}</div>`
-                        : ''}
-                    <a href="${pdf.file_url}" target="_blank" download class="pdf-res-download">
-                        <i class="fas fa-download"></i> Download PDF
-                    </a>
-                </div>
-            `).join('');
-
-            wrap.innerHTML = `<div class="pdf-res-grid">${cards}</div>`;
+            allPdfResources = data || [];
+            renderPdfResources(allPdfResources);
         }).fail(function () {
             document.getElementById('pdf-res-container').innerHTML = `
                 <div class="pdf-res-empty">
@@ -540,6 +525,86 @@
                     <p>Something went wrong. Please refresh the page and try again.</p>
                 </div>`;
         });
+    }
+
+    function renderPdfResources(pdfs, query = '') {
+        const wrap = document.getElementById('pdf-res-container');
+
+        if (!pdfs.length) {
+            if (query) {
+                wrap.innerHTML = `
+                    <div class="pdf-res-empty">
+                        <div class="pdf-res-empty-icon"><i class="fas fa-search"></i></div>
+                        <h6>No PDF resources found</h6>
+                        <p>No PDFs matched your search term "<strong>${escapeHtml(query)}</strong>". Try a different search term.</p>
+                    </div>`;
+            } else {
+                wrap.innerHTML = `
+                    <div class="pdf-res-empty">
+                        <div class="pdf-res-empty-icon"><i class="fas fa-file-pdf"></i></div>
+                        <h6>No PDF resources yet</h6>
+                        <p>There are no PDF downloads available for this category yet. Check back soon.</p>
+                    </div>`;
+            }
+            return;
+        }
+
+        const cards = pdfs.map(pdf => `
+            <div class="pdf-res-card">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="pdf-res-icon"><i class="fas fa-file-pdf"></i></div>
+                    <div style="min-width:0;">
+                        <p class="pdf-res-title">${escapeHtml(pdf.title)}</p>
+                        <p class="pdf-res-meta">Uploaded ${pdf.uploaded}</p>
+                    </div>
+                </div>
+                ${pdf.description ? `<p class="pdf-res-desc">${escapeHtml(pdf.description)}</p>` : ''}
+                ${pdf.categories && pdf.categories.length
+                    ? `<div class="pdf-res-cats">${pdf.categories.map(c => `<span class="pdf-res-cat">${escapeHtml(c.name)}</span>`).join('')}</div>`
+                    : ''}
+                <a href="${pdf.file_url}" target="_blank" download class="pdf-res-download">
+                    <i class="fas fa-download"></i> Download PDF
+                </a>
+            </div>
+        `).join('');
+
+        wrap.innerHTML = `<div class="pdf-res-grid">${cards}</div>`;
+    }
+
+    function filterPdfResources() {
+        const query = (document.getElementById('pdfSearchInput').value || '').trim();
+        const clearBtn = document.getElementById('pdfClearBtn');
+
+        if (query) {
+            clearBtn.style.display = 'inline-flex';
+        } else {
+            clearBtn.style.display = 'none';
+        }
+
+        const qLower = query.toLowerCase();
+        const filtered = allPdfResources.filter(pdf => {
+            const titleMatch = pdf.title && pdf.title.toLowerCase().includes(qLower);
+            const descMatch = pdf.description && pdf.description.toLowerCase().includes(qLower);
+            const catMatch = pdf.categories && pdf.categories.some(c => c.name && c.name.toLowerCase().includes(qLower));
+            return titleMatch || descMatch || catMatch;
+        });
+
+        renderPdfResources(filtered, query);
+    }
+
+    function clearPdfSearch() {
+        document.getElementById('pdfSearchInput').value = '';
+        filterPdfResources();
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 </script>
 @endpush
