@@ -9,13 +9,14 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Traits\Auditable;
 
 #[Fillable(['name', 'email', 'profile_image', 'phone', 'whatsapp_number', 'password', 'role_id', 'referred_by_staff_id', 'profile_completed', 'verification_status', 'status', 'verification_sent_at'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, Auditable;
 
     public function role()
     {

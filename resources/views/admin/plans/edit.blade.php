@@ -179,6 +179,20 @@
             </div>
         </div>
     </div>
+
+    <div class="flex flex-wrap -mx-3 mt-6">
+        <div class="w-full max-w-full px-3 mt-0 mb-6 lg:mb-0 lg:w-full lg:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
+                <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
+                    <h6 class="mb-0 font-bold text-slate-700">Membership Audit History</h6>
+                    <p class="text-xs text-slate-400">Track changes to pricing, commissions, and service categories.</p>
+                </div>
+                <div class="flex-auto p-6">
+                    <x-activity-timeline :entity-type="'Plan'" :entity-id="$plan->id" />
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')

@@ -228,7 +228,17 @@ Route::prefix('services/questions')->middleware('permission:questions.view')->gr
             Route::post('/commission/bulk-settle', [App\Http\Controllers\CommissionController::class, 'bulkSettle'])->name('admin.commission.bulk-settle');
             Route::get('/commission/payment-history', [App\Http\Controllers\CommissionController::class, 'paymentHistory'])->name('admin.commission.payment-history');
         });
+
+        // Activity Logs Admin Views
+        Route::middleware('permission:activity-logs.view')->prefix('activity-logs')->group(function () {
+            Route::get('/', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('admin.activity-logs.index');
+            Route::get('/{id}', [App\Http\Controllers\ActivityLogController::class, 'show'])->name('admin.activity-logs.show');
+        });
     });
+
+    // AJAX Entity History Endpoint
+    Route::get('/activity-logs/entity-history', [App\Http\Controllers\ActivityLogController::class, 'entityHistory'])->name('admin.activity-logs.entity-history');
+
     // Customer-specific routes
     Route::middleware(['auth', 'is_customer'])->prefix('customer')->group(function () {
         Route::get('/plan-preview', [App\Http\Controllers\PlanController::class, 'preview'])->name('customer.plan-preview');

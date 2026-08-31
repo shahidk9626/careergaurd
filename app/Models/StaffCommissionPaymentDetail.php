@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Auditable;
 
 class StaffCommissionPaymentDetail extends Model
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $table = 'staff_commission_payment_details';
 

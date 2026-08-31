@@ -93,6 +93,13 @@
                                         <span class="ml-1">Documents</span>
                                     </a>
                                 </li>
+                                <li class="flex-auto text-center">
+                                    <a class="flex items-center justify-center w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-soft-in-out bg-inherit text-slate-700 cursor-pointer"
+                                       onclick="switchTab(event, 'history')">
+                                        <i class="fas fa-history text-sm mr-2"></i>
+                                        <span class="ml-1">History</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -263,6 +270,15 @@
                                 </div>
                             @endforelse
                         </div>
+                    </div>
+
+                    <!-- History Tab -->
+                    <div id="history" class="tabcontent hidden">
+                        <div class="flex items-center mb-6">
+                            <h6 class="font-bold leading-tight uppercase text-xs text-slate-500 mb-0">Activity History Timeline</h6>
+                            <div class="flex-1 h-px bg-gray-100 ml-4"></div>
+                        </div>
+                        <x-activity-timeline :entity-type="'Staff'" :entity-id="$staff->id" />
                     </div>
                 </div>
             </div>

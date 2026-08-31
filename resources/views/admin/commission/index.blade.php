@@ -493,6 +493,11 @@ table.dataTable tbody td {
                             <i class="fas fa-history mr-2"></i> Payment Settlement History
                         </button>
                     </li>
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg font-bold text-slate-500 bg-transparent border-0 cursor-pointer transition-all" id="audit-tab" data-tabs-target="#audit-panel" type="button" role="tab" aria-controls="audit-panel" aria-selected="false" onclick="loadAuditHistory()">
+                            <i class="fas fa-history mr-2"></i> Audit Timeline
+                        </button>
+                    </li>
                 </ul>
             </div>
 
@@ -564,6 +569,33 @@ table.dataTable tbody td {
                                 <!-- Dynamic rows -->
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <!-- Tab Panel 3: Audit History -->
+                <div class="p-0 rounded-lg hidden" id="audit-panel" role="tabpanel" aria-labelledby="audit-tab">
+                    <div class="flex items-center justify-between mb-4">
+                        <h6 class="font-bold text-slate-700 uppercase tracking-wider text-xs mb-0">Commission Audit History</h6>
+                    </div>
+                    
+                    <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-none rounded-2xl bg-clip-border">
+                        <div class="flex-auto p-4">
+                            <!-- Spinner -->
+                            <div id="c-timeline-loading" class="text-center py-6">
+                                <div class="inline-block animate-spin rounded-full h-7 w-7 border-t-2 border-b-2 border-purple-500"></div>
+                                <p class="text-xs text-slate-400 mt-2">Loading audit history...</p>
+                            </div>
+                            
+                            <!-- Timeline Content -->
+                            <div id="c-timeline-content" class="relative pl-8 border-l border-slate-200/60 ml-3 space-y-6 hidden">
+                                <!-- Populated dynamically via JS -->
+                            </div>
+                            
+                            <!-- Empty State -->
+                            <div id="c-timeline-empty" class="text-center py-6 hidden">
+                                <p class="text-sm text-slate-400 italic">No commission activity logged.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1228,6 +1260,109 @@ table.dataTable tbody td {
                 },
                 error: function() {
                     Swal.fire('Error', 'Failed to retrieve payment history logs.', 'error');
+                }
+            });
+        }
+
+        function loadAuditHistory() {
+            if (!currentStaffCode) return;
+            
+            $('#c-timeline-loading').removeClass('hidden');
+            $('#c-timeline-content').addClass('hidden');
+            $('#c-timeline-empty').addClass('hidden');
+            
+            const formatDescription = (desc) => {
+                if (!desc) return '';
+                
+                if (desc.startsWith('Updated fields:')) {
+                    const fields = desc.replace('Updated fields:', '').split(',').map(f => f.trim());
+                    let html = '<span class="text-slate-400 mr-2 text-xxs uppercase font-semibold">Modified Fields:</span><div class="flex flex-wrap gap-1 mt-1">';
+                    fields.forEach(field => {
+                        html += `<span class="inline-block bg-purple-50 text-purple-600 border border-purple-100 px-2 py-0.5 rounded text-xxs font-mono font-bold">${field}</span>`;
+                    });
+                    html += '</div>';
+                    return html;
+                }
+
+                if (desc.startsWith('Status changed from')) {
+                    const matches = desc.match(/'([^']+)'/g);
+                    if (matches && matches.length === 2) {
+                        const oldStatus = matches[0].replace(/'/g, '');
+                        const newStatus = matches[1].replace(/'/g, '');
+                        
+                        let oldClass = 'bg-slate-100 text-slate-650 border-slate-200';
+                        let newClass = 'bg-green-50 text-green-700 border-green-200';
+                        if (newStatus === 'inactive' || newStatus === 'rejected' || newStatus === 'failed') {
+                            newClass = 'bg-red-50 text-red-655 border-red-200';
+                        } else if (newStatus === 'pending') {
+                            newClass = 'bg-amber-50 text-amber-705 border-amber-200';
+                        }
+
+                        return `
+                            <div class="flex items-center flex-wrap gap-1.5 text-xs">
+                                <span class="text-slate-400 text-xxs uppercase font-semibold mr-1">Status Shift:</span>
+                                <span class="inline-block border px-2 py-0.5 rounded text-xxs font-semibold ${oldClass}">${oldStatus}</span>
+                                <i class="fas fa-long-arrow-alt-right text-slate-300 mx-1"></i>
+                                <span class="inline-block border px-2 py-0.5 rounded text-xxs font-bold ${newClass}">${newStatus}</span>
+                            </div>
+                        `;
+                    }
+                }
+
+                return desc.replace(/\\n/g, '<br>');
+            };
+
+            $.ajax({
+                url: "{{ route('admin.activity-logs.entity-history') }}",
+                type: 'GET',
+                data: {
+                    entity_type: 'Commission',
+                    entity_id: currentStaffCode
+                },
+                success: function(response) {
+                    $('#c-timeline-loading').addClass('hidden');
+                    if (response.success && response.logs && response.logs.length > 0) {
+                        let html = '';
+                        $.each(response.logs, function(idx, log) {
+                            html += `
+                                <div class="relative transition-all duration-300 hover:translate-x-1 group">
+                                    <!-- Premium Outer Circle node centered on the line -->
+                                    <span class="absolute flex h-7 w-7 items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm transition-all duration-350 group-hover:scale-110 group-hover:border-purple-300 group-hover:shadow-md" style="left: -45px; top: 6px; z-index: 10;">
+                                        <span class="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-tl ${log.color}">
+                                            <i class="fas ${log.icon} text-white" style="font-size: 8px;"></i>
+                                        </span>
+                                    </span>
+                                    
+                                    <!-- Premium soft card for content -->
+                                    <div class="bg-gradient-to-r from-slate-50/50 to-white border border-slate-100 rounded-xl p-4 shadow-soft-sm hover:shadow-soft-md hover:border-slate-250 transition-all duration-350">
+                                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <span class="text-xs font-bold text-slate-800 tracking-wide uppercase">${log.action}</span>
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xxs font-medium bg-white text-slate-600 border border-slate-150 shadow-none">
+                                                    <i class="fas fa-user-circle mr-1 text-slate-400"></i> ${log.performed_by_name || 'System'}
+                                                    <span class="text-slate-400 ml-1">(${log.performed_by_role || 'System'})</span>
+                                                </span>
+                                            </div>
+                                            <span class="text-xxs font-semibold text-slate-400"><i class="far fa-clock mr-1"></i> ${log.created_at}</span>
+                                        </div>
+                                        
+                                        ${log.description ? `
+                                            <div class="mt-2 text-xs text-slate-650 leading-relaxed font-medium">
+                                                ${formatDescription(log.description)}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        $('#c-timeline-content').html(html).removeClass('hidden');
+                    } else {
+                        $('#c-timeline-empty').removeClass('hidden');
+                    }
+                },
+                error: function() {
+                    $('#c-timeline-loading').addClass('hidden');
+                    Swal.fire('Error', 'Failed to retrieve commission audit logs.', 'error');
                 }
             });
         }

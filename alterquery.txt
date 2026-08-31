@@ -1,0 +1,82 @@
+-- Enterprise Audit Trail & Activity Logging System ALTER Queries
+-- All ALTER statements for existing database tables to add created_by, updated_by, deleted_by columns and their type counterparts.
+
+ALTER TABLE `users` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `roles` ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `permissions` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `modules` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `role_permissions` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `user_permissions` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `staff_details` ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `customer_details` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `staff_documents` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `customer_documents` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `plans` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `plan_services` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `resume_templates` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `job_links` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `interview_questions` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `interview_pdf_resources` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `claims` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `purchased_plans` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `transactions` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `payment_orders` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `payment_failures` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `claimed_transactions` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `staff_membership_referrals` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `customer_update_requests` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `customer_update_request_details` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `callback_requests` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `staff_commission_payments` ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `staff_commission_payment_details` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `service_categories` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `resume_template_categories` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `job_link_categories` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `interview_question_categories` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+ALTER TABLE `interview_pdf_resource_category` ADD COLUMN `created_by` BIGINT UNSIGNED NULL, ADD COLUMN `created_by_type` VARCHAR(255) NULL, ADD COLUMN `updated_by` BIGINT UNSIGNED NULL, ADD COLUMN `updated_by_type` VARCHAR(255) NULL, ADD COLUMN `deleted_by` BIGINT UNSIGNED NULL, ADD COLUMN `deleted_by_type` VARCHAR(255) NULL;
+
+-- --------------------------------------------------------
+-- CREATE TABLE Query for Activity Logs
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `activity_logs` (
+  `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `module_name` VARCHAR(255) NOT NULL,
+  `module_slug` VARCHAR(255) NOT NULL,
+  `record_id` BIGINT UNSIGNED NULL,
+  `action` VARCHAR(255) NOT NULL,
+  `performed_by` BIGINT UNSIGNED NULL,
+  `performed_by_name` VARCHAR(255) NULL,
+  `performed_by_role` VARCHAR(255) NULL,
+  `performed_by_type` VARCHAR(255) NULL,
+  `old_values` JSON NULL,
+  `new_values` JSON NULL,
+  `changed_fields` JSON NULL,
+  `description` TEXT NULL,
+  `reference_no` VARCHAR(255) NULL,
+  `ip_address` VARCHAR(255) NULL,
+  `browser` VARCHAR(255) NULL,
+  `device` VARCHAR(255) NULL,
+  `operating_system` VARCHAR(255) NULL,
+  `url` VARCHAR(255) NULL,
+  `http_method` VARCHAR(255) NULL,
+  `request_id` VARCHAR(255) NULL,
+  `created_at` TIMESTAMP NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+-- INSERT Queries for Seeding Permission & Modules
+-- --------------------------------------------------------
+-- Create Activity Logs Module
+INSERT INTO `modules` (`name`, `slug`, `status`, `created_at`, `updated_at`) 
+VALUES ('Activity Logs', 'activity-logs', 'active', NOW(), NOW());
+
+-- Insert Permissions linked to Activity Logs Module
+INSERT INTO `permissions` (`module_id`, `name`, `slug`, `created_at`, `updated_at`) VALUES 
+((SELECT `id` FROM `modules` WHERE `slug` = 'activity-logs' LIMIT 1), 'View Activity Logs', 'activity-logs.view', NOW(), NOW()),
+((SELECT `id` FROM `modules` WHERE `slug` = 'activity-logs' LIMIT 1), 'View Activity Log Details', 'activity-logs.detail', NOW(), NOW());
+
+-- Link Permissions to Admin Role (slug: admin)
+INSERT INTO `role_permissions` (`role_id`, `permission_id`, `allowed`, `created_at`, `updated_at`) VALUES
+((SELECT `id` FROM `roles` WHERE `slug` = 'admin' LIMIT 1), (SELECT `id` FROM `permissions` WHERE `slug` = 'activity-logs.view' LIMIT 1), 1, NOW(), NOW()),
+((SELECT `id` FROM `roles` WHERE `slug` = 'admin' LIMIT 1), (SELECT `id` FROM `permissions` WHERE `slug` = 'activity-logs.detail' LIMIT 1), 1, NOW(), NOW());
+

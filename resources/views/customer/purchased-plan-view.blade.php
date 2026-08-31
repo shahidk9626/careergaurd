@@ -40,6 +40,13 @@
                                 <span class="ml-1">Repayment History</span>
                             </a>
                         </li>
+                        <li class="z-30 flex-auto text-center">
+                            <a class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-soft-in-out bg-inherit text-slate-700 cursor-pointer"
+                                nav-link data-tab="audit-history" role="tab" aria-selected="false">
+                                <i class="fas fa-history text-slate-700 text-sm"></i>
+                                <span class="ml-1">Timeline</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -210,6 +217,24 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Audit History Tab -->
+    <div id="audit-history" class="tab-content hidden">
+        <div class="flex flex-wrap -mx-3">
+            <div class="w-full max-w-full px-3">
+                <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
+                    <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
+                        <h6 class="mb-0 font-bold text-slate-700">Membership Lifecycle Timeline</h6>
+                        <p class="text-xs text-slate-400">Chronological history of plan purchases, payment clearances, claims, and status updates.</p>
+                    </div>
+                    <div class="flex-auto p-6">
+                        <x-activity-timeline :entity-type="'PurchasedPlan'" :entity-id="$purchasedPlan->id" />
                     </div>
                 </div>
             </div>
