@@ -4,10 +4,20 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceCategoryController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\FrontendController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Public Frontend Routes
+Route::get('/', [FrontendController::class, 'index'])->name('frontend.index');
+Route::get('/about', [FrontendController::class, 'about'])->name('frontend.about');
+Route::get('/features', [FrontendController::class, 'features'])->name('frontend.features');
+Route::get('/how-it-works', [FrontendController::class, 'howItWorks'])->name('frontend.how-it-works');
+Route::get('/reviews', [FrontendController::class, 'reviews'])->name('frontend.reviews');
+Route::get('/subscribe', [FrontendController::class, 'subscribe'])->name('frontend.subscribe');
+Route::get('/contact-us', [FrontendController::class, 'contactUs'])->name('frontend.contact-us');
+Route::get('/download', [FrontendController::class, 'download'])->name('frontend.download');
+Route::get('/privacy-policy', [FrontendController::class, 'privacyPolicy'])->name('frontend.privacy-policy');
+Route::get('/refund-policy', [FrontendController::class, 'refundPolicy'])->name('frontend.refund-policy');
+Route::get('/terms', [FrontendController::class, 'terms'])->name('frontend.terms');
 
 Route::get('/clear-cache', function () {
     \Illuminate\Support\Facades\Artisan::call('cache:clear');
